@@ -2,280 +2,293 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <title>PB PUBLIC V10</title>
+    <title>PB V8.0 PRO</title>
     <style>
         :root {
-            --bg: #080808;
-            --sur: #121212;
-            --acc: #00d4ff;
-            --tx: #f0f0f0;
-            --tx2: #a0a0a0;
-            --ok: #00e676;
-            --err: #ff5252;
+            --bg: #050505;
+            --card: #121212;
+            --border: #1c1c1c;
+            --accent: #ccff00; /* Neon-Lime */
+            --text: #ffffff;
+            --text-dim: #888888;
         }
 
         body {
             background-color: var(--bg);
-            color: var(--tx);
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            color: var(--text);
+            font-family: -apple-system, system-ui, sans-serif;
             margin: 0;
-            padding: env(safe-area-inset-top) 15px env(safe-area-inset-bottom) 15px;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
+            padding: 15px;
+            -webkit-font-smoothing: antialiased;
         }
 
-        /* Header Styling */
+        /* Header */
         .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 20px 0;
-            position: sticky;
-            top: 0;
-            background: var(--bg);
-            z-index: 10;
+            margin-bottom: 20px;
+            padding-top: 5px;
         }
 
-        .header h2 {
-            margin: 0;
-            font-size: 1.4rem;
-            letter-spacing: 1px;
-        }
+        .logo { font-weight: 900; letter-spacing: -1px; font-size: 1.2rem; }
+        .logo span { color: var(--accent); }
 
-        .header span {
-            color: var(--acc);
-        }
-
-        .setup-btn {
-            background: #222;
-            color: var(--tx2);
-            border: 1px solid #333;
-            border-radius: 8px;
+        .setup-trigger {
+            background: none;
+            border: 1px solid var(--border);
+            color: var(--text-dim);
             padding: 6px 12px;
-            font-size: 0.75rem;
+            border-radius: 8px;
+            font-size: 0.7rem;
+            text-transform: uppercase;
             font-weight: bold;
-            cursor: pointer;
         }
 
-        #plan-info {
-            font-size: 0.7rem;
-            color: var(--tx2);
-            text-align: center;
-            margin-bottom: 15px;
-            text-transform: uppercase;
-        }
-
-        /* Exercise Cards */
-        .exercise-card {
-            background: var(--sur);
-            border-radius: 14px;
-            padding: 16px;
-            margin-bottom: 16px;
-            border: 1px solid #222;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
-        }
-
-        .card-header {
+        /* Navigation (Trainingstage) */
+        .nav-bar {
             display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 14px;
+            gap: 10px;
+            overflow-x: auto;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+            scrollbar-width: none;
+            -webkit-overflow-scrolling: touch;
         }
 
-        .exercise-title {
-            color: var(--acc);
-            font-weight: 700;
-            font-size: 1.1rem;
-            margin: 0;
+        .nav-bar::-webkit-scrollbar { display: none; }
+
+        .nav-btn {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            min-width: 85px;
+            padding: 12px;
+            text-align: center;
+            flex-shrink: 0;
+            transition: all 0.2s;
         }
 
-        .muscle-group {
-            color: var(--tx2);
-            font-size: 0.7rem;
-            background: #222;
-            padding: 2px 8px;
-            border-radius: 4px;
-            text-transform: uppercase;
+        .nav-btn.active {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: #000;
         }
 
-        .input-row {
+        .nav-btn span { font-size: 0.75rem; font-weight: 800; text-transform: uppercase; }
+
+        /* Übungskarten */
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 18px;
+            margin-bottom: 16px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+        }
+
+        .ex-title {
+            color: var(--accent);
+            font-weight: 800;
+            font-size: 1rem;
+            margin: 0 0 15px 0;
+            display: inline-block;
+            border-bottom: 1px dashed #333;
+            padding-bottom: 3px;
+        }
+
+        .set-row {
             display: flex;
             gap: 10px;
             align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .set-label {
+            font-size: 0.6rem;
+            color: #444;
+            width: 40px;
+            font-weight: 900;
+            text-transform: uppercase;
         }
 
         input {
-            background: #252525;
-            border: 1px solid #333;
+            background: #000;
+            border: 1px solid #222;
             color: white;
+            padding: 12px;
             border-radius: 10px;
-            padding: 14px 5px;
-            width: 28%;
+            width: 35%;
             text-align: center;
             font-size: 1.1rem;
             font-weight: bold;
             outline: none;
-            -webkit-appearance: none;
+            transition: border-color 0.2s;
         }
 
-        input:focus {
-            border-color: var(--acc);
-        }
+        input:focus { border-color: var(--accent); }
 
         .save-btn {
-            background: var(--ok);
+            background: #1a1a1a;
+            color: var(--text-dim);
+            border: 1px solid #333;
+            border-radius: 12px;
+            padding: 15px;
+            width: 100%;
+            font-weight: 900;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+
+        .save-btn.ready {
+            background: var(--accent);
             color: #000;
             border: none;
-            border-radius: 10px;
-            padding: 14px;
-            flex-grow: 1;
-            font-weight: 900;
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            cursor: pointer;
-            transition: transform 0.1s, opacity 0.2s;
         }
 
-        .save-btn:active {
-            transform: scale(0.96);
-            opacity: 0.8;
-        }
-
-        .loading-text {
-            text-align: center;
-            color: var(--tx2);
-            margin-top: 50px;
-        }
+        #loader { text-align: center; padding: 50px; color: var(--text-dim); font-size: 0.8rem; }
     </style>
 </head>
 <body>
 
     <div class="header">
-        <h2>PB <span>PUBLIC</span></h2>
-        <button class="setup-btn" onclick="setupPlan()">⚙️ SETUP</button>
+        <div class="logo">PB <span>V8.0</span></div>
+        <button class="setup-trigger" onclick="handleSetup()">⚙️ Plan</button>
     </div>
 
-    <div id="plan-info">Wird geladen...</div>
-
-    <div id="exercise-list">
-        <div class="loading-text">Trainingsplan wird abgerufen...</div>
-    </div>
+    <div id="nav" class="nav-bar"></div>
+    <div id="exercise-list"><div id="loader">Lade Trainingsplan...</div></div>
 
     <script>
-        // DEINE URL AUS GOOGLE APPS SCRIPT
-        const API_URL = "https://script.google.com/macros/s/AKfycbyodbqXL6wwIHU5Z18gvRDLi3GfbbVKYqbjL6r0NiR3jdupobFs2Yo4_etyydg0gYw3kQ/exec";
+        // Deine aktuelle Web-App URL
+        const API = "https://script.google.com/macros/s/AKfycbw2SPaQwUbVln23N83rOJqSr4Fukt2jnJlpXa4qGbVWFK-0_5k0hJ7ZVQaOXLx9LlYx9A/exec";
         
-        // Holt den gespeicherten Plan-Namen (LocalStorage), Standard ist "ZYKLUS MASTER"
-        let SHEET_NAME = localStorage.getItem('meinPlanName') || "ZYKLUS MASTER";
-        
-        // UI Update für den aktuellen Plan
-        const infoDiv = document.getElementById('plan-info');
-        infoDiv.innerText = "AKTUELLER PLAN: " + SHEET_NAME;
+        let activeSheet = localStorage.getItem('pb_sheet_name') || "ZYKLUS MASTER";
+        let rawData = [];
 
-        // Funktion für das Setup (Prompt für deine Kumpels)
-        function setupPlan() {
-            const name = prompt("Wie heißt dein Tab im Google Sheet exakt?", SHEET_NAME);
-            if (name && name.trim() !== "") {
-                localStorage.setItem('meinPlanName', name.trim());
-                location.reload(); 
+        function handleSetup() {
+            const name = prompt("Name deines Tabellenblatts (exakt wie im Sheet):", activeSheet);
+            if (name) {
+                localStorage.setItem('pb_sheet_name', name.trim());
+                location.reload();
             }
         }
 
-        // Trainingsplan laden
-        async function loadPlan() {
-            const list = document.getElementById('exercise-list');
+        async function init() {
             try {
-                // Cache-Buster verhindert, dass das Handy alte Daten anzeigt
-                const resp = await fetch(`${API_URL}?sheet=${encodeURIComponent(SHEET_NAME)}&nocache=${Date.now()}`);
-                const rows = await resp.json();
-                
-                if (rows.error) {
-                    list.innerHTML = `<div class="loading-text" style="color:var(--err)">Fehler: ${rows.error}</div>`;
-                    return;
-                }
+                const response = await fetch(`${API}?sheet=${encodeURIComponent(activeSheet)}&v=${Date.now()}`);
+                rawData = await response.json();
+                renderNav();
+            } catch (e) {
+                document.getElementById('loader').innerText = "Fehler: Verbindung zum Sheet fehlgeschlagen.";
+            }
+        }
 
-                list.innerHTML = "";
-                // Wir starten ab Zeile 4 (Index 3)
-                rows.slice(3).forEach((row, index) => {
-                    if (!row[4]) return; // Falls Übungsname (Spalte E) leer ist
-                    
+        function renderNav() {
+            const nav = document.getElementById('nav');
+            nav.innerHTML = "";
+            const sections = [];
+
+            // Erstellt Navigation anhand der Trainingstage in Spalte D
+            rawData.forEach((row, i) => {
+                if (row[3] && row[3].trim() !== "") {
+                    sections.push({ name: row[3], index: i + 3 });
+                }
+            });
+
+            sections.forEach((sec, idx) => {
+                const btn = document.createElement('div');
+                btn.className = `nav-btn ${idx === 0 ? 'active' : ''}`;
+                btn.innerHTML = `<span>${sec.name}</span>`;
+                btn.onclick = () => {
+                    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    renderExercises(sec.name);
+                };
+                nav.appendChild(btn);
+            });
+
+            if (sections.length > 0) renderExercises(sections[0].name);
+        }
+
+        function renderExercises(dayName) {
+            const list = document.getElementById('exercise-list');
+            list.innerHTML = "";
+            let isTarget = false;
+
+            rawData.forEach((row, i) => {
+                const rowIdx = i + 3; // Wichtig für die korrekte Zeile im Sheet
+                
+                // Prüft, ob die aktuelle Zeile zum gewählten Tag gehört
+                if (row[3] && row[3] !== "") isTarget = (row[3] === dayName);
+
+                if (isTarget && row[4]) {
                     const card = document.createElement('div');
-                    card.className = 'exercise-card';
+                    card.className = 'card';
                     card.innerHTML = `
-                        <div class="card-header">
-                            <h3 class="exercise-title">${row[4]}</h3>
-                            <span class="muscle-group">${row[5] || ''}</span>
-                        </div>
-                        <div class="input-row">
-                            <input type="number" step="0.5" pattern="[0-9]*" inputmode="decimal" placeholder="kg" id="kg-${index}" value="${row[2] || ''}">
-                            <input type="number" pattern="[0-9]*" inputmode="numeric" placeholder="Reps" id="reps-${index}">
-                            <button class="save-btn" id="btn-${index}" onclick="saveData(${index}, '${row[4]}')">Sichern</button>
-                        </div>
+                        <h3 class="ex-title" onclick="quickRename(${rowIdx}, '${row[4]}')">${row[4]} ✏️</h3>
+                        ${[1, 2, 3].map(s => `
+                            <div class="set-row">
+                                <span class="set-label">SATZ ${s}</span>
+                                <input type="number" step="0.5" inputmode="decimal" placeholder="kg" id="g${s}-${rowIdx}" value="${row[6 + (s-1)*2] || ''}">
+                                <input type="number" inputmode="numeric" placeholder="Wdh" id="r${s}-${rowIdx}" value="${row[7 + (s-1)*2] || ''}">
+                            </div>
+                        `).join('')}
+                        <button class="save-btn ready" id="btn-${rowIdx}" onclick="saveData(${rowIdx}, '${row[4]}')">Sichern</button>
                     `;
                     list.appendChild(card);
-                });
-            } catch (e) {
-                list.innerHTML = `<div class="loading-text" style="color:var(--err)">Verbindung zum Sheet fehlgeschlagen.</div>`;
+                }
+            });
+        }
+
+        async function quickRename(idx, oldName) {
+            const newName = prompt("Übung umbenennen:", oldName);
+            if (newName && newName !== oldName) {
+                const payload = { sheet: activeSheet, rowIdx: idx, action: "rename", newName: newName };
+                await fetch(API, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
+                alert("Erfolgreich umbenannt!");
+                location.reload();
             }
         }
 
-        // Daten an Google Sheet senden
-        async function saveData(id, uebung) {
-            const btn = document.getElementById(`btn-${id}`);
-            const kg = document.getElementById(`kg-${id}`).value;
-            const reps = document.getElementById(`reps-${reps}`).id ? document.getElementById(`reps-${id}`).value : ""; // Sicherheits-Check
-            
-            // Falls nur Reps wichtig sind (Validierung)
-            const repsValue = document.getElementById(`reps-${id}`).value;
-            if (!repsValue) {
-                alert("Bitte Wiederholungen eingeben!");
-                return;
-            }
-
-            const originalColor = btn.style.background;
+        async function saveData(idx, title) {
+            const btn = document.getElementById(`btn-${idx}`);
             btn.innerText = "SENDET...";
-            btn.style.opacity = "0.5";
             btn.disabled = true;
 
+            // Datum automatisch generieren
+            const today = new Date().toLocaleDateString('de-DE', {day:'2.digit', month:'2.digit'}) + ".";
+
             const payload = {
-                sheet: SHEET_NAME,
-                date: new Date().toLocaleDateString('de-DE', {day:'2.digit', month:'2.digit'}) + ".",
-                uebung: uebung,
-                g1: kg, 
-                r1: repsValue
+                sheet: activeSheet,
+                rowIdx: idx,
+                date: today,
+                uebung: title,
+                g1: document.getElementById(`g1-${idx}`).value, r1: document.getElementById(`r1-${idx}`).value,
+                g2: document.getElementById(`g2-${idx}`).value, r2: document.getElementById(`r2-${idx}`).value,
+                g3: document.getElementById(`g3-${idx}`).value, r3: document.getElementById(`r3-${idx}`).value
             };
 
             try {
-                const resp = await fetch(API_URL, {
-                    method: 'POST',
-                    mode: 'no-cors', // Verhindert CORS Probleme beim Senden
-                    body: JSON.stringify(payload)
-                });
-                
-                // Da 'no-cors' keine Antwort lesbar macht, gehen wir bei Erfolg von OK aus
-                btn.innerText = "OK!";
+                await fetch(API, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
+                btn.innerText = "GESICHERT";
                 btn.style.background = "#00c853";
-                btn.style.opacity = "1";
-                
                 setTimeout(() => {
                     btn.innerText = "SICHERN";
-                    btn.style.background = originalColor;
+                    btn.style.background = "";
                     btn.disabled = false;
-                }, 3000);
-
+                }, 2000);
             } catch (e) {
-                btn.innerText = "ERROR";
-                btn.style.background = "var(--err)";
+                btn.innerText = "FEHLER";
                 btn.disabled = false;
-                alert("Fehler beim Sichern. Internetverbindung prüfen.");
             }
         }
 
-        // Start der App
-        loadPlan();
+        init();
     </script>
 </body>
 </html>
