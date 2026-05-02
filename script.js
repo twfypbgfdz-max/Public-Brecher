@@ -1,17 +1,18 @@
 const API_URL = "https://script.google.com/macros/s/AKfycbyodbqXL6wwIHU5Z18gvRDLi3GfbbVKYqbjL6r0NiR3jdupobFs2Yo4_etyydg0gYw3kQ/exec";
 
-// Prüft, ob ein Name gespeichert ist, sonst Standard "ZYKLUS MASTER"
+// 1. Plan-Name dynamisch laden
 let SHEET_NAME = localStorage.getItem('meinPlanName') || "ZYKLUS MASTER";
 
-// Funktion für deine Kumpels, um ihren eigenen Plan einzustellen
+// 2. Setup-Funktion für deine Kumpels
 function setupPlan() {
     const name = prompt("Wie heißt dein Tab im Google Sheet exakt?", SHEET_NAME);
     if (name && name.trim() !== "") {
         localStorage.setItem('meinPlanName', name.trim());
-        location.reload(); // Lädt die App mit dem neuen Plan neu
+        location.reload(); 
     }
 }
 
+// 3. Plan laden
 async function loadPlan() {
     const list = document.getElementById('exercise-list');
     try {
@@ -20,12 +21,12 @@ async function loadPlan() {
         
         list.innerHTML = "";
         rows.slice(3).forEach((row, index) => {
-            if (!row[4]) return; // Name in Spalte E
+            if (!row[4]) return; 
             
             const card = document.createElement('div');
             card.className = 'exercise-card';
             card.innerHTML = `
-                <div style="display:flex; justify-content:space-between">
+                <div style="display:flex; justify-content:space-between; align-items:center">
                     <span class="exercise-title">${row[4]}</span>
                     <small style="color:#00bcd4">${row[5] || ''}</small> 
                 </div>
@@ -40,6 +41,7 @@ async function loadPlan() {
     } catch (e) { list.innerHTML = "Fehler beim Laden!"; }
 }
 
+// 4. Daten speichern
 async function saveData(id, uebung) {
     const btn = document.getElementById(`btn-${id}`);
     const kg = document.getElementById(`kg-${id}`).value;
@@ -61,7 +63,7 @@ async function saveData(id, uebung) {
             btn.innerText = "OK!";
             btn.style.background = "#00e676";
         } else {
-            alert("Fehler beim Speichern!");
+            alert("Fehler!");
             btn.innerText = "Error";
         }
     } catch (e) { alert("Verbindung fehlgeschlagen"); }
