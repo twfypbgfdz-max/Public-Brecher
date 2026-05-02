@@ -3,292 +3,206 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <title>PB V8.0 PRO</title>
+    <title>PB V9.0 - Training</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:wght@400;700&family=Inter:wght@300;400;600&display=swap');
+        
         :root {
-            --bg: #050505;
-            --card: #121212;
-            --border: #1c1c1c;
-            --accent: #ccff00; /* Neon-Lime */
-            --text: #ffffff;
-            --text-dim: #888888;
+            --bg: #080808; --sur: #121212; --bor: #2a2a2a; --acc: #c8ff00; --tx: #f0f0f0; --tx2: #a0a0a0; --mu: #555;
         }
 
         body {
-            background-color: var(--bg);
-            color: var(--text);
-            font-family: -apple-system, system-ui, sans-serif;
-            margin: 0;
-            padding: 15px;
-            -webkit-font-smoothing: antialiased;
+            background: var(--bg); color: var(--tx); font-family: 'Inter', sans-serif;
+            margin: 0; padding-bottom: 120px;
         }
 
-        /* Header */
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            padding-top: 5px;
+        /* Header Styling aus V9.0[cite: 2] */
+        header {
+            padding: 15px; border-bottom: 1px solid var(--bor);
+            display: flex; align-items: center; justify-content: space-between;
+            background: rgba(8,8,8,.95); backdrop-filter: blur(20px); sticky; top: 0; z-index: 100;
         }
 
-        .logo { font-weight: 900; letter-spacing: -1px; font-size: 1.2rem; }
-        .logo span { color: var(--accent); }
+        .logo { font-family: 'Bebas Neue', sans-serif; font-size: 24px; letter-spacing: 2px; color: var(--acc); }
 
-        .setup-trigger {
-            background: none;
-            border: 1px solid var(--border);
-            color: var(--text-dim);
-            padding: 6px 12px;
-            border-radius: 8px;
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            font-weight: bold;
-        }
+        /* Stats Section: KG, kcal, bpm, min[cite: 2] */
+        .info-row { display: flex; gap: 8px; padding: 15px; flex-wrap: wrap; }
+        .bw-box { background: var(--sur); border: 1px solid var(--bor); padding: 12px; flex: 1; min-width: 140px; border-radius: 10px; }
+        .box-lbl { font-family: 'Space Mono', monospace; font-size: 8px; color: var(--mu); text-transform: uppercase; margin-bottom: 8px; }
+        .bw-input { background: transparent; border: none; border-bottom: 1px solid var(--bor); color: var(--tx); font-family: 'Space Mono', monospace; font-size: 18px; width: 60px; outline: none; }
+        .bw-input:focus { border-bottom-color: var(--acc); }
 
-        /* Navigation (Trainingstage) */
-        .nav-bar {
-            display: flex;
-            gap: 10px;
-            overflow-x: auto;
-            padding-bottom: 15px;
-            margin-bottom: 20px;
-            scrollbar-width: none;
-            -webkit-overflow-scrolling: touch;
-        }
+        /* Training Tab & Day Selector[cite: 2] */
+        .day-nav { display: flex; gap: 8px; overflow-x: auto; padding: 10px 15px; scrollbar-width: none; }
+        .day-btn { background: var(--sur); border: 1px solid var(--bor); border-radius: 8px; padding: 10px 15px; min-width: 80px; text-align: center; flex-shrink: 0; }
+        .day-btn.active { background: var(--acc); color: #000; font-weight: 700; border-color: var(--acc); }
+        .day-btn span { font-size: 0.7rem; font-family: 'Space Mono', monospace; display: block; }
 
-        .nav-bar::-webkit-scrollbar { display: none; }
+        /* Exercise Cards[cite: 2] */
+        .card { background: var(--sur); border: 1px solid var(--bor); border-radius: 12px; padding: 16px; margin: 0 15px 12px 15px; }
+        .ex-title { font-family: 'Bebas Neue', sans-serif; font-size: 20px; color: var(--tx); letter-spacing: 1px; margin-bottom: 12px; }
+        
+        .sets-grid { display: grid; grid-template-columns: 40px 1fr 1fr; gap: 8px; align-items: center; margin-bottom: 10px; }
+        .slbl { font-family: 'Space Mono', monospace; font-size: 8px; color: var(--mu); }
+        .sinput { background: #000; border: 1px solid var(--bor); color: #fff; padding: 10px; border-radius: 6px; text-align: center; font-family: 'Space Mono', monospace; font-weight: bold; width: 100%; box-sizing: border-box; }
 
-        .nav-btn {
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            min-width: 85px;
-            padding: 12px;
-            text-align: center;
-            flex-shrink: 0;
-            transition: all 0.2s;
-        }
-
-        .nav-btn.active {
-            background: var(--accent);
-            border-color: var(--accent);
-            color: #000;
-        }
-
-        .nav-btn span { font-size: 0.75rem; font-weight: 800; text-transform: uppercase; }
-
-        /* Übungskarten */
-        .card {
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 18px;
-            margin-bottom: 16px;
-            box-shadow: 0 8px 16px rgba(0,0,0,0.3);
-        }
-
-        .ex-title {
-            color: var(--accent);
-            font-weight: 800;
-            font-size: 1rem;
-            margin: 0 0 15px 0;
-            display: inline-block;
-            border-bottom: 1px dashed #333;
-            padding-bottom: 3px;
-        }
-
-        .set-row {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-            margin-bottom: 12px;
-        }
-
-        .set-label {
-            font-size: 0.6rem;
-            color: #444;
-            width: 40px;
-            font-weight: 900;
-            text-transform: uppercase;
-        }
-
-        input {
-            background: #000;
-            border: 1px solid #222;
-            color: white;
-            padding: 12px;
-            border-radius: 10px;
-            width: 35%;
-            text-align: center;
-            font-size: 1.1rem;
-            font-weight: bold;
-            outline: none;
-            transition: border-color 0.2s;
-        }
-
-        input:focus { border-color: var(--accent); }
-
-        .save-btn {
-            background: #1a1a1a;
-            color: var(--text-dim);
-            border: 1px solid #333;
-            border-radius: 12px;
-            padding: 15px;
-            width: 100%;
-            font-weight: 900;
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            margin-top: 10px;
-            cursor: pointer;
-        }
-
-        .save-btn.ready {
-            background: var(--accent);
-            color: #000;
-            border: none;
-        }
-
-        #loader { text-align: center; padding: 50px; color: var(--text-dim); font-size: 0.8rem; }
+        /* Fixed Footer Save Button[cite: 2] */
+        .footer { position: fixed; bottom: 0; width: 100%; background: rgba(8,8,8,0.98); padding: 15px 20px; border-top: 1px solid var(--bor); box-sizing: border-box; z-index: 100; }
+        .save-btn { background: var(--acc); color: #000; border: none; border-radius: 10px; padding: 18px; width: 100%; font-family: 'Bebas Neue', sans-serif; font-size: 18px; letter-spacing: 2px; }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <div class="logo">PB <span>V8.0</span></div>
-        <button class="setup-trigger" onclick="handleSetup()">⚙️ Plan</button>
+<header>
+    <div class="logo">PB<span> V8.0</span></div>
+    <button onclick="switchView('plan')" style="background:none; border:none; color:var(--mu); font-family:'Space Mono'; font-size:10px;">📋 PLANUNG</button>
+</header>
+
+<!-- STATS BEREICH[cite: 2] -->
+<div class="info-row">
+    <div class="bw-box">
+        <div class="box-lbl">Körpergewicht</div>
+        <div style="display:flex; align-items:baseline;"><input class="bw-input" type="number" step="0.1" id="bwInput" placeholder="0.0"><span style="color:var(--mu); font-size:10px; margin-left:4px;">kg</span></div>
     </div>
+    <div class="bw-box">
+        <div class="box-lbl">Training Stats</div>
+        <div style="display:flex; gap:10px;">
+            <input class="bw-input" style="width:45px;" type="number" id="kcalIn" placeholder="kcal">
+            <input class="bw-input" style="width:40px;" type="number" id="bpmIn" placeholder="bpm">
+            <input class="bw-input" style="width:40px;" type="number" id="minIn" placeholder="min">
+        </div>
+    </div>
+</div>
 
-    <div id="nav" class="nav-bar"></div>
-    <div id="exercise-list"><div id="loader">Lade Trainingsplan...</div></div>
+<div id="day-nav" class="day-nav"></div>
 
-    <script>
-        // Deine aktuelle Web-App URL
-        const API = "https://script.google.com/macros/s/AKfycbw2SPaQwUbVln23N83rOJqSr4Fukt2jnJlpXa4qGbVWFK-0_5k0hJ7ZVQaOXLx9LlYx9A/exec";
+<div id="training-view" class="view">
+    <div id="training-list">Lade Übungen...</div>
+</div>
+
+<div id="plan-view" class="view" style="display:none; padding: 15px;">
+    <h3 style="font-family:'Bebas Neue'; letter-spacing:1px;">Planung / Übungen benennen</h3>
+    <div id="plan-list"></div>
+</div>
+
+<div class="footer">
+    <button class="save-btn" id="main-save" onclick="saveAll()">Training in Sheet speichern</button>
+</div>
+
+<script>
+    const API = "https://script.google.com/macros/s/AKfycbw2SPaQwUbVln23N83rOJqSr4Fukt2jnJlpXa4qGbVWFK-0_5k0hJ7ZVQaOXLx9LlYx9A/exec";
+    let sheetName = localStorage.getItem('pb_sheet') || "ZYKLUS MASTER";
+    let fullData = [];
+    let currentDay = "";
+
+    async function init() {
+        const r = await fetch(`${API}?sheet=${encodeURIComponent(sheetName)}&v=${Date.now()}`);
+        fullData = await r.json();
+        renderNav();
+    }
+
+    function renderNav() {
+        const nav = document.getElementById('day-nav');
+        nav.innerHTML = "";
+        const days = [];
+        fullData.forEach((row, i) => { if (row[3]) days.push({ name: row[3], idx: i + 3 }); });
         
-        let activeSheet = localStorage.getItem('pb_sheet_name') || "ZYKLUS MASTER";
-        let rawData = [];
+        days.forEach((d, i) => {
+            const b = document.createElement('div');
+            b.className = `day-btn ${i === 0 ? 'active' : ''}`;
+            b.innerHTML = `<span>${d.name}</span>`;
+            b.onclick = () => {
+                document.querySelectorAll('.day-btn').forEach(x => x.classList.remove('active'));
+                b.classList.add('active');
+                currentDay = d.name;
+                renderContent();
+            };
+            nav.appendChild(b);
+        });
+        if(days.length > 0) { currentDay = days[0].name; renderContent(); }
+    }
 
-        function handleSetup() {
-            const name = prompt("Name deines Tabellenblatts (exakt wie im Sheet):", activeSheet);
-            if (name) {
-                localStorage.setItem('pb_sheet_name', name.trim());
-                location.reload();
-            }
-        }
+    function renderContent() {
+        const tList = document.getElementById('training-list');
+        const pList = document.getElementById('plan-list');
+        tList.innerHTML = ""; pList.innerHTML = "";
+        let isD = false;
 
-        async function init() {
-            try {
-                const response = await fetch(`${API}?sheet=${encodeURIComponent(activeSheet)}&v=${Date.now()}`);
-                rawData = await response.json();
-                renderNav();
-            } catch (e) {
-                document.getElementById('loader').innerText = "Fehler: Verbindung zum Sheet fehlgeschlagen.";
-            }
-        }
-
-        function renderNav() {
-            const nav = document.getElementById('nav');
-            nav.innerHTML = "";
-            const sections = [];
-
-            // Erstellt Navigation anhand der Trainingstage in Spalte D
-            rawData.forEach((row, i) => {
-                if (row[3] && row[3].trim() !== "") {
-                    sections.push({ name: row[3], index: i + 3 });
-                }
-            });
-
-            sections.forEach((sec, idx) => {
-                const btn = document.createElement('div');
-                btn.className = `nav-btn ${idx === 0 ? 'active' : ''}`;
-                btn.innerHTML = `<span>${sec.name}</span>`;
-                btn.onclick = () => {
-                    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
-                    renderExercises(sec.name);
-                };
-                nav.appendChild(btn);
-            });
-
-            if (sections.length > 0) renderExercises(sections[0].name);
-        }
-
-        function renderExercises(dayName) {
-            const list = document.getElementById('exercise-list');
-            list.innerHTML = "";
-            let isTarget = false;
-
-            rawData.forEach((row, i) => {
-                const rowIdx = i + 3; // Wichtig für die korrekte Zeile im Sheet
+        fullData.forEach((row, i) => {
+            const rIdx = i + 3;
+            if(row[3]) isD = (row[3] === currentDay);
+            if(isD && row[4]) {
+                const isNamed = row[4] !== "Übung eintragen...";
                 
-                // Prüft, ob die aktuelle Zeile zum gewählten Tag gehört
-                if (row[3] && row[3] !== "") isTarget = (row[3] === dayName);
+                // Planung Ansicht
+                const pItem = document.createElement('div');
+                pItem.innerHTML = `<div style="background:var(--sur); padding:10px; margin-bottom:5px; display:flex; justify-content:space-between; align-items:center; border-radius:8px;">
+                    <span style="font-size:12px;">${row[4]}</span>
+                    <button onclick="rename(${rIdx}, '${row[4]}')" style="background:var(--bor); border:none; color:var(--acc); padding:5px; border-radius:4px;">Edit</button>
+                </div>`;
+                pList.appendChild(pItem);
 
-                if (isTarget && row[4]) {
+                // Trainings Ansicht[cite: 2]
+                if(isNamed) {
                     const card = document.createElement('div');
                     card.className = 'card';
-                    card.innerHTML = `
-                        <h3 class="ex-title" onclick="quickRename(${rowIdx}, '${row[4]}')">${row[4]} ✏️</h3>
-                        ${[1, 2, 3].map(s => `
-                            <div class="set-row">
-                                <span class="set-label">SATZ ${s}</span>
-                                <input type="number" step="0.5" inputmode="decimal" placeholder="kg" id="g${s}-${rowIdx}" value="${row[6 + (s-1)*2] || ''}">
-                                <input type="number" inputmode="numeric" placeholder="Wdh" id="r${s}-${rowIdx}" value="${row[7 + (s-1)*2] || ''}">
+                    card.setAttribute('data-idx', rIdx);
+                    card.setAttribute('data-title', row[4]);
+                    card.innerHTML = `<div class="ex-title">${row[4]}</div>
+                        ${[1,2,3].map(s => `
+                            <div class="sets-grid">
+                                <div class="slbl">SATZ ${s}</div>
+                                <input class="sinput" type="number" id="g${s}-${rIdx}" value="${row[6+(s-1)*2] || ''}" placeholder="kg">
+                                <input class="sinput" type="number" id="r${s}-${rIdx}" value="${row[7+(s-1)*2] || ''}" placeholder="Reps">
                             </div>
-                        `).join('')}
-                        <button class="save-btn ready" id="btn-${rowIdx}" onclick="saveData(${rowIdx}, '${row[4]}')">Sichern</button>
-                    `;
-                    list.appendChild(card);
+                        `).join('')}`;
+                    tList.appendChild(card);
                 }
-            });
-        }
-
-        async function quickRename(idx, oldName) {
-            const newName = prompt("Übung umbenennen:", oldName);
-            if (newName && newName !== oldName) {
-                const payload = { sheet: activeSheet, rowIdx: idx, action: "rename", newName: newName };
-                await fetch(API, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
-                alert("Erfolgreich umbenannt!");
-                location.reload();
             }
-        }
+        });
+    }
 
-        async function saveData(idx, title) {
-            const btn = document.getElementById(`btn-${idx}`);
-            btn.innerText = "SENDET...";
-            btn.disabled = true;
+    async function saveAll() {
+        const btn = document.getElementById('main-save');
+        const cards = document.querySelectorAll('.card');
+        btn.innerText = "SICHERE..."; btn.disabled = true;
 
-            // Datum automatisch generieren
-            const today = new Date().toLocaleDateString('de-DE', {day:'2.digit', month:'2.digit'}) + ".";
+        const date = new Date().toLocaleDateString('de-DE', {day:'2.digit', month:'2.digit'}) + ".";
+        const kg = document.getElementById('bwInput').value;
+        const kcal = document.getElementById('kcalIn').value;
+        const bpm = document.getElementById('bpmIn').value;
+        const dur = document.getElementById('minIn').value;
 
+        for (let card of cards) {
+            const idx = card.getAttribute('data-idx');
             const payload = {
-                sheet: activeSheet,
-                rowIdx: idx,
-                date: today,
-                uebung: title,
+                sheet: sheetName, rowIdx: parseInt(idx), date: date, kg: kg,
+                uebung: card.getAttribute('data-title'),
                 g1: document.getElementById(`g1-${idx}`).value, r1: document.getElementById(`r1-${idx}`).value,
                 g2: document.getElementById(`g2-${idx}`).value, r2: document.getElementById(`r2-${idx}`).value,
-                g3: document.getElementById(`g3-${idx}`).value, r3: document.getElementById(`r3-${idx}`).value
+                g3: document.getElementById(`g3-${idx}`).value, r3: document.getElementById(`r3-${idx}`).value,
+                kcal: kcal, bpm: bpm, duration: dur
             };
-
-            try {
-                await fetch(API, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
-                btn.innerText = "GESICHERT";
-                btn.style.background = "#00c853";
-                setTimeout(() => {
-                    btn.innerText = "SICHERN";
-                    btn.style.background = "";
-                    btn.disabled = false;
-                }, 2000);
-            } catch (e) {
-                btn.innerText = "FEHLER";
-                btn.disabled = false;
-            }
+            await fetch(API, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
         }
+        btn.innerText = "GESPEICHERT!";
+        setTimeout(() => { btn.innerText = "Training in Sheet speichern"; btn.disabled = false; }, 2000);
+    }
 
-        init();
-    </script>
+    function switchView(view) {
+        document.getElementById('training-view').style.display = view === 'training' ? 'block' : 'none';
+        document.getElementById('plan-view').style.display = view === 'plan' ? 'block' : 'none';
+    }
+
+    async function rename(idx, old) {
+        const n = prompt("Neuer Name:", old === "Übung eintragen..." ? "" : old);
+        if(n) {
+            await fetch(API, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ sheet: sheetName, rowIdx: idx, action: "rename", newName: n }) });
+            location.reload();
+        }
+    }
+
+    init();
+</script>
 </body>
 </html>
