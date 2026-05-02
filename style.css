@@ -1,0 +1,7 @@
+:root { --bg: #121212; --card: #1e1e1e; --accent: #00bcd4; --success: #00e676; --text: #ffffff; }
+body { background-color: var(--bg); color: var(--text); font-family: sans-serif; padding: 20px; }
+.exercise-card { background: var(--card); border-radius: 12px; padding: 16px; margin-bottom: 15px; border: 1px solid #333; }
+.exercise-title { color: var(--accent); font-weight: bold; }
+.input-row { display: flex; gap: 8px; margin-top: 10px; }
+input { background: #2a2a2a; border: 1px solid #444; color: white; border-radius: 8px; padding: 12px; width: 30%; text-align: center; }
+.save-btn { background: var(--success); border: none; border-radius: 8px; padding: 12px; flex-grow: 1; font-weight: bold; cursor: pointer; }
