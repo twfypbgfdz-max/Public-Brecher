@@ -11,7 +11,6 @@ function setupPlan() {
         location.reload(); // Lädt die App mit dem neuen Plan neu
     }
 }
-const SHEET_NAME = "ZYKLUS MASTER";
 
 async function loadPlan() {
     const list = document.getElementById('exercise-list');
