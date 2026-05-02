@@ -1,132 +1,90 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<meta name="apple-mobile-web-app-title" content="PB PUBLIC">
-<title>PB Public V10</title>
-<style>
-/* Hier ist dein CSS für das iPhone-Design */
-@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:wght@400;700&family=Inter:wght@300;400;500;600&display=swap');
-:root {
-  --bg: #080808; --sur: #121212; --sur2: #181818; --bor: #2a2a2a;
-  --acc: #00d4ff; /* Blau für Public */
-  --tx: #f0f0f0; --tx2: #a0a0a0; --mu: #555; --ok: #00e676;
-  --r: 8px; --safe-top: env(safe-area-inset-top); --safe-bottom: env(safe-area-inset-bottom);
-}
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body { background: var(--bg); color: var(--tx); font-family: 'Inter', sans-serif; padding-top: var(--safe-top); padding-bottom: 80px; }
-header { padding: 12px 16px; border-bottom: 1px solid var(--bor); display: flex; align-items: center; justify-content: space-between; background: rgba(8,8,8,.95); position: sticky; top: 0; z-index: 100; }
-.logo { font-family: 'Bebas Neue', sans-serif; font-size: 28px; letter-spacing: 3px; color: var(--acc); }
-.tabs { display: flex; border-bottom: 1px solid var(--bor); background: var(--sur); position: sticky; top: 57px; z-index: 99; }
-.tab { padding: 12px 14px; cursor: pointer; color: var(--mu); border: none; background: none; font-family: 'Space Mono'; font-size: 9px; text-transform: uppercase; flex: 1; }
-.tab.active { color: var(--acc); border-bottom: 2px solid var(--acc); }
-main { padding: 16px; max-width: 600px; margin: 0 auto; }
-.sec { display: none; } .sec.active { display: block; }
-.setup-step { background: var(--sur); border: 1px solid var(--bor); padding: 20px; border-radius: var(--r); margin-bottom: 15px; }
-.url-input { width: 100%; padding: 12px; background: var(--bg); border: 1px solid var(--bor); color: #fff; border-radius: 4px; margin-bottom: 10px; font-size: 12px; }
-.btn { width: 100%; padding: 12px; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; font-family: 'Bebas Neue'; letter-spacing: 1px; }
-/* Workout-Elemente */
-.excard { background: var(--sur); border: 1px solid var(--bor); margin-bottom: 10px; border-radius: var(--r); padding: 12px; }
-.exname { font-size: 14px; font-weight: 600; margin-bottom: 10px; color: var(--acc); }
-.sets-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
-.sinput { background: var(--sur2); border: 1px solid var(--bor); color: #fff; padding: 8px; border-radius: 4px; text-align: center; }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>PB Public V10</title>
+    <style>
+        :root {
+            --bg: #080808; --sur: #121212; --acc: #00d4ff; --tx: #f0f0f0; --ok: #00e676;
+        }
+        body { background: var(--bg); color: var(--tx); font-family: sans-serif; padding: 20px; margin: 0; }
+        .exercise-card { 
+            background: var(--sur); border-radius: 12px; padding: 16px; margin-bottom: 15px; 
+            border: 1px solid #2a2a2a; box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+        }
+        .header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+        .exercise-title { color: var(--acc); font-weight: bold; font-size: 1.1rem; }
+        .muscle-group { color: #888; font-size: 0.8rem; text-transform: uppercase; }
+        .input-row { display: flex; gap: 8px; }
+        input { 
+            background: #2a2a2a; border: 1px solid #444; color: white; border-radius: 8px; 
+            padding: 12px; width: 30%; text-align: center; font-size: 1rem;
+        }
+        .save-btn { 
+            background: var(--ok); color: black; border: none; border-radius: 8px; 
+            padding: 12px; flex-grow: 1; font-weight: bold; cursor: pointer;
+        }
+    </style>
 </head>
 <body>
+    <h2 style="text-align: center; margin-bottom: 20px;">PB <span style="color: var(--acc)">PUBLIC</span></h2>
+    <div id="exercise-list">Lade Plan aus Sheet...</div>
 
-<header>
-  <div class="logo">PB<span style="color:var(--mu);font-size:.55em;"> PUBLIC</span></div>
-  <div id="status">Bereit</div>
-</header>
+    <script>
+        const API_URL = "DEINE_URL_HIER"; // <--- DEINE WEB-APP URL EINTRAGEN
+        const SHEET_NAME = "ZYKLUS MASTER";
 
-<div class="tabs">
-  <button class="tab active" onclick="showTab('workout', this)">Training</button>
-  <button class="tab" onclick="showTab('setup', this)">Setup</button>
-</div>
+        async function loadPlan() {
+            try {
+                const resp = await fetch(`${API_URL}?sheet=${encodeURIComponent(SHEET_NAME)}&nocache=${Date.now()}`);
+                const rows = await resp.json();
+                render(rows);
+            } catch (e) { document.getElementById('exercise-list').innerText = "Fehler: " + e; }
+        }
 
-<main>
-  <div class="sec active" id="tab-workout">
-    <div id="noPlan" style="text-align:center; padding:40px;">
-      <p style="color:var(--mu);">Kein Plan geladen.</p>
-      <button class="btn" style="background:var(--acc); margin-top:20px;" onclick="showTab('setup', document.querySelectorAll('.tab')[1])">Zum Setup</button>
-    </div>
-    <div id="workoutUI" style="display:none;">
-       <div id="workoutContent"></div>
-    </div>
-  </div>
+        function render(rows) {
+            const list = document.getElementById('exercise-list');
+            list.innerHTML = "";
+            rows.slice(3).forEach((row, index) => {
+                if (!row[4]) return; 
+                const div = document.createElement('div');
+                div.className = 'exercise-card';
+                div.innerHTML = `
+                    <div class="header-row">
+                        <span class="exercise-title">${row[4]}</span>
+                        <span class="muscle-group">${row[5] || ''}</span>
+                    </div>
+                    <div class="input-row">
+                        <input type="number" placeholder="kg" id="kg-${index}" value="${row[2] || ''}">
+                        <input type="number" placeholder="Reps" id="reps-${index}">
+                        <button class="save-btn" id="btn-${index}" onclick="save(${index}, '${row[4]}')">Sichern</button>
+                    </div>`;
+                list.appendChild(div);
+            });
+        }
 
-  <div class="sec" id="tab-setup">
-    <div class="setup-step">
-      <p style="margin-bottom:10px; font-size:12px;">1. API-URL aus Google Sheet:</p>
-      <input class="url-input" id="apiUrl" type="url" placeholder="https://script.google.com/...">
-      <button class="btn" style="background:var(--acc);" onclick="saveSetup()">Speichern & Plan laden</button>
-    </div>
-  </div>
-</main>
+        async function save(id, uebung) {
+            const btn = document.getElementById(`btn-${id}`);
+            const kg = document.getElementById(`kg-${id}`).value;
+            const reps = document.getElementById(`reps-${id}`).value;
+            btn.innerText = "...";
+            
+            const payload = {
+                sheet: SHEET_NAME,
+                date: new Date().toLocaleDateString('de-DE', {day:'2.digit', month:'2.digit'}) + ".",
+                uebung: uebung, g1: kg, r1: reps
+            };
 
-<script>
-const SK = 'pb_public_v10';
-let store = JSON.parse(localStorage.getItem(SK) || '{"url":"","plan":[]}');
-
-function showTab(id, btn) {
-  document.querySelectorAll('.sec').forEach(s => s.classList.remove('active'));
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  document.getElementById('tab-' + id).classList.add('active');
-  btn.classList.add('active');
-}
-
-async function saveSetup() {
-  const url = document.getElementById('apiUrl').value.trim();
-  if(!url) return alert("URL fehlt!");
-  store.url = url;
-  
-  document.getElementById('status').innerText = "Lädt...";
-  try {
-    const resp = await fetch(url + '?action=getPlan&sheet=ZYKLUS MASTER');
-    const data = await resp.json();
-    store.plan = data;
-    localStorage.setItem(SK, JSON.stringify(store));
-    alert("Plan geladen!");
-    location.reload();
-  } catch(e) { alert("Fehler: " + e.message); }
-}
-
-function renderWorkout() {
-  const cont = document.getElementById('workoutContent');
-  if(!store.plan || store.plan.length === 0) return;
-  
-  document.getElementById('noPlan').style.display = 'none';
-  document.getElementById('workoutUI').style.display = 'block';
-  
-  let html = '';
-  // Wir zeigen hier beispielhaft die ersten 10 Zeilen des Plans
-  store.plan.slice(0, 20).forEach((row, i) => {
-    if(row[4] && row[4] !== 'Übung' && row[4] !== '—') {
-      html += `<div class="excard">
-        <div class="exname">${row[4]}</div>
-        <div class="sets-grid">
-          <input class="sinput" placeholder="kg" id="kg-${i}">
-          <input class="sinput" placeholder="Reps" id="r1-${i}">
-          <button class="btn" style="background:var(--ok); padding:4px;" onclick="saveEx(${i}, '${row[4]}')">Sichern</button>
-        </div>
-      </div>`;
-    }
-  });
-  cont.innerHTML = html;
-}
-
-async function saveEx(idx, name) {
-  const kg = document.getElementById('kg-'+idx).value;
-  const reps = document.getElementById('r1-'+idx).value;
-  // Hier würde der Bulk-POST an dein code.gs gehen
-  alert(`${name} gesichert! (V10 API ready)`);
-}
-
-window.onload = () => {
-  if(store.url) document.getElementById('apiUrl').value = store.url;
-  renderWorkout();
-};
-</script>
+            try {
+                const r = await fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) });
+                const res = await r.json();
+                if (res.success) { 
+                    btn.innerText = "OK!"; btn.style.background = "#00c853"; 
+                }
+            } catch (e) { alert("Fehler!"); btn.innerText = "Error"; }
+        }
+        loadPlan();
+    </script>
 </body>
 </html>
