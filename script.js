@@ -1,4 +1,16 @@
-const API_URL = "DEINE_NEUE_WEB_APP_URL"; // <-- HIER DEINE URL AUS GOOGLE SCRIPT EINTRAGEN
+const API_URL = "https://script.google.com/macros/s/AKfycbyodbqXL6wwIHU5Z18gvRDLi3GfbbVKYqbjL6r0NiR3jdupobFs2Yo4_etyydg0gYw3kQ/exec";
+
+// Prüft, ob ein Name gespeichert ist, sonst Standard "ZYKLUS MASTER"
+let SHEET_NAME = localStorage.getItem('meinPlanName') || "ZYKLUS MASTER";
+
+// Funktion für deine Kumpels, um ihren eigenen Plan einzustellen
+function setupPlan() {
+    const name = prompt("Wie heißt dein Tab im Google Sheet exakt?", SHEET_NAME);
+    if (name && name.trim() !== "") {
+        localStorage.setItem('meinPlanName', name.trim());
+        location.reload(); // Lädt die App mit dem neuen Plan neu
+    }
+}
 const SHEET_NAME = "ZYKLUS MASTER";
 
 async function loadPlan() {
