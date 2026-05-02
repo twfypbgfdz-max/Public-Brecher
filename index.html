@@ -584,7 +584,22 @@ async function init() {
     // Standard fetch (kein no-cors) für GET → JSON lesbar, kein CORS-Fehler
     const res = await fetch(`${API}?sheet=${encodeURIComponent(SHEET)}&v=${Date.now()}`);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    rawData = await res.json();
+    const json = await res.json();
+
+    // Apps Script kann verschiedene Formate zurückgeben:
+    // 1) Direkt ein Array:           [ [...], [...], ... ]
+    // 2) { data: [ [...], ... ] }    (z.B. bei ContentService mit JSON-Wrapper)
+    // 3) { values: [ [...], ... ] }
+    if (Array.isArray(json)) {
+      rawData = json;
+    } else if (Array.isArray(json?.data)) {
+      rawData = json.data;
+    } else if (Array.isArray(json?.values)) {
+      rawData = json.values;
+    } else {
+      throw new Error('Unbekanntes Antwort-Format: ' + JSON.stringify(json).slice(0, 80));
+    }
+
     setDot('ok');
     renderNav();
     hideLS();
