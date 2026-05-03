@@ -320,6 +320,12 @@ header {
 .dbtn.active .dbtn-label { color: var(--acc); }
 .dbtn-count { font-size: 9px; color: var(--tx3); letter-spacing: .06em; }
 
+/* ── EMPTY NAV ──────────────────────────── */
+.empty-nav {
+  font-size: 10px; color: var(--tx3);
+  padding: 8px 2px; letter-spacing: .06em;
+}
+
 /* ── VIEWS ───────────────────────────── */
 main { padding: 8px 16px; }
 .view { display: none; }
@@ -690,16 +696,17 @@ async function runDiag(manual = false) {
     diagAdd('ok', 'Tabellenblatt gesetzt', SHEET);
   }
 
-  // ── CHECK 3: Datum-Format prüfen (der historische RangeError)
+  // ── CHECK 3: Datum-Format prüfen — manuell gebaut, kein Locale-Vertrauen
   try {
-    const testDate = new Date().toLocaleDateString('de-DE', {
-      day: '2-digit', month: '2-digit'
-    }) + '.';
+    const _now = new Date();
+    const _d = String(_now.getDate()).padStart(2, '0');
+    const _m = String(_now.getMonth() + 1).padStart(2, '0');
+    const testDate = _d + '.' + _m + '.';
     if (!/^\d{2}\.\d{2}\.$/.test(testDate)) throw new Error('Format falsch: ' + testDate);
     diagAdd('ok', 'Datumsformat korrekt', 'Heute: ' + testDate);
   } catch (e) {
-    diagAdd('err', 'Datumsformat-Fehler (RangeError)',
-      e.message + '\nBrowser unterstützt de-DE Locale nicht korrekt.');
+    diagAdd('err', 'Datumsformat-Fehler',
+      e.message);
   }
 
   // ── CHECK 4: localStorage verfügbar
@@ -754,20 +761,29 @@ async function runDiag(manual = false) {
             'Sheet "' + SHEET + '" hat keine Daten ab Zeile 3.\nPrüfe Tabellenname und Sheet-Inhalt.');
         } else {
           // Prüfe Spalten-Mapping
-          const sampleRow = data[0];
+          // Header-Zeile erkennen und überspringen
+          const hasHeader = (data[0]?.[3] || '').trim() === 'Trainingstag';
+          const dataRows  = hasHeader ? data.slice(1) : data;
+          const sampleRow = dataRows[0];
           const colD = sampleRow?.[3];
           const colE = sampleRow?.[4];
-          diagAdd('ok', `API OK — ${data.length} Zeilen geladen`,
-            `Spalte D (Trainingstag): "${colD || '—'}"\nSpalte E (Übung): "${colE || '—'}"`);
+
+          if (hasHeader) {
+            diagAdd('warn', `API liefert Header-Zeile mit — wird übersprungen`,
+              `${data.length} Zeilen total, ${dataRows.length} Datenzeilen.`);
+          } else {
+            diagAdd('ok', `API OK — ${data.length} Zeilen geladen`,
+              `Spalte D (Trainingstag): "${colD || '—'}"\nSpalte E (Übung): "${colE || '—'}"`);
+          }
 
           // Check: Haben wir mind. einen benannten Tag?
-          const hasDays = data.some(r => (r[3] || '').trim());
+          const hasDays = dataRows.some(r => (r[3] || '').trim());
           if (!hasDays) {
             diagAdd('warn', 'Keine Trainingstage in Spalte D gefunden',
               'Die App kann keine Navigation aufbauen.\nPrüfe ob Spalte D (Index 3) Werte enthält.');
           } else {
-            const named = data.filter(r =>
-              (r[4] || '').trim() && r[4] !== 'Übung eintragen...'
+            const named = dataRows.filter(r =>
+              (r[4] || '').trim() && r[4] !== 'Übung eintragen...' && r[4] !== 'Übung'
             ).length;
             diagAdd('ok', `${named} benannte Übungen im Sheet`, 'Übungen in Spalte E erkannt.');
           }
@@ -846,7 +862,11 @@ function diagClose() {
 //  BOOT
 // ════════════════════════════════════════════════════
 document.getElementById('hdr-date').textContent =
-  new Date().toLocaleDateString('de-DE', { day: '2-digit', month: 'short' });
+  (() => {
+    const _months = ['Jan','Feb','Mär','Apr','Mai','Jun','Jul','Aug','Sep','Okt','Nov','Dez'];
+    const _n = new Date();
+    return String(_n.getDate()).padStart(2,'0') + '. ' + _months[_n.getMonth()];
+  })();
 
 async function init() {
   lmsg('Verbinde…');
@@ -894,6 +914,10 @@ function buildStructure() {
     const w = (row[0] || '').trim();
     const d = (row[3] || '').trim();
     const e = (row[4] || '').trim();
+
+    // Header-Zeile überspringen (Apps Script gibt sie manchmal mit zurück)
+    if (w === 'Woche' || d === 'Trainingstag' || e === 'Übung') return;
+
     const week = w || lastWeek;
     const day  = d || lastDay;
     if (!week || !day) return;
@@ -919,7 +943,7 @@ function renderWeekAccordion() {
   const structure = buildStructure();
 
   if (!structure.length) {
-    container.innerHTML = '<div style="font-size:10px;color:var(--tx3);padding:8px 2px;">Keine Daten</div>';
+    container.innerHTML = '<div class="empty-nav">Keine Daten</div>';
     return;
   }
 
@@ -1027,12 +1051,16 @@ function renderContent() {
   rawData.forEach((row, i) => {
     const w = (row[0] || '').trim();
     const d = (row[3] || '').trim();
+
+    // Header-Zeile überspringen
+    if (w === 'Woche' || d === 'Trainingstag') return;
+
     if (w) lastWeekCol = w;
     if (d) inDay = (d === curDay && lastWeekCol === curWeek);
     if (!inDay) return;
 
     const name    = (row[4]  || '').trim();
-    if (!name) return;
+    if (!name || name === 'Übung') return;
 
     const muscle  = (row[5]  || '').trim();
     const progRaw = (row[15] || '').trim();
@@ -1115,13 +1143,16 @@ async function saveAll() {
     return;
   }
 
-  // Datum-Validierung
+  // Datum-Validierung — manuell gebaut, Safari-sicher (kein toLocaleDateString)
   let date;
   try {
-    date = new Date().toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit' }) + '.';
-    if (!/^\d{2}\.\d{2}\.$/.test(date)) throw new Error('Format ungültig');
+    const _n = new Date();
+    const _d = String(_n.getDate()).padStart(2, '0');
+    const _m = String(_n.getMonth() + 1).padStart(2, '0');
+    date = _d + '.' + _m + '.';
+    if (!/^\d{2}\.\d{2}\.$/.test(date)) throw new Error('Format ungültig: ' + date);
   } catch (e) {
-    toast('Datumsfehler — bitte manuell eingeben', 'err');
+    toast('Datumsfehler: ' + e.message, 'err');
     return;
   }
 
