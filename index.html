@@ -628,6 +628,60 @@ main { padding: 8px 14px; }
 </div>
 
 <script>
+// ============================================================
+//  ADMIN-LOGGING (V10.0) — nicht anfassen
+// ============================================================
+const ADMIN_URL   = 'https://script.google.com/macros/s/AKfycbwhSOHROvw6VgNyd248plmIsnwcbvTCEcHynhPkEs0uEXYhSVT7tqXujBCdoDyxe8za/exec';
+const APP_ENV     = 'PUBLIC';
+const APP_VERSION = '10.0';
+
+window.onerror = function(msg, url, line, col, error) {
+  fetch(ADMIN_URL, {
+    method: 'POST',
+    mode:   'no-cors',
+    body:   JSON.stringify({
+      type:       'log',
+      env:        APP_ENV,
+      appVersion: APP_VERSION,
+      error:      msg,
+      device:     navigator.userAgent.slice(0, 80),
+      stack:      error ? error.stack : 'Line: ' + line
+    })
+  });
+  return false;
+};
+
+window.addEventListener('unhandledrejection', function(event) {
+  fetch(ADMIN_URL, {
+    method: 'POST',
+    mode:   'no-cors',
+    body:   JSON.stringify({
+      type:       'log',
+      env:        APP_ENV,
+      appVersion: APP_VERSION,
+      error:      'ASYNC: ' + String(event.reason),
+      device:     navigator.userAgent.slice(0, 80),
+      stack:      'unhandledrejection'
+    })
+  });
+});
+
+function logError(message, stack) {
+  fetch(ADMIN_URL, {
+    method: 'POST',
+    mode:   'no-cors',
+    body:   JSON.stringify({
+      type:       'log',
+      env:        APP_ENV,
+      appVersion: APP_VERSION,
+      error:      message,
+      device:     navigator.userAgent.slice(0, 80),
+      stack:      stack || 'manuell'
+    })
+  });
+}
+// ============================================================
+
 // ════════════════════════════════════════════════════
 //  STATE
 // ════════════════════════════════════════════════════
