@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#080808">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>PB V10.0</title>
+<title>PB V11.0</title>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;700;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 /* ════════════════════════════════════════
@@ -254,52 +254,86 @@ main { padding: 8px 14px; }
 }
 
 /* ════════════════════════════════════════
-   TRAINING CARDS
+   TRAINING CARDS — AKKORDEON
    ════════════════════════════════════════ */
 .excard {
   background: var(--s1); border: 1px solid var(--bor);
   border-radius: var(--r); margin-bottom: 7px;
   overflow: hidden; animation: fadeUp .18s ease both;
-  box-shadow: 0 4px 16px rgba(0,0,0,.35);
+  position: relative; transition: border-color .2s;
 }
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(5px); }
   to   { opacity: 1; transform: translateY(0); }
 }
-.excard[data-muscle="Schultern"] { border-left: 3px solid #ffd54f; }
-.excard[data-muscle="Brust"]     { border-left: 3px solid #ef5350; }
-.excard[data-muscle="Trizeps"]   { border-left: 3px solid #ab47bc; }
-.excard[data-muscle="Rücken"]    { border-left: 3px solid #42a5f5; }
-.excard[data-muscle="Bizeps"]    { border-left: 3px solid #26c6da; }
-.excard[data-muscle="Beine"]     { border-left: 3px solid #66bb6a; }
-.excard[data-muscle="Bauch"]     { border-left: 3px solid #ff7043; }
-.excard[data-muscle="default"]   { border-left: 3px solid var(--acc); }
-
-.card-top {
-  display: flex; align-items: flex-start; justify-content: space-between;
-  padding: 11px 13px 0; gap: 8px;
+/* Muskel-Farbstreifen links */
+.excard::before {
+  content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+  width: 3px; background: var(--bor); transition: background .2s;
 }
-.card-meta { flex: 1; min-width: 0; }
+.excard[data-muscle="Schultern"]::before { background: #ffd54f; }
+.excard[data-muscle="Brust"]::before     { background: #ef5350; }
+.excard[data-muscle="Trizeps"]::before   { background: #ab47bc; }
+.excard[data-muscle="Rücken"]::before    { background: #42a5f5; }
+.excard[data-muscle="Bizeps"]::before    { background: #26c6da; }
+.excard[data-muscle="Beine"]::before     { background: #66bb6a; }
+.excard[data-muscle="Bauch"]::before     { background: #ff7043; }
+.excard[data-muscle="default"]::before   { background: var(--acc); }
+.excard.open-ex { border-color: var(--b2); }
+.excard.open-ex::before { background: var(--acc); }
+
+/* Kopfzeile — klickbar */
+.exhead {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 13px 12px 16px; cursor: pointer; gap: 8px;
+  -webkit-tap-highlight-color: transparent;
+}
+.exhead:active { background: var(--s2); }
+.exhead-left { flex: 1; min-width: 0; }
 .ex-title {
   font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: 20px;
   letter-spacing: .05em; text-transform: uppercase; color: var(--tx); line-height: 1.1;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 .ex-muscle { font-size: 8px; color: var(--tx3); letter-spacing: .1em; text-transform: uppercase; margin-top: 2px; }
+.exhead-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
 .prog-wrap { display: flex; flex-direction: column; align-items: center; gap: 2px; flex-shrink: 0; }
 .prog-chip {
-  width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;
-  border-radius: 6px; font-size: 17px; border: 1px solid transparent;
+  width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;
+  border-radius: 6px; font-size: 15px; border: 1px solid transparent;
 }
-.prog-chip.up { color: var(--ok); background: rgba(0,230,118,.12); border-color: rgba(0,230,118,.25); box-shadow: 0 0 10px rgba(0,230,118,.15); }
+.prog-chip.up { color: var(--ok); background: rgba(0,230,118,.12); border-color: rgba(0,230,118,.25); box-shadow: 0 0 8px rgba(0,230,118,.15); }
 .prog-chip.dn { color: var(--err); background: rgba(255,68,68,.12); border-color: rgba(255,68,68,.25); }
 .prog-chip.eq { color: var(--tx3); background: var(--s3); border-color: var(--bor); }
 .prog-lbl { font-size: 7px; color: var(--tx3); letter-spacing: .08em; text-transform: uppercase; }
+.ex-chevron {
+  width: 16px; height: 16px; flex-shrink: 0; color: var(--tx3);
+  transition: transform .28s ease, color .15s;
+}
+.excard.open-ex .ex-chevron { transform: rotate(180deg); color: var(--acc); }
 
-.col-hdr { display: grid; grid-template-columns: 30px 1fr 1fr 46px; gap: 5px; padding: 8px 13px 2px; }
+/* Body — aufklappbar */
+.exbody {
+  max-height: 0; overflow: hidden;
+  transition: max-height .35s cubic-bezier(.4,0,.2,1);
+  border-top: 0px solid var(--bor);
+}
+.exbody.open {
+  max-height: 600px;
+  border-top: 1px solid var(--bor);
+}
+
+/* Sets-Grid: Satz / kg / Wdh / RPE / 1RM */
+.sets-wrap { padding: 4px 13px 12px; }
+.col-hdr {
+  display: grid; grid-template-columns: 30px 1fr 1fr 42px 52px;
+  gap: 5px; padding: 8px 13px 2px;
+}
 .ch { font-size: 7px; color: var(--tx3); letter-spacing: .12em; text-align: center; text-transform: uppercase; }
-.sets-wrap { padding: 0 13px 12px; }
-.set-row { display: grid; grid-template-columns: 30px 1fr 1fr 46px; gap: 5px; align-items: center; margin-bottom: 4px; }
+.set-row {
+  display: grid; grid-template-columns: 30px 1fr 1fr 42px 52px;
+  gap: 5px; align-items: center; margin-bottom: 4px;
+}
 .set-row:last-child { margin-bottom: 0; }
 .slbl { font-size: 8px; color: var(--tx3); letter-spacing: .1em; text-align: center; text-transform: uppercase; }
 .sinput {
@@ -324,6 +358,43 @@ main { padding: 8px 14px; }
 .rpeinput::-webkit-inner-spin-button { -webkit-appearance: none; }
 .rpeinput:focus { border-color: var(--warn); background: #221a00; }
 .rpeinput::placeholder { color: var(--tx3); font-size: 9px; }
+/* 1RM inline — rechts neben RPE */
+.orm-inline {
+  font-family: 'DM Mono', monospace; font-size: 10px;
+  color: var(--acc); font-weight: 500;
+  padding: 2px 4px; background: rgba(200,255,0,.07);
+  border-radius: 4px; text-align: center; white-space: nowrap;
+}
+
+/* Warmup-Toggle */
+.warmup-toggle {
+  display: flex; align-items: center; gap: 6px;
+  font-family: 'DM Mono', monospace; font-size: 9px; color: var(--warn);
+  cursor: pointer; padding: 8px 13px 4px;
+  background: none; border: none; text-align: left; width: 100%;
+  -webkit-tap-highlight-color: transparent;
+  transition: opacity .15s;
+}
+.warmup-toggle:active { opacity: .7; }
+.warmup-toggle svg {
+  width: 10px; height: 10px; stroke: currentColor; fill: none;
+  stroke-width: 2; transition: transform .2s; flex-shrink: 0;
+}
+.warmup-toggle.wu-open svg { transform: rotate(180deg); }
+.warmup-body {
+  max-height: 0; overflow: hidden;
+  transition: max-height .3s cubic-bezier(.4,0,.2,1);
+}
+.warmup-body.wu-open { max-height: 60px; }
+.wu-sets {
+  display: flex; gap: 5px; flex-wrap: wrap;
+  padding: 4px 13px 10px;
+}
+.wu-set {
+  font-family: 'DM Mono', monospace; font-size: 9px; color: var(--warn);
+  background: rgba(255,170,0,.06); border: 1px solid rgba(255,170,0,.15);
+  padding: 4px 10px; border-radius: 4px;
+}
 
 /* ════════════════════════════════════════
    PLANUNG — 3-STUFEN HIERARCHIE
@@ -594,7 +665,7 @@ main { padding: 8px 14px; }
 
 <!-- HEADER -->
 <header>
-  <div class="logo">PB<sub>v10.0</sub></div>
+  <div class="logo">PB<sub>v11.0</sub></div>
   <div class="hdr-r">
     <span id="hdr-date"></span>
     <div id="dot" title="System-Check" onclick="runDiag(true)"></div>
@@ -973,6 +1044,71 @@ function muscleKey(m) {
   return 'default';
 }
 
+// ── 1RM Epley-Formel ──────────────────────────────────
+function calc1RM(g, r) {
+  const gf = parseFloat(String(g || '').replace(',', '.'));
+  const rf = parseFloat(String(r || '').replace(',', '.'));
+  if (!gf || !rf) return null;
+  return Math.round(gf * (1 + rf / 30));
+}
+
+// ── Warmup-HTML ───────────────────────────────────────
+function warmupHTML(ri, g1) {
+  const wu = parseFloat(String(g1 || '').replace(',', '.'));
+  const hasWu = wu > 0;
+  const wu60 = hasWu ? Math.round(wu * 0.6 * 2) / 2 : null;
+  const wuText = hasWu ? `\u2192 ${wu60} kg` : '(Gew. S1 eingeben)';
+  return `
+    <button class="warmup-toggle" id="wutog-${ri}" onclick="toggleWarmup('${ri}')"
+            ${hasWu ? '' : 'style="opacity:.4;pointer-events:none;"'}>
+      <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+      \uD83D\uDD25 WARMUP 60% ${esc(wuText)}
+    </button>
+    <div class="warmup-body" id="wubody-${ri}">
+      ${hasWu ? `<div class="wu-sets"><span class="wu-set">60% \u2192 ${wu60} kg</span></div>` : ''}
+    </div>`;
+}
+
+// ── Warmup aufklappen ─────────────────────────────────
+function toggleWarmup(ri) {
+  document.getElementById('wutog-' + ri)?.classList.toggle('wu-open');
+  document.getElementById('wubody-' + ri)?.classList.toggle('wu-open');
+}
+
+// ── Akkordeon aufklappen ──────────────────────────────
+function toggleEx(ri) {
+  const card = document.getElementById('ec-' + ri);
+  const body = document.getElementById('eb-' + ri);
+  if (!card || !body) return;
+  card.classList.toggle('open-ex');
+  body.classList.toggle('open');
+}
+
+// ── Live 1RM updaten beim Tippen ──────────────────────
+function liveOrm(ri, s) {
+  const g = document.getElementById(`g${s}-${ri}`)?.value;
+  const r = document.getElementById(`r${s}-${ri}`)?.value;
+  const el = document.getElementById(`orm${s}-${ri}`);
+  if (el) el.textContent = calc1RM(g, r) ? calc1RM(g, r) + ' kg' : '—';
+
+  // Warmup bei S1-Änderung aktualisieren
+  if (s === 1) {
+    const wu = parseFloat(g || 0);
+    const wu60 = wu > 0 ? Math.round(wu * 0.6 * 2) / 2 : null;
+    const tog  = document.getElementById('wutog-' + ri);
+    const body = document.getElementById('wubody-' + ri);
+    if (tog) {
+      tog.innerHTML = `<svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+        \uD83D\uDD25 WARMUP 60% ${wu60 ? '\u2192 ' + wu60 + ' kg' : '(Gew. S1 eingeben)'}`;
+      tog.style.opacity = wu > 0 ? '1' : '.4';
+      tog.style.pointerEvents = wu > 0 ? 'auto' : 'none';
+    }
+    if (body) body.innerHTML = wu60
+      ? `<div class="wu-sets"><span class="wu-set">60% \u2192 ${wu60} kg</span></div>` : '';
+  }
+}
+
+// ── Haupt-Render ──────────────────────────────────────
 function renderContent() {
   const tL = document.getElementById('view-training');
   tL.innerHTML =
@@ -986,7 +1122,6 @@ function renderContent() {
   rawData.forEach((row, i) => {
     const w = (row[0] || '').trim();
     const d = (row[3] || '').trim();
-    // Header-Zeilen überspringen
     if (w === 'Woche' || d === 'Trainingstag') return;
     if (w) lastWeekCol = w;
     if (d) inDay = (d === curDay && lastWeekCol === curWeek);
@@ -994,44 +1129,69 @@ function renderContent() {
     const name = (row[4] || '').trim();
     if (!name || name === 'Übung' || name === 'Übung eintragen...') return;
     tCount++;
+
     const muscle  = (row[5]  || '').trim();
     const progRaw = (row[15] || '').trim();
     const ri      = i + 3;
+    const isFirst = tCount === 1;
     const pCls    = progRaw === '▲' ? 'up' : progRaw === '▼' ? 'dn' : 'eq';
     const pLabel  = progRaw || '►';
     const pText   = progRaw === '▲' ? 'PR' : progRaw === '▼' ? 'Rück' : 'Neu';
     const mk      = muscleKey(muscle);
+
+    const g1 = escA(row[6]);
+    const sets = [1,2,3].map(s => {
+      const g   = escA(row[6+(s-1)*2]);
+      const r   = escA(row[7+(s-1)*2]);
+      const rpe = s === 1 ? escA(row[14]) : '';
+      const orm = calc1RM(g, r);
+      return `<div class="set-row">
+        <div class="slbl">S${s}</div>
+        <input class="sinput" type="number" step="0.5" inputmode="decimal"
+               id="g${s}-${ri}" value="${g}" placeholder="—"
+               oninput="liveOrm(${ri},${s})">
+        <input class="sinput" type="number" inputmode="numeric"
+               id="r${s}-${ri}" value="${r}" placeholder="—"
+               oninput="liveOrm(${ri},${s})">
+        <input class="rpeinput" type="number" step="0.5" inputmode="decimal"
+               id="rpe${s}-${ri}" value="${rpe}" placeholder="—">
+        <div class="orm-inline" id="orm${s}-${ri}">${orm ? orm + ' kg' : '—'}</div>
+      </div>`;
+    }).join('');
+
     const card = document.createElement('div');
-    card.className = 'excard'; card.dataset.muscle = mk;
+    card.className = 'excard' + (isFirst ? ' open-ex' : '');
+    card.dataset.muscle = mk;
+    card.id = 'ec-' + ri;
     card.style.animationDelay = Math.min(tCount * .05, .3) + 's';
     card.innerHTML =
-      `<div class="card-top">
-         <div class="card-meta">
+      `<div class="exhead" onclick="toggleEx(${ri})">
+         <div class="exhead-left">
            <div class="ex-title">${esc(name)}</div>
            ${muscle ? `<div class="ex-muscle">${esc(muscle)}</div>` : ''}
          </div>
-         <div class="prog-wrap">
-           <div class="prog-chip ${pCls}">${pLabel}</div>
-           <div class="prog-lbl">${pText}</div>
+         <div class="exhead-right">
+           <div class="prog-wrap">
+             <div class="prog-chip ${pCls}">${pLabel}</div>
+             <div class="prog-lbl">${pText}</div>
+           </div>
+           <svg class="ex-chevron" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+             <polyline points="6 9 12 15 18 9"/>
+           </svg>
          </div>
        </div>
-       <div class="col-hdr"><div></div><div class="ch">kg</div><div class="ch">wdh</div><div class="ch">rpe</div></div>
-       <div class="sets-wrap">` +
-      [1,2,3].map(s => {
-        const g   = escA(row[6+(s-1)*2]);
-        const r   = escA(row[7+(s-1)*2]);
-        // RPE: Index 14 = Spalte O, ein Wert pro Übung — nur im ersten Satz vorhanden
-        const rpe = s === 1 ? escA(row[14]) : '';
-        return `<div class="set-row">
-          <div class="slbl">S${s}</div>
-          <input class="sinput" type="number" step="0.5" inputmode="decimal"
-                 id="g${s}-${ri}" value="${g}" placeholder="—">
-          <input class="sinput" type="number" inputmode="numeric"
-                 id="r${s}-${ri}" value="${r}" placeholder="—">
-          <input class="rpeinput" type="number" step="0.5" inputmode="decimal"
-                 id="rpe${s}-${ri}" value="${rpe}" placeholder="—">
-        </div>`;
-      }).join('') + `</div>`;
+       <div class="exbody${isFirst ? ' open' : ''}" id="eb-${ri}">
+         ${warmupHTML(ri, g1)}
+         <div class="col-hdr">
+           <div></div>
+           <div class="ch">kg</div>
+           <div class="ch">wdh</div>
+           <div class="ch">rpe</div>
+           <div class="ch">1rm</div>
+         </div>
+         <div class="sets-wrap">${sets}</div>
+       </div>`;
     tL.appendChild(card);
   });
 
