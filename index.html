@@ -152,6 +152,13 @@ main { padding: 14px 16px; }
 /* ── SELECTOR ROWS ───────────────────── */
 .sel-row { display: flex; gap: 4px; margin-bottom: 8px; flex-wrap: wrap; align-items: center; }
 .sel-label { font-family: 'DM Mono', monospace; font-size: 8px; color: var(--tx3); text-transform: uppercase; letter-spacing: 2px; min-width: 48px; }
+.sel-btns { display: flex; gap: 4px; flex-wrap: wrap; }
+.week-sel-row { margin-bottom: 6px; }
+.day-sel-row  { margin-bottom: 10px; }
+.bw-val-row   { display: flex; align-items: baseline; }
+.api-dot      { width: 6px; height: 6px; border-radius: 50%; background: var(--tx3); flex-shrink: 0; }
+.api-dot.ok   { background: var(--ok); box-shadow: 0 0 6px rgba(0,230,118,.4); }
+.api-dot.err  { background: var(--err); }
 
 /* ── DAY BTNS ────────────────────────── */
 .dbtn {
@@ -302,42 +309,70 @@ main { padding: 14px 16px; }
 }
 
 /* ── PLANUNG ─────────────────────────── */
-.plan-crumb { display: flex; align-items: center; gap: 6px; padding: 10px 0 6px; font-size: 9px; letter-spacing: .1em; text-transform: uppercase; }
+.plan-crumb { display: flex; align-items: center; gap: 6px; padding: 4px 0 10px; font-size: 9px; letter-spacing: .1em; text-transform: uppercase; }
 .plan-crumb-link { color: var(--acc); cursor: pointer; opacity: .7; transition: opacity .15s; }
 .plan-crumb-link:active { opacity: 1; }
 .plan-crumb-sep { color: var(--tx3); }
-.plan-crumb-cur { color: var(--tx2); }
-.plan-box { background: var(--s1); border: 1px solid var(--bor); border-radius: var(--r); overflow: hidden; }
-.pw-item { display: flex; align-items: center; padding: 14px; cursor: pointer; border-bottom: 1px solid var(--bor); transition: background .12s; }
-.pw-item:last-child { border-bottom: none; }
-.pw-item:active { background: var(--s3); }
-.pw-left { flex: 1; }
-.pw-name { font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: 18px; letter-spacing: .08em; text-transform: uppercase; color: var(--tx); }
-.pw-meta { font-size: 8px; color: var(--tx3); letter-spacing: .06em; margin-top: 3px; }
-.pw-arr { font-size: 16px; color: var(--tx3); margin-left: 8px; }
-.pd-item { display: flex; align-items: center; padding: 13px 14px; cursor: pointer; border-bottom: 1px solid var(--bor); transition: background .12s; }
-.pd-item:last-child { border-bottom: none; }
-.pd-item:active { background: var(--s3); }
-.pd-left { flex: 1; display: flex; align-items: center; gap: 10px; }
-.pd-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--bor); flex-shrink: 0; }
-.pd-dot.has { background: var(--acc); box-shadow: 0 0 5px var(--acc); }
-.pd-name { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 16px; letter-spacing: .08em; text-transform: uppercase; color: var(--tx2); }
-.pd-count { font-size: 9px; color: var(--tx3); letter-spacing: .06em; }
-.pd-arr { font-size: 14px; color: var(--tx3); margin-left: 8px; }
-.pe-item { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-bottom: 1px solid var(--bor); }
-.pe-item:last-child { border-bottom: none; }
-.pe-num { font-size: 9px; color: var(--tx3); width: 18px; text-align: right; flex-shrink: 0; }
-.pe-info { flex: 1; min-width: 0; }
-.pe-name { font-family: 'Barlow Condensed', sans-serif; font-size: 15px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--tx3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.pe-name.named { color: var(--tx); }
-.pe-muscle { font-size: 8px; color: var(--tx3); letter-spacing: .08em; text-transform: uppercase; margin-top: 1px; }
-.pe-muscle.has { color: var(--acc); opacity: .7; }
-.pe-prog { font-size: 13px; flex-shrink: 0; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; border-radius: 4px; }
-.pe-prog.up { color: var(--ok);  background: rgba(0,230,118,.1); }
-.pe-prog.dn { color: var(--err); background: rgba(255,68,68,.1); }
-.pe-prog.eq { color: var(--tx3); background: var(--s3); }
-.edit-btn { background: var(--s3); border: 1px solid var(--b2); color: var(--tx2); font-family: 'DM Mono', monospace; font-size: 8px; letter-spacing: .08em; padding: 5px 8px; border-radius: 4px; cursor: pointer; flex-shrink: 0; transition: border-color .12s, color .12s; }
-.edit-btn:active { border-color: var(--acc); color: var(--acc); }
+
+/* Plan-Card — identisch excard aber mit Edit-Body */
+.plcard {
+  background: var(--s1); border: 1px solid var(--bor);
+  margin-bottom: 7px; position: relative; overflow: hidden;
+  border-radius: var(--r); transition: border-color .2s;
+}
+.plcard::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--bor); transition: background .2s; }
+.plcard[data-muscle="Schultern"]::before { background: #ffd54f; }
+.plcard[data-muscle="Brust"]::before     { background: #ef5350; }
+.plcard[data-muscle="Trizeps"]::before   { background: #ab47bc; }
+.plcard[data-muscle="Rücken"]::before    { background: #42a5f5; }
+.plcard[data-muscle="Bizeps"]::before    { background: #26c6da; }
+.plcard[data-muscle="Beine"]::before     { background: #66bb6a; }
+.plcard[data-muscle="Bauch"]::before     { background: #ff7043; }
+.plcard[data-muscle="default"]::before   { background: var(--bor); }
+.plcard.open-pl { border-color: var(--b2); }
+.plcard.open-pl::before { background: var(--acc); }
+
+.plhead {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 13px 12px 16px; cursor: pointer; gap: 8px;
+  -webkit-tap-highlight-color: transparent;
+}
+.plhead:active { background: var(--s2); }
+.plhead-left { flex: 1; min-width: 0; }
+.pl-num { font-family: 'DM Mono', monospace; font-size: 9px; color: var(--tx3); margin-bottom: 1px; }
+.pl-name { font-size: 13px; font-weight: 500; line-height: 1.3; color: var(--tx); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pl-name.empty { color: var(--tx3); font-style: italic; }
+.pl-muscle { font-size: 8px; color: var(--tx3); letter-spacing: .1em; text-transform: uppercase; margin-top: 2px; }
+.pl-muscle.set { color: var(--acc); opacity: .7; }
+.plhead-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.pl-chevron { width: 16px; height: 16px; flex-shrink: 0; color: var(--tx3); transition: transform .28s ease, color .15s; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.plcard.open-pl .pl-chevron { transform: rotate(180deg); color: var(--acc); }
+
+.plbody { max-height: 0; overflow: hidden; transition: max-height .35s cubic-bezier(.4,0,.2,1); border-top: 0px solid var(--bor); }
+.plbody.open { max-height: 300px; border-top: 1px solid var(--bor); }
+
+/* Edit-Felder im Planungs-Body */
+.pl-edit-wrap { padding: 12px 14px 14px; display: flex; flex-direction: column; gap: 10px; }
+.pl-field-lbl { font-family: 'DM Mono', monospace; font-size: 8px; color: var(--tx3); letter-spacing: .12em; text-transform: uppercase; margin-bottom: 4px; }
+.pl-field-inp {
+  width: 100%; background: var(--s3); border: 1px solid var(--b2);
+  border-radius: 6px; color: var(--tx);
+  font-family: 'DM Mono', monospace; font-size: 13px;
+  padding: 10px 12px; outline: none; transition: border-color .15s;
+}
+.pl-field-inp:focus { border-color: var(--acc); }
+.pl-field-inp::placeholder { color: var(--tx3); font-size: 11px; }
+.pl-save-btn {
+  width: 100%; background: var(--acc); color: #000; border: none;
+  border-radius: var(--r); font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900; font-size: 16px; letter-spacing: .12em;
+  padding: 11px; cursor: pointer; text-transform: uppercase;
+  transition: opacity .15s; -webkit-tap-highlight-color: transparent;
+}
+.pl-save-btn:active { opacity: .8; }
+
+/* Woche/Tag Nav im Planungsreiter */
+.plan-nav { margin-bottom: 12px; }
 
 /* ── PR-SEITE ─────────────────────────── */
 .pr-filter { display: flex; gap: 6px; flex-wrap: wrap; padding: 4px 0 12px; }
@@ -387,7 +422,45 @@ main { padding: 14px 16px; }
 #save-btn.saving .btn-lbl { display: none; }
 .api-status { display: flex; align-items: center; gap: 6px; margin-top: 6px; font-family: 'DM Mono', monospace; font-size: 9px; color: var(--tx3); }
 
-/* ── SETUP MODAL ─────────────────────── */
+/* ── SETUP TAB ───────────────────────── */
+.setup-section {
+  background: var(--s1); border: 1px solid var(--bor);
+  border-radius: var(--r); padding: 16px; margin-bottom: 10px;
+}
+.setup-section-title {
+  font-family: 'Barlow Condensed', sans-serif; font-weight: 900;
+  font-size: 16px; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--tx); margin-bottom: 12px; display: flex; align-items: center; gap: 8px;
+}
+.setup-section-title svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; color: var(--acc); flex-shrink: 0; }
+.setup-status-row {
+  display: flex; align-items: center; gap: 8px;
+  background: var(--s3); border: 1px solid var(--bor); border-radius: 6px;
+  padding: 10px 12px; margin-bottom: 14px;
+}
+.setup-status-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--tx3); flex-shrink: 0; }
+.setup-status-dot.ok   { background: var(--ok);  box-shadow: 0 0 6px rgba(0,230,118,.4); }
+.setup-status-dot.err  { background: var(--err); }
+.setup-status-dot.warn { background: var(--warn); }
+.setup-status-txt { font-family: 'DM Mono', monospace; font-size: 9px; color: var(--tx3); flex: 1; word-break: break-all; }
+.setup-test-btn {
+  background: none; border: 1px solid var(--b2); color: var(--tx3);
+  font-family: 'DM Mono', monospace; font-size: 9px; padding: 7px 12px;
+  border-radius: 6px; cursor: pointer; transition: border-color .15s, color .15s;
+  width: 100%; margin-top: 8px; letter-spacing: .06em;
+  -webkit-tap-highlight-color: transparent;
+}
+.setup-test-btn:active { border-color: var(--acc); color: var(--acc); }
+.setup-save-btn {
+  width: 100%; background: var(--acc); color: #000; border: none;
+  border-radius: var(--r); font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900; font-size: 17px; letter-spacing: .14em;
+  padding: 13px; cursor: pointer; margin-top: 4px;
+  -webkit-tap-highlight-color: transparent;
+}
+.setup-save-btn:active { opacity: .85; }
+
+/* ── SETUP MODAL (Fallback bei erstem Start) ── */
 #setup-ov { position: fixed; inset: 0; z-index: 200; background: rgba(0,0,0,.88); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); display: none; align-items: flex-end; justify-content: center; }
 #setup-ov.open { display: flex; }
 .modal-sheet { background: var(--s1); border-top: 1px solid var(--b2); border-radius: 16px 16px 0 0; padding: 20px; padding-bottom: calc(20px + env(safe-area-inset-bottom)); width: 100%; max-width: 480px; animation: slideUp .22s ease; }
@@ -469,7 +542,7 @@ main { padding: 14px 16px; }
   <button class="tab" id="t-pr" onclick="switchTab('pr',this)">
     <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>PRs
   </button>
-  <button class="tab" id="t-set" onclick="setupOpen()">
+  <button class="tab" id="t-set" onclick="switchTab('set',this)">
     <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Setup
   </button>
 </div>
@@ -479,13 +552,13 @@ main { padding: 14px 16px; }
 <!-- TRAINING TAB -->
 <div class="sec active" id="sec-training">
   <!-- Woche/Tag Selector -->
-  <div class="sel-row" id="week-sel-row" style="margin-bottom:6px;">
+  <div class="sel-row week-sel-row">
     <span class="sel-label">Woche</span>
-    <div id="week-btns" style="display:flex;gap:4px;flex-wrap:wrap;"></div>
+    <div id="week-btns" class="sel-btns"></div>
   </div>
-  <div class="sel-row" id="day-sel-row" style="margin-bottom:10px;">
+  <div class="sel-row day-sel-row">
     <span class="sel-label">Tag</span>
-    <div id="day-btns" style="display:flex;gap:4px;flex-wrap:wrap;"></div>
+    <div id="day-btns" class="sel-btns"></div>
   </div>
 
   <!-- Cycle Info -->
@@ -501,7 +574,7 @@ main { padding: 14px 16px; }
         <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
         Körpergewicht
       </div>
-      <div style="display:flex;align-items:baseline;">
+      <div class="bw-val-row">
         <input class="bw-input" type="number" min="0" step="0.1" placeholder="0.0" id="bwIn" inputmode="decimal">
         <span class="bw-unit">kg</span>
       </div>
@@ -533,6 +606,11 @@ main { padding: 14px 16px; }
   <div id="view-pr"></div>
 </div>
 
+<!-- SETUP TAB -->
+<div class="sec" id="sec-set">
+  <div id="view-set"></div>
+</div>
+
 </main>
 
 <!-- SAVE FOOTER -->
@@ -542,7 +620,7 @@ main { padding: 14px 16px; }
     <span class="btn-lbl">In Google Sheet speichern</span>
   </button>
   <div class="api-status">
-    <div id="dot2" style="width:6px;height:6px;border-radius:50%;background:var(--tx3);flex-shrink:0;"></div>
+    <div id="dot2" class="api-dot"></div>
     <span id="api-status-txt">API nicht verbunden — Setup öffnen</span>
   </div>
 </div>
@@ -568,7 +646,7 @@ window.addEventListener('unhandledrejection', function(e) {
 let API   = localStorage.getItem('pb_api')   || '';
 let SHEET = localStorage.getItem('pb_sheet') || 'ZYKLUS MASTER';
 let rawData = [], curDay = '', curWeek = '';
-const PS = { level: 'weeks', week: '', day: '' };
+let planWeek = '', planDay = '';
 
 // ════════════════════════════════════════════════════
 //  DIAGNOSTICS
@@ -914,70 +992,192 @@ function renderWorkout() {
 }
 
 // ════════════════════════════════════════════════════
-//  PLANUNG — 3-Stufen
+//  PLANUNG — Woche/Tag-Selector + Akkordeon-Cards
 // ════════════════════════════════════════════════════
 function renderPlan() {
   const container = document.getElementById('view-plan');
   container.innerHTML = '';
   const structure = buildStructure();
-  if (!structure.length) { container.innerHTML = '<div class="empty"><big>?</big>Keine Daten.</div>'; return; }
-
-  if (PS.level === 'weeks') {
-    const box = document.createElement('div'); box.className = 'plan-box';
-    structure.forEach(wObj => {
-      const named = wObj.days.reduce((a,d) => a+d.named, 0);
-      const el = document.createElement('div'); el.className = 'pw-item';
-      el.innerHTML = `<div class="pw-left"><div class="pw-name">${esc(wObj.week)}</div><div class="pw-meta">${wObj.days.length} Tage · ${named} benannte Übungen</div></div><span class="pw-arr">›</span>`;
-      el.onclick = () => { PS.level='days'; PS.week=wObj.week; renderPlan(); };
-      box.appendChild(el);
-    });
-    container.appendChild(box); return;
+  if (!structure.length) {
+    container.innerHTML = '<div class="empty"><big>?</big>Keine Daten geladen.</div>';
+    return;
   }
 
-  if (PS.level === 'days') {
-    const wObj = structure.find(w => w.week===PS.week);
-    if (!wObj) { PS.level='weeks'; renderPlan(); return; }
-    const crumb = document.createElement('div'); crumb.className = 'plan-crumb';
-    crumb.innerHTML = `<span class="plan-crumb-link" onclick="PS.level='weeks';renderPlan()">${esc(PS.week)}</span>`;
-    container.appendChild(crumb);
-    const box = document.createElement('div'); box.className = 'plan-box';
-    wObj.days.forEach(dObj => {
-      const cs = dObj.named>0?`${dObj.named} benannt`:dObj.total>0?`${dObj.total} Slots`:'leer';
-      const el = document.createElement('div'); el.className = 'pd-item';
-      el.innerHTML = `<div class="pd-left"><div class="pd-dot${dObj.named>0?' has':''}"></div><span class="pd-name">${esc(dObj.day)}</span></div><span class="pd-count">${cs}</span><span class="pd-arr">›</span>`;
-      el.onclick = () => { PS.level='exercises'; PS.day=dObj.day; renderPlan(); };
-      box.appendChild(el);
-    });
-    container.appendChild(box); return;
+  // Woche/Tag Nav
+  const nav = document.createElement('div');
+  nav.className = 'plan-nav';
+
+  // Woche-Buttons
+  const wRow = document.createElement('div');
+  wRow.className = 'sel-row';
+  wRow.style.marginBottom = '6px';
+  const wLbl = document.createElement('span');
+  wLbl.className = 'sel-label'; wLbl.textContent = 'Woche';
+  const wBtns = document.createElement('div');
+  wBtns.style.cssText = 'display:flex;gap:4px;flex-wrap:wrap;';
+  wRow.appendChild(wLbl); wRow.appendChild(wBtns);
+
+  // Tag-Buttons
+  const dRow = document.createElement('div');
+  dRow.className = 'sel-row';
+  dRow.style.marginBottom = '12px';
+  const dLbl = document.createElement('span');
+  dLbl.className = 'sel-label'; dLbl.textContent = 'Tag';
+  const dBtns = document.createElement('div');
+  dBtns.id = 'plan-day-btns';
+  dBtns.style.cssText = 'display:flex;gap:4px;flex-wrap:wrap;';
+  dRow.appendChild(dLbl); dRow.appendChild(dBtns);
+
+  nav.appendChild(wRow); nav.appendChild(dRow);
+  container.appendChild(nav);
+
+  // Cards-Container
+  const cardsWrap = document.createElement('div');
+  cardsWrap.id = 'plan-cards';
+  container.appendChild(cardsWrap);
+
+  // Init: erste Woche/Tag falls noch nicht gesetzt
+  if (!planWeek || !structure.find(w => w.week === planWeek)) {
+    planWeek = structure[0].week;
+    planDay  = structure[0].days[0]?.day || '';
   }
 
-  if (PS.level === 'exercises') {
-    const wObj = structure.find(w => w.week===PS.week);
-    const dObj = wObj?.days.find(d => d.day===PS.day);
-    if (!dObj) { PS.level='days'; renderPlan(); return; }
-    const crumb = document.createElement('div'); crumb.className = 'plan-crumb';
-    crumb.innerHTML = `<span class="plan-crumb-link" onclick="PS.level='weeks';renderPlan()">${esc(PS.week)}</span><span class="plan-crumb-sep">›</span><span class="plan-crumb-link" onclick="PS.level='days';renderPlan()">${esc(PS.day)}</span>`;
-    container.appendChild(crumb);
-    const box = document.createElement('div'); box.className = 'plan-box';
-    let idx = 0;
-    rawData.forEach((row, i) => {
-      const w=(row[0]||'').trim(), d=(row[3]||'').trim();
-      let lastW='',lastD='';
-      // inline scan
-      if (w) lastW=w; if(d) lastD=d;
-      if (!(lastD===PS.day||d===PS.day)) return;
-      const name=(row[4]||'').trim();
-      if (!name||name==='Übung') return;
-      const muscle=(row[5]||'').trim();
-      const progRaw=(row[15]||'').trim();
-      const ri=i+3; idx++;
-      const pCls=progRaw==='▲'?'up':progRaw==='▼'?'dn':'eq';
-      const isNamed=name!=='Übung eintragen...';
-      const el=document.createElement('div'); el.className='pe-item';
-      el.innerHTML=`<div class="pe-num">${idx}</div><div class="pe-info"><div class="pe-name${isNamed?' named':''}">${esc(name)}</div>${muscle?`<div class="pe-muscle${muscle?' has':''}">${esc(muscle)}</div>`:''}</div><div class="pe-prog ${pCls}">${progRaw||'►'}</div><button class="edit-btn" onclick="renameEx(${ri},\`${name.replace(/`/g,'\\`')}\`)">EDIT</button>`;
-      box.appendChild(el);
+  function buildWBtns() {
+    wBtns.innerHTML = '';
+    structure.forEach((wObj, wi) => {
+      const btn = document.createElement('button');
+      btn.className = 'dbtn' + (wObj.week === planWeek ? ' active' : '');
+      btn.textContent = 'W' + (wi + 1);
+      btn.title = wObj.week;
+      btn.onclick = () => {
+        planWeek = wObj.week;
+        planDay  = wObj.days[0]?.day || '';
+        buildWBtns(); buildDBtns(); renderPlanCards();
+      };
+      wBtns.appendChild(btn);
     });
-    container.appendChild(box);
+  }
+
+  function buildDBtns() {
+    dBtns.innerHTML = '';
+    const wObj = structure.find(w => w.week === planWeek);
+    if (!wObj) return;
+    wObj.days.forEach((dObj, di) => {
+      const btn = document.createElement('button');
+      btn.className = 'dbtn' + (dObj.day === planDay ? ' active' : '');
+      const short = dObj.day.includes(':') ? dObj.day.split(':')[1].split('(')[0].trim() : dObj.day;
+      btn.textContent = short; btn.title = dObj.day;
+      btn.onclick = () => {
+        planDay = dObj.day;
+        buildDBtns(); renderPlanCards();
+      };
+      dBtns.appendChild(btn);
+    });
+  }
+
+  buildWBtns(); buildDBtns(); renderPlanCards();
+}
+
+function renderPlanCards() {
+  const wrap = document.getElementById('plan-cards');
+  if (!wrap) return;
+  wrap.innerHTML = '';
+  let inDay = false, idx = 0, lastWeekCol = '';
+
+  rawData.forEach((row, i) => {
+    const w = (row[0]||'').trim(), d = (row[3]||'').trim();
+    if (w==='Woche'||d==='Trainingstag') return;
+    if (w) lastWeekCol = w;
+    if (d) inDay = (d === planDay && lastWeekCol === planWeek);
+    if (!inDay) return;
+    const name   = (row[4]||'').trim();
+    const muscle = (row[5]||'').trim();
+    if (!name && !muscle) return;
+    const progRaw = (row[15]||'').trim();
+    const ri  = i + 3;
+    const mk  = muscleKey(muscle);
+    const isNamed = name && name !== 'Übung eintragen...';
+    const isFirst = idx === 0;
+    idx++;
+
+    const pCls   = progRaw==='▲'?'up':progRaw==='▼'?'dn':'eq';
+    const pLabel = progRaw==='▲'?'▲ PR':progRaw==='▼'?'▼ Rück':'► Neu';
+
+    const card = document.createElement('div');
+    card.className = 'plcard' + (isFirst ? ' open-pl' : '');
+    card.dataset.muscle = mk;
+    card.id = 'pc-' + ri;
+    card.style.animationDelay = Math.min(idx * .05, .3) + 's';
+    card.innerHTML =
+      `<div class="plhead" onclick="togglePlan(${ri})">
+         <div class="plhead-left">
+           <div class="pl-num">${idx}.</div>
+           <div class="pl-name${isNamed ? '' : ' empty'}">${esc(isNamed ? name : 'Übung eintragen…')}</div>
+           ${muscle ? `<div class="pl-muscle set">${esc(muscle)}</div>` : '<div class="pl-muscle">— Muskelgruppe fehlt</div>'}
+         </div>
+         <div class="plhead-right">
+           <span class="prog-arrow ${pCls}">${pLabel}</span>
+           <svg class="pl-chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+         </div>
+       </div>
+       <div class="plbody${isFirst ? ' open' : ''}" id="pb-${ri}">
+         <div class="pl-edit-wrap">
+           <div>
+             <div class="pl-field-lbl">Übungsname</div>
+             <input class="pl-field-inp" id="pln-${ri}" type="text"
+               value="${escA(isNamed ? name : '')}"
+               placeholder="Übungsname eintragen…"
+               oninput="planPreview(${ri})">
+           </div>
+           <button class="pl-save-btn" onclick="planSave(${ri})">SPEICHERN</button>
+         </div>
+       </div>`;
+    wrap.appendChild(card);
+  });
+
+  if (!idx) {
+    wrap.innerHTML = '<div class="empty"><big>LEER</big>Kein Tag ausgewählt oder keine Zeilen vorhanden.</div>';
+  }
+}
+
+function togglePlan(ri) {
+  const card = document.getElementById('pc-' + ri);
+  const body = document.getElementById('pb-' + ri);
+  if (!card || !body) return;
+  card.classList.toggle('open-pl');
+  body.classList.toggle('open');
+}
+
+function planPreview(ri) {
+  const val = document.getElementById('pln-' + ri)?.value.trim();
+  const nameEl = document.querySelector(`#pc-${ri} .pl-name`);
+  if (!nameEl) return;
+  if (val) {
+    nameEl.textContent = val;
+    nameEl.classList.remove('empty');
+  } else {
+    nameEl.textContent = 'Übung eintragen…';
+    nameEl.classList.add('empty');
+  }
+}
+
+async function planSave(ri) {
+  const n = document.getElementById('pln-' + ri)?.value.trim();
+  if (!n) { toast('Kein Name eingetragen', 'warn'); return; }
+  if (/<|>|script/i.test(n)) { toast('Ungültiger Name', 'err'); return; }
+  const btn = document.querySelector(`#pb-${ri} .pl-save-btn`);
+  if (btn) { btn.textContent = '…'; btn.disabled = true; }
+  try {
+    await fetch(API, {
+      method: 'POST', mode: 'no-cors',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify({ sheet: SHEET, rowIdx: ri, action: 'rename', newName: n })
+    });
+    toast('Gespeichert — lade neu…', 'ok');
+    setTimeout(() => location.reload(), 900);
+  } catch(_) {
+    toast('Fehler beim Speichern', 'err');
+    if (btn) { btn.textContent = 'SPEICHERN'; btn.disabled = false; }
   }
 }
 
@@ -1089,31 +1289,113 @@ function switchTab(id, el) {
   document.getElementById('sec-' + id).classList.add('active');
   el.classList.add('active');
   document.getElementById('save-footer').style.display = id==='training' ? 'block' : 'none';
-  if (id==='plan') { PS.level='weeks'; renderPlan(); }
+  if (id==='plan') renderPlan();
   if (id==='pr')   renderPR();
+  if (id==='set')  renderSetup();
 }
 
+
 // ════════════════════════════════════════════════════
-//  SETUP
+//  SETUP — Modal (nur erster Start ohne API)
 // ════════════════════════════════════════════════════
 function setupOpen() {
   document.getElementById('si-sheet').value = SHEET;
   document.getElementById('si-url').value   = API;
   document.getElementById('setup-ov').classList.add('open');
-  document.getElementById('t-set').classList.add('active');
 }
 function setupClose() {
   document.getElementById('setup-ov').classList.remove('open');
-  document.getElementById('t-set').classList.remove('active');
 }
 function setupSave() {
-  const sh=document.getElementById('si-sheet').value.trim();
-  const url=document.getElementById('si-url').value.trim();
-  if (url&&!url.startsWith('https://')) { toast('URL muss mit https:// beginnen','err'); return; }
-  if (sh)  { SHEET=sh;  localStorage.setItem('pb_sheet',sh); }
-  if (url) { API=url;   localStorage.setItem('pb_api',url); }
+  const sh  = document.getElementById('si-sheet').value.trim();
+  const url = document.getElementById('si-url').value.trim();
+  if (url && !url.startsWith('https://')) { toast('URL muss mit https:// beginnen', 'err'); return; }
+  if (sh)  { SHEET = sh;  localStorage.setItem('pb_sheet', sh); }
+  if (url) { API   = url; localStorage.setItem('pb_api',   url); }
   setupClose(); location.reload();
 }
+
+// ════════════════════════════════════════════════════
+//  SETUP — Tab-Inhalt
+// ════════════════════════════════════════════════════
+function renderSetup() {
+  const c = document.getElementById('view-set');
+  const connected = API && API.startsWith('https://');
+  const dotCls    = connected ? 'ok' : 'err';
+  const statusTxt = connected ? `Verbunden · ${SHEET}` : 'Nicht verbunden — URL eintragen';
+
+  c.innerHTML = `
+    <div class="setup-section">
+      <div class="setup-section-title">
+        <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        Verbindung
+      </div>
+      <div class="setup-status-row">
+        <div class="setup-status-dot ${dotCls}" id="set-dot"></div>
+        <div class="setup-status-txt" id="set-status-txt">${esc(statusTxt)}</div>
+      </div>
+      <div class="setup-lbl">Tabellenblatt</div>
+      <input class="setup-inp" id="set-sheet" type="text"
+        value="${escA(SHEET)}" placeholder="ZYKLUS MASTER"
+        style="margin-bottom:10px;">
+      <div class="setup-lbl">Apps Script URL</div>
+      <input class="setup-inp" id="set-url" type="url"
+        value="${escA(API)}" placeholder="https://script.google.com/macros/s/…/exec"
+        style="margin-bottom:10px;">
+      <button class="setup-save-btn" onclick="setupSaveInline()">SPEICHERN &amp; NEU LADEN</button>
+      <button class="setup-test-btn" id="set-test-btn" onclick="setupTest()">Verbindung testen</button>
+    </div>
+    <div class="setup-section">
+      <div class="setup-section-title">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        Info
+      </div>
+      <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--tx3);line-height:2;">
+        Version: <span style="color:var(--acc);">V12.0</span><br>
+        Zeilen im Speicher: <span style="color:var(--tx2);">${rawData.length}</span><br>
+        Sheet-ID: <span style="color:var(--tx2);word-break:break-all;">1htGms-zv9-RKl4XyapLeOv9sYS4OXDz_xYzGJdGt_v4</span>
+      </div>
+    </div>`;
+}
+
+function setupSaveInline() {
+  const sh  = document.getElementById('set-sheet')?.value.trim();
+  const url = document.getElementById('set-url')?.value.trim();
+  if (url && !url.startsWith('https://')) { toast('URL muss mit https:// beginnen', 'err'); return; }
+  if (sh)  { SHEET = sh;  localStorage.setItem('pb_sheet', sh); }
+  if (url) { API   = url; localStorage.setItem('pb_api',   url); }
+  toast('Gespeichert — lade neu…', 'ok');
+  setTimeout(() => location.reload(), 800);
+}
+
+async function setupTest() {
+  const url = document.getElementById('set-url')?.value.trim();
+  const sh  = document.getElementById('set-sheet')?.value.trim() || SHEET;
+  const btn = document.getElementById('set-test-btn');
+  const dot = document.getElementById('set-dot');
+  const txt = document.getElementById('set-status-txt');
+  if (!url) { toast('Erst URL eintragen', 'warn'); return; }
+  if (btn) { btn.textContent = 'Teste…'; btn.disabled = true; }
+  try {
+    const ctrl = new AbortController();
+    const tid  = setTimeout(() => ctrl.abort(), 6000);
+    const res  = await fetch(`${url}?sheet=${encodeURIComponent(sh)}&v=${Date.now()}`, { signal: ctrl.signal });
+    clearTimeout(tid);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const json = await res.json();
+    const rows = Array.isArray(json) ? json : (Array.isArray(json?.data) ? json.data : null);
+    if (!rows) throw new Error('Kein Array zurückgegeben');
+    if (dot) dot.className = 'setup-status-dot ok';
+    if (txt) txt.textContent = `OK · ${rows.length} Zeilen · ${sh}`;
+    toast(`Verbindung OK · ${rows.length} Zeilen`, 'ok');
+  } catch(e) {
+    if (dot) dot.className = 'setup-status-dot err';
+    if (txt) txt.textContent = 'Fehler: ' + e.message;
+    toast('Verbindung fehlgeschlagen', 'err');
+  }
+  if (btn) { btn.textContent = 'Verbindung testen'; btn.disabled = false; }
+}
+
 
 // ════════════════════════════════════════════════════
 //  HELPERS
