@@ -1118,14 +1118,17 @@ function renderPlanCards() {
   // ── Tag-Edit-Card ──────────────────────────────────
   // Zeile im rawData finden die planDay in Spalte D enthält
   let dayRowIdx = -1, lastWC = '';
-  rawData.forEach((row, i) => {
-    const w = (row[0]||'').trim(), d = (row[3]||'').trim();
-    if (w === 'Woche' || d === 'Trainingstag') return;
+  for (let i = 0; i < rawData.length; i++) {
+    const row = rawData[i];
+    const w = (row[0]||'').trim();
+    const d = (row[3]||'').trim();
+    if (d === 'Trainingstag') continue;
     if (w) lastWC = w;
-    if (d && d === planDay && lastWC === planWeek) {
-      if (dayRowIdx === -1) dayRowIdx = i + 3;
+    if (d === planDay && lastWC === planWeek) {
+      dayRowIdx = i + 3; // rawData[0] = Sheet-Zeile 4 (3 Header-Zeilen)
+      break;
     }
-  });
+  }
 
   const isRest = planDay.toLowerCase().includes('rest') || planDay.toLowerCase().includes('pause') || planDay.toLowerCase().includes('ruhe');
 
@@ -1477,15 +1480,7 @@ function renderSetup() {
       </div>
       <div class="setup-info-box">
         Version: <span class="setup-info-acc">V12.0</span><br>
-        Zeilen im Speicher: <span class="setup-info-tx2">${rawData.length}</span><br>
-        Sheet-ID: <span class="setup-info-tx2 setup-info-break">1htGms-zv9-RKl4XyapLeOv9sYS4OXDz_xYzGJdGt_v4</span>
-      </div>
-      <div class="setup-lbl" style="margin-top:14px;">Apps Script — doPost rename Handler</div>
-      <div class="setup-info-box" style="background:var(--s3);border:1px solid var(--bor);border-radius:6px;padding:10px;margin-top:4px;font-size:9px;line-height:1.7;color:var(--ok);word-break:break-all;">
-        if (data.action === 'rename') {<br>
-        &nbsp;&nbsp;const col = data.col || 5;<br>
-        &nbsp;&nbsp;sheet.getRange(data.rowIdx, col).setValue(data.newName);<br>
-        }
+        Zeilen im Speicher: <span class="setup-info-tx2">${rawData.length}</span>
       </div>
     </div>`;
 }
