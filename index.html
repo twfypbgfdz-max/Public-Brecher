@@ -1082,20 +1082,26 @@ function renderPlanCards() {
   const wrap = document.getElementById('plan-cards');
   if (!wrap) return;
   wrap.innerHTML = '';
-  let inDay = false, idx = 0, lastWeekCol = '';
+  let inDay = false, idx = 0, lastWeekCol = '', lastDay = '';
 
   rawData.forEach((row, i) => {
-    const w = (row[0]||'').trim(), d = (row[3]||'').trim();
-    if (w==='Woche'||d==='Trainingstag') return;
+    const w = (row[0]||'').trim();
+    const d = (row[3]||'').trim();
+    if (w === 'Woche' || d === 'Trainingstag') return;
     if (w) lastWeekCol = w;
-    if (d) inDay = (d === planDay && lastWeekCol === planWeek);
+    if (d) {
+      lastDay = d;
+      inDay = (d === planDay && lastWeekCol === planWeek);
+    }
     if (!inDay) return;
+
     const name   = (row[4]||'').trim();
     const muscle = (row[5]||'').trim();
-    if (!name && !muscle) return;
+    if (!name || name === 'Übung' ) return;
+
     const progRaw = (row[15]||'').trim();
-    const ri  = i + 3;
-    const mk  = muscleKey(muscle);
+    const ri      = i + 3;
+    const mk      = muscleKey(muscle);
     const isNamed = name && name !== 'Übung eintragen...';
     const isFirst = idx === 0;
     idx++;
@@ -1136,7 +1142,7 @@ function renderPlanCards() {
   });
 
   if (!idx) {
-    wrap.innerHTML = '<div class="empty"><big>LEER</big>Kein Tag ausgewählt oder keine Zeilen vorhanden.</div>';
+    wrap.innerHTML = '<div class="empty"><big>LEER</big>Kein Tag ausgewählt oder keine Übungen vorhanden.</div>';
   }
 }
 
