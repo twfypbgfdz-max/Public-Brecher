@@ -722,8 +722,8 @@ async function runDiag(manual = false) {
           const hasHeader = (data[0]?.[3] || '').trim() === 'Trainingstag';
           const dataRows  = hasHeader ? data.slice(1) : data;
           if (hasHeader) {
-            diagAdd('warn', 'API liefert Header-Zeile mit — wird übersprungen',
-              `${data.length} Zeilen total, ${dataRows.length} Datenzeilen.`);
+            diagAdd('ok', 'Header-Zeile erkannt & übersprungen',
+              `${dataRows.length} Datenzeilen geladen.`);
           }
           if (!dataRows.length) {
             diagAdd('warn', 'Leeres Sheet', '"' + SHEET + '" hat keine Daten.');
