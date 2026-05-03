@@ -1247,38 +1247,49 @@ async function planSaveAll() {
 
   // 1. Tag-Name
   const dayName = document.getElementById('pld-name')?.value.trim();
-  const dayRiEl = document.getElementById('pc-tag');
-  const dayRi   = parseInt(dayRiEl?.dataset.rowIdx || '0');
-  if (dayName && dayRi > 0) {
+  const dayRi   = parseInt(document.getElementById('pc-tag')?.dataset.rowIdx || '0');
+  if (dayName) {
     if (/<|>|script/i.test(dayName)) { toast('Ungültiger Tagesname', 'err'); return; }
-    changes.push({ rowIdx: dayRi, action: 'renameDay', newName: dayName });
+    if (dayRi > 0) changes.push({ rowIdx: dayRi, action: 'renameDay', newName: dayName });
   }
 
   // 2. Alle Übungsfelder
   document.querySelectorAll('.plcard[id^="pc-"]:not(#pc-tag)').forEach(card => {
     const ri = parseInt(card.id.replace('pc-', ''));
-    if (isNaN(ri)) return;
+    if (isNaN(ri) || ri < 3) return;
     const n = document.getElementById('pln-' + ri)?.value.trim();
-    if (!n) return;
-    if (/<|>|script/i.test(n)) return;
+    if (!n || /<|>|script/i.test(n)) return;
     changes.push({ rowIdx: ri, action: 'rename', newName: n });
   });
 
-  if (!changes.length) { toast('Keine Änderungen', 'warn'); return; }
+  if (!changes.length) { toast('Keine Änderungen erkannt', 'warn'); return; }
 
   btn.classList.add('saving'); btn.disabled = true;
 
-  try {
-    await fetch(API, {
-      method: 'POST', mode: 'no-cors',
-      headers: { 'Content-Type': 'text/plain' },
-      body: JSON.stringify({ sheet: SHEET, planChanges: changes })
-    });
-    toast(`${changes.length} Änderung${changes.length > 1 ? 'en' : ''} gespeichert — lade neu…`, 'ok');
+  let ok = 0, failed = 0;
+  for (const ch of changes) {
+    try {
+      await fetch(API, {
+        method: 'POST', mode: 'no-cors',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify({
+          sheet:   SHEET,
+          rowIdx:  ch.rowIdx,
+          action:  ch.action,
+          newName: ch.newName
+        })
+      });
+      ok++;
+    } catch(_) { failed++; }
+  }
+
+  btn.classList.remove('saving'); btn.disabled = false;
+
+  if (failed > 0) {
+    toast(`${ok} gespeichert · ${failed} fehlgeschlagen`, 'warn');
+  } else {
+    toast(`${ok} Änderung${ok > 1 ? 'en' : ''} gespeichert — lade neu…`, 'ok');
     setTimeout(() => location.reload(), 900);
-  } catch(_) {
-    toast('Fehler beim Speichern', 'err');
-    btn.classList.remove('saving'); btn.disabled = false;
   }
 }
 
