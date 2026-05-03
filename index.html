@@ -1245,21 +1245,21 @@ async function planSaveAll() {
   const btn = document.getElementById('plan-save-btn');
   const changes = [];
 
-  // 1. Tag-Name
+  // 1. Tag-Name → Spalte D (col 4)
   const dayName = document.getElementById('pld-name')?.value.trim();
   const dayRi   = parseInt(document.getElementById('pc-tag')?.dataset.rowIdx || '0');
-  if (dayName) {
+  if (dayName && dayRi > 0) {
     if (/<|>|script/i.test(dayName)) { toast('Ungültiger Tagesname', 'err'); return; }
-    if (dayRi > 0) changes.push({ rowIdx: dayRi, action: 'renameDay', newName: dayName });
+    changes.push({ rowIdx: dayRi, action: 'rename', col: 4, newName: dayName });
   }
 
-  // 2. Alle Übungsfelder
+  // 2. Übungsnamen → Spalte E (col 5, Standard)
   document.querySelectorAll('.plcard[id^="pc-"]:not(#pc-tag)').forEach(card => {
     const ri = parseInt(card.id.replace('pc-', ''));
     if (isNaN(ri) || ri < 3) return;
     const n = document.getElementById('pln-' + ri)?.value.trim();
     if (!n || /<|>|script/i.test(n)) return;
-    changes.push({ rowIdx: ri, action: 'rename', newName: n });
+    changes.push({ rowIdx: ri, action: 'rename', col: 5, newName: n });
   });
 
   if (!changes.length) { toast('Keine Änderungen erkannt', 'warn'); return; }
@@ -1276,6 +1276,7 @@ async function planSaveAll() {
           sheet:   SHEET,
           rowIdx:  ch.rowIdx,
           action:  ch.action,
+          col:     ch.col,
           newName: ch.newName
         })
       });
@@ -1478,6 +1479,13 @@ function renderSetup() {
         Version: <span class="setup-info-acc">V12.0</span><br>
         Zeilen im Speicher: <span class="setup-info-tx2">${rawData.length}</span><br>
         Sheet-ID: <span class="setup-info-tx2 setup-info-break">1htGms-zv9-RKl4XyapLeOv9sYS4OXDz_xYzGJdGt_v4</span>
+      </div>
+      <div class="setup-lbl" style="margin-top:14px;">Apps Script — doPost rename Handler</div>
+      <div class="setup-info-box" style="background:var(--s3);border:1px solid var(--bor);border-radius:6px;padding:10px;margin-top:4px;font-size:9px;line-height:1.7;color:var(--ok);word-break:break-all;">
+        if (data.action === 'rename') {<br>
+        &nbsp;&nbsp;const col = data.col || 5;<br>
+        &nbsp;&nbsp;sheet.getRange(data.rowIdx, col).setValue(data.newName);<br>
+        }
       </div>
     </div>`;
 }
