@@ -409,7 +409,24 @@ main { padding: 14px 16px; }
 .empty { text-align: center; padding: 40px 20px; color: var(--tx3); font-size: 11px; line-height: 1.8; }
 .empty big { display: block; font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: 36px; color: var(--b2); letter-spacing: .1em; margin-bottom: 8px; }
 
-/* ── SAVE FOOTER ─────────────────────── */
+#plan-footer {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  padding: 12px 16px; padding-bottom: calc(12px + env(safe-area-inset-bottom));
+  background: rgba(8,8,8,.97); backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px); border-top: 1px solid var(--bor); z-index: 90;
+}
+#plan-save-btn {
+  display: flex; align-items: center; justify-content: center; gap: 9px;
+  background: var(--acc); border: none; color: #000;
+  font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: 17px;
+  letter-spacing: 2px; padding: 14px; cursor: pointer; transition: all .2s;
+  width: 100%; border-radius: var(--r); text-transform: uppercase;
+  -webkit-tap-highlight-color: transparent;
+}
+#plan-save-btn:active  { transform: scale(.98); }
+#plan-save-btn:disabled { opacity: .4; cursor: not-allowed; transform: none; }
+#plan-save-btn.saving .spin-sm { display: block; }
+#plan-save-btn.saving .btn-lbl { display: none; }
 #save-footer {
   position: fixed; bottom: 0; left: 0; right: 0;
   padding: 12px 16px; padding-bottom: calc(12px + env(safe-area-inset-bottom));
@@ -626,7 +643,7 @@ main { padding: 14px 16px; }
 
 </main>
 
-<!-- SAVE FOOTER -->
+<!-- SAVE FOOTER (Training) -->
 <div id="save-footer">
   <button id="save-btn" onclick="saveAll()">
     <div class="spin-sm"></div>
@@ -636,6 +653,14 @@ main { padding: 14px 16px; }
     <div id="dot2" class="api-dot"></div>
     <span id="api-status-txt">API nicht verbunden — Setup öffnen</span>
   </div>
+</div>
+
+<!-- PLAN FOOTER (Planung) -->
+<div id="plan-footer" style="display:none;">
+  <button id="plan-save-btn" onclick="planSaveAll()">
+    <div class="spin-sm"></div>
+    <span class="btn-lbl">Alle Änderungen speichern</span>
+  </button>
 </div>
 
 <script>
@@ -1106,7 +1131,8 @@ function renderPlanCards() {
 
   const tagCard = document.createElement('div');
   tagCard.className = 'plcard open-pl';
-  tagCard.dataset.muscle = 'default';
+  tagCard.dataset.muscle  = 'default';
+  tagCard.dataset.rowIdx  = dayRowIdx;
   tagCard.id = 'pc-tag';
   tagCard.innerHTML =
     `<div class="plhead" onclick="togglePlanTag()">
@@ -1131,7 +1157,6 @@ function renderPlanCards() {
            <button class="pl-quick-btn" onclick="planSetDayType('Pause')">Pause</button>
            <button class="pl-quick-btn" onclick="planSetDayType('Ruhetag')">Ruhetag</button>
          </div>
-         <button class="pl-save-btn" onclick="planSaveDay(${dayRowIdx})">SPEICHERN</button>
        </div>
      </div>`;
   wrap.appendChild(tagCard);
@@ -1187,7 +1212,6 @@ function renderPlanCards() {
                placeholder="Übungsname eintragen…"
                oninput="planPreview(${ri})">
            </div>
-           <button class="pl-save-btn" onclick="planSave(${ri})">SPEICHERN</button>
          </div>
        </div>`;
     wrap.appendChild(card);
@@ -1214,65 +1238,61 @@ function planSetDayType(type) {
   if (inp) inp.value = type;
 }
 
-async function planSaveDay(dayRi) {
-  const n = document.getElementById('pld-name')?.value.trim();
-  if (!n) { toast('Kein Name eingetragen', 'warn'); return; }
-  if (/<|>|script/i.test(n)) { toast('Ungültiger Name', 'err'); return; }
-  const btn = document.querySelector('#pb-tag .pl-save-btn');
-  if (btn) { btn.textContent = '…'; btn.disabled = true; }
+// ════════════════════════════════════════════════════
+//  PLANUNG — Batch-Speichern (Tag + alle Übungen)
+// ════════════════════════════════════════════════════
+async function planSaveAll() {
+  const btn = document.getElementById('plan-save-btn');
+  const changes = [];
+
+  // 1. Tag-Name
+  const dayName = document.getElementById('pld-name')?.value.trim();
+  const dayRiEl = document.getElementById('pc-tag');
+  const dayRi   = parseInt(dayRiEl?.dataset.rowIdx || '0');
+  if (dayName && dayRi > 0) {
+    if (/<|>|script/i.test(dayName)) { toast('Ungültiger Tagesname', 'err'); return; }
+    changes.push({ rowIdx: dayRi, action: 'renameDay', newName: dayName });
+  }
+
+  // 2. Alle Übungsfelder
+  document.querySelectorAll('.plcard[id^="pc-"]:not(#pc-tag)').forEach(card => {
+    const ri = parseInt(card.id.replace('pc-', ''));
+    if (isNaN(ri)) return;
+    const n = document.getElementById('pln-' + ri)?.value.trim();
+    if (!n) return;
+    if (/<|>|script/i.test(n)) return;
+    changes.push({ rowIdx: ri, action: 'rename', newName: n });
+  });
+
+  if (!changes.length) { toast('Keine Änderungen', 'warn'); return; }
+
+  btn.classList.add('saving'); btn.disabled = true;
+
   try {
     await fetch(API, {
       method: 'POST', mode: 'no-cors',
       headers: { 'Content-Type': 'text/plain' },
-      body: JSON.stringify({ sheet: SHEET, rowIdx: dayRi, action: 'renameDay', newName: n })
+      body: JSON.stringify({ sheet: SHEET, planChanges: changes })
     });
-    toast('Gespeichert — lade neu…', 'ok');
+    toast(`${changes.length} Änderung${changes.length > 1 ? 'en' : ''} gespeichert — lade neu…`, 'ok');
     setTimeout(() => location.reload(), 900);
   } catch(_) {
     toast('Fehler beim Speichern', 'err');
-    if (btn) { btn.textContent = 'SPEICHERN'; btn.disabled = false; }
+    btn.classList.remove('saving'); btn.disabled = false;
   }
 }
 
 function togglePlan(ri) {
-  const card = document.getElementById('pc-' + ri);
-  const body = document.getElementById('pb-' + ri);
-  if (!card || !body) return;
-  card.classList.toggle('open-pl');
-  body.classList.toggle('open');
+  document.getElementById('pc-' + ri)?.classList.toggle('open-pl');
+  document.getElementById('pb-' + ri)?.classList.toggle('open');
 }
 
 function planPreview(ri) {
-  const val = document.getElementById('pln-' + ri)?.value.trim();
+  const val    = document.getElementById('pln-' + ri)?.value.trim();
   const nameEl = document.querySelector(`#pc-${ri} .pl-name`);
   if (!nameEl) return;
-  if (val) {
-    nameEl.textContent = val;
-    nameEl.classList.remove('empty');
-  } else {
-    nameEl.textContent = 'Übung eintragen…';
-    nameEl.classList.add('empty');
-  }
-}
-
-async function planSave(ri) {
-  const n = document.getElementById('pln-' + ri)?.value.trim();
-  if (!n) { toast('Kein Name eingetragen', 'warn'); return; }
-  if (/<|>|script/i.test(n)) { toast('Ungültiger Name', 'err'); return; }
-  const btn = document.querySelector(`#pb-${ri} .pl-save-btn`);
-  if (btn) { btn.textContent = '…'; btn.disabled = true; }
-  try {
-    await fetch(API, {
-      method: 'POST', mode: 'no-cors',
-      headers: { 'Content-Type': 'text/plain' },
-      body: JSON.stringify({ sheet: SHEET, rowIdx: ri, action: 'rename', newName: n })
-    });
-    toast('Gespeichert — lade neu…', 'ok');
-    setTimeout(() => location.reload(), 900);
-  } catch(_) {
-    toast('Fehler beim Speichern', 'err');
-    if (btn) { btn.textContent = 'SPEICHERN'; btn.disabled = false; }
-  }
+  nameEl.textContent = val || 'Übung eintragen…';
+  nameEl.classList.toggle('empty', !val);
 }
 
 // ════════════════════════════════════════════════════
@@ -1382,10 +1402,11 @@ function switchTab(id, el) {
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   document.getElementById('sec-' + id).classList.add('active');
   el.classList.add('active');
-  document.getElementById('save-footer').style.display = id==='training' ? 'block' : 'none';
-  if (id==='plan') renderPlan();
-  if (id==='pr')   renderPR();
-  if (id==='set')  renderSetup();
+  document.getElementById('save-footer').style.display  = id === 'training' ? 'block' : 'none';
+  document.getElementById('plan-footer').style.display  = id === 'plan'     ? 'block' : 'none';
+  if (id === 'plan') renderPlan();
+  if (id === 'pr')   renderPR();
+  if (id === 'set')  renderSetup();
 }
 
 
