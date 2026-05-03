@@ -370,6 +370,15 @@ main { padding: 14px 16px; }
   transition: opacity .15s; -webkit-tap-highlight-color: transparent;
 }
 .pl-save-btn:active { opacity: .8; }
+.pl-quick-row { display: flex; gap: 6px; flex-wrap: wrap; }
+.pl-quick-btn {
+  background: var(--s3); border: 1px solid var(--b2); color: var(--tx2);
+  font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: .08em;
+  padding: 6px 12px; border-radius: 6px; cursor: pointer;
+  transition: border-color .12s, color .12s, background .12s;
+  -webkit-tap-highlight-color: transparent;
+}
+.pl-quick-btn:active { border-color: var(--warn); color: var(--warn); background: rgba(255,170,0,.07); }
 
 /* Woche/Tag Nav im Planungsreiter */
 .plan-nav { margin-bottom: 12px; }
@@ -458,7 +467,11 @@ main { padding: 14px 16px; }
   padding: 13px; cursor: pointer; margin-top: 4px;
   -webkit-tap-highlight-color: transparent;
 }
-.setup-save-btn:active { opacity: .85; }
+.setup-inp-spaced  { margin-bottom: 10px; }
+.setup-info-box    { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--tx3); line-height: 2; }
+.setup-info-acc    { color: var(--acc); }
+.setup-info-tx2    { color: var(--tx2); }
+.setup-info-break  { word-break: break-all; }
 
 /* ── SETUP MODAL (Fallback bei erstem Start) ── */
 #setup-ov { position: fixed; inset: 0; z-index: 200; background: rgba(0,0,0,.88); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); display: none; align-items: flex-end; justify-content: center; }
@@ -992,7 +1005,7 @@ function renderWorkout() {
 }
 
 // ════════════════════════════════════════════════════
-//  PLANUNG — Woche/Tag-Selector + Akkordeon-Cards
+//  PLANUNG — Woche/Tag-Selector + Tag-Edit + Übungs-Cards
 // ════════════════════════════════════════════════════
 function renderPlan() {
   const container = document.getElementById('view-plan');
@@ -1003,40 +1016,34 @@ function renderPlan() {
     return;
   }
 
-  // Woche/Tag Nav
-  const nav = document.createElement('div');
-  nav.className = 'plan-nav';
-
-  // Woche-Buttons
+  // Woche-Selector
   const wRow = document.createElement('div');
-  wRow.className = 'sel-row';
-  wRow.style.marginBottom = '6px';
+  wRow.className = 'sel-row week-sel-row';
   const wLbl = document.createElement('span');
   wLbl.className = 'sel-label'; wLbl.textContent = 'Woche';
   const wBtns = document.createElement('div');
-  wBtns.style.cssText = 'display:flex;gap:4px;flex-wrap:wrap;';
+  wBtns.className = 'sel-btns';
   wRow.appendChild(wLbl); wRow.appendChild(wBtns);
 
-  // Tag-Buttons
+  // Tag-Selector
   const dRow = document.createElement('div');
-  dRow.className = 'sel-row';
-  dRow.style.marginBottom = '12px';
+  dRow.className = 'sel-row day-sel-row';
   const dLbl = document.createElement('span');
   dLbl.className = 'sel-label'; dLbl.textContent = 'Tag';
   const dBtns = document.createElement('div');
+  dBtns.className = 'sel-btns';
   dBtns.id = 'plan-day-btns';
-  dBtns.style.cssText = 'display:flex;gap:4px;flex-wrap:wrap;';
   dRow.appendChild(dLbl); dRow.appendChild(dBtns);
 
-  nav.appendChild(wRow); nav.appendChild(dRow);
-  container.appendChild(nav);
+  container.appendChild(wRow);
+  container.appendChild(dRow);
 
-  // Cards-Container
+  // Cards-Container (Tag-Edit + Übungen)
   const cardsWrap = document.createElement('div');
   cardsWrap.id = 'plan-cards';
   container.appendChild(cardsWrap);
 
-  // Init: erste Woche/Tag falls noch nicht gesetzt
+  // Init
   if (!planWeek || !structure.find(w => w.week === planWeek)) {
     planWeek = structure[0].week;
     planDay  = structure[0].days[0]?.day || '';
@@ -1062,7 +1069,7 @@ function renderPlan() {
     dBtns.innerHTML = '';
     const wObj = structure.find(w => w.week === planWeek);
     if (!wObj) return;
-    wObj.days.forEach((dObj, di) => {
+    wObj.days.forEach(dObj => {
       const btn = document.createElement('button');
       btn.className = 'dbtn' + (dObj.day === planDay ? ' active' : '');
       const short = dObj.day.includes(':') ? dObj.day.split(':')[1].split('(')[0].trim() : dObj.day;
@@ -1082,22 +1089,67 @@ function renderPlanCards() {
   const wrap = document.getElementById('plan-cards');
   if (!wrap) return;
   wrap.innerHTML = '';
-  let inDay = false, idx = 0, lastWeekCol = '', lastDay = '';
+
+  // ── Tag-Edit-Card ──────────────────────────────────
+  // Zeile im rawData finden die planDay in Spalte D enthält
+  let dayRowIdx = -1, lastWC = '';
+  rawData.forEach((row, i) => {
+    const w = (row[0]||'').trim(), d = (row[3]||'').trim();
+    if (w === 'Woche' || d === 'Trainingstag') return;
+    if (w) lastWC = w;
+    if (d && d === planDay && lastWC === planWeek) {
+      if (dayRowIdx === -1) dayRowIdx = i + 3;
+    }
+  });
+
+  const isRest = planDay.toLowerCase().includes('rest') || planDay.toLowerCase().includes('pause') || planDay.toLowerCase().includes('ruhe');
+
+  const tagCard = document.createElement('div');
+  tagCard.className = 'plcard open-pl';
+  tagCard.dataset.muscle = 'default';
+  tagCard.id = 'pc-tag';
+  tagCard.innerHTML =
+    `<div class="plhead" onclick="togglePlanTag()">
+       <div class="plhead-left">
+         <div class="pl-num">📅</div>
+         <div class="pl-name">${esc(planDay)}</div>
+         <div class="pl-muscle${isRest ? ' set' : ''}">${isRest ? 'REST / PAUSE' : 'Trainingstag'}</div>
+       </div>
+       <div class="plhead-right">
+         <svg class="pl-chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+       </div>
+     </div>
+     <div class="plbody open" id="pb-tag">
+       <div class="pl-edit-wrap">
+         <div>
+           <div class="pl-field-lbl">Tagesname (Spalte D)</div>
+           <input class="pl-field-inp" id="pld-name" type="text"
+             value="${escA(planDay)}" placeholder="z.B. Tag 1: Push (Brust/Schulter)">
+         </div>
+         <div class="pl-quick-row">
+           <button class="pl-quick-btn" onclick="planSetDayType('REST')">REST</button>
+           <button class="pl-quick-btn" onclick="planSetDayType('Pause')">Pause</button>
+           <button class="pl-quick-btn" onclick="planSetDayType('Ruhetag')">Ruhetag</button>
+         </div>
+         <button class="pl-save-btn" onclick="planSaveDay(${dayRowIdx})">SPEICHERN</button>
+       </div>
+     </div>`;
+  wrap.appendChild(tagCard);
+
+  // ── Übungs-Cards ───────────────────────────────────
+  let inDay = false, idx = 0, lastWeekCol = '';
 
   rawData.forEach((row, i) => {
     const w = (row[0]||'').trim();
     const d = (row[3]||'').trim();
     if (w === 'Woche' || d === 'Trainingstag') return;
     if (w) lastWeekCol = w;
-    if (d) {
-      lastDay = d;
-      inDay = (d === planDay && lastWeekCol === planWeek);
-    }
+    if (d) inDay = (d === planDay && lastWeekCol === planWeek);
     if (!inDay) return;
 
     const name   = (row[4]||'').trim();
     const muscle = (row[5]||'').trim();
-    if (!name || name === 'Übung' ) return;
+    if (!name || name === 'Übung') return;
 
     const progRaw = (row[15]||'').trim();
     const ri      = i + 3;
@@ -1113,13 +1165,13 @@ function renderPlanCards() {
     card.className = 'plcard' + (isFirst ? ' open-pl' : '');
     card.dataset.muscle = mk;
     card.id = 'pc-' + ri;
-    card.style.animationDelay = Math.min(idx * .05, .3) + 's';
+    card.style.animationDelay = Math.min(idx * .04, .25) + 's';
     card.innerHTML =
       `<div class="plhead" onclick="togglePlan(${ri})">
          <div class="plhead-left">
            <div class="pl-num">${idx}.</div>
            <div class="pl-name${isNamed ? '' : ' empty'}">${esc(isNamed ? name : 'Übung eintragen…')}</div>
-           ${muscle ? `<div class="pl-muscle set">${esc(muscle)}</div>` : '<div class="pl-muscle">— Muskelgruppe fehlt</div>'}
+           ${muscle ? `<div class="pl-muscle set">${esc(muscle)}</div>` : '<div class="pl-muscle">— Muskel fehlt</div>'}
          </div>
          <div class="plhead-right">
            <span class="prog-arrow ${pCls}">${pLabel}</span>
@@ -1142,7 +1194,43 @@ function renderPlanCards() {
   });
 
   if (!idx) {
-    wrap.innerHTML = '<div class="empty"><big>LEER</big>Kein Tag ausgewählt oder keine Übungen vorhanden.</div>';
+    const empty = document.createElement('div');
+    empty.className = 'empty';
+    empty.innerHTML = '<big>LEER</big>Keine Übungen für diesen Tag.';
+    wrap.appendChild(empty);
+  }
+}
+
+function togglePlanTag() {
+  const card = document.getElementById('pc-tag');
+  const body = document.getElementById('pb-tag');
+  if (!card || !body) return;
+  card.classList.toggle('open-pl');
+  body.classList.toggle('open');
+}
+
+function planSetDayType(type) {
+  const inp = document.getElementById('pld-name');
+  if (inp) inp.value = type;
+}
+
+async function planSaveDay(dayRi) {
+  const n = document.getElementById('pld-name')?.value.trim();
+  if (!n) { toast('Kein Name eingetragen', 'warn'); return; }
+  if (/<|>|script/i.test(n)) { toast('Ungültiger Name', 'err'); return; }
+  const btn = document.querySelector('#pb-tag .pl-save-btn');
+  if (btn) { btn.textContent = '…'; btn.disabled = true; }
+  try {
+    await fetch(API, {
+      method: 'POST', mode: 'no-cors',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify({ sheet: SHEET, rowIdx: dayRi, action: 'renameDay', newName: n })
+    });
+    toast('Gespeichert — lade neu…', 'ok');
+    setTimeout(() => location.reload(), 900);
+  } catch(_) {
+    toast('Fehler beim Speichern', 'err');
+    if (btn) { btn.textContent = 'SPEICHERN'; btn.disabled = false; }
   }
 }
 
@@ -1341,13 +1429,11 @@ function renderSetup() {
         <div class="setup-status-txt" id="set-status-txt">${esc(statusTxt)}</div>
       </div>
       <div class="setup-lbl">Tabellenblatt</div>
-      <input class="setup-inp" id="set-sheet" type="text"
-        value="${escA(SHEET)}" placeholder="ZYKLUS MASTER"
-        style="margin-bottom:10px;">
+      <input class="setup-inp setup-inp-spaced" id="set-sheet" type="text"
+        value="${escA(SHEET)}" placeholder="ZYKLUS MASTER">
       <div class="setup-lbl">Apps Script URL</div>
-      <input class="setup-inp" id="set-url" type="url"
-        value="${escA(API)}" placeholder="https://script.google.com/macros/s/…/exec"
-        style="margin-bottom:10px;">
+      <input class="setup-inp setup-inp-spaced" id="set-url" type="url"
+        value="${escA(API)}" placeholder="https://script.google.com/macros/s/…/exec">
       <button class="setup-save-btn" onclick="setupSaveInline()">SPEICHERN &amp; NEU LADEN</button>
       <button class="setup-test-btn" id="set-test-btn" onclick="setupTest()">Verbindung testen</button>
     </div>
@@ -1356,10 +1442,10 @@ function renderSetup() {
         <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
         Info
       </div>
-      <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--tx3);line-height:2;">
-        Version: <span style="color:var(--acc);">V12.0</span><br>
-        Zeilen im Speicher: <span style="color:var(--tx2);">${rawData.length}</span><br>
-        Sheet-ID: <span style="color:var(--tx2);word-break:break-all;">1htGms-zv9-RKl4XyapLeOv9sYS4OXDz_xYzGJdGt_v4</span>
+      <div class="setup-info-box">
+        Version: <span class="setup-info-acc">V12.0</span><br>
+        Zeilen im Speicher: <span class="setup-info-tx2">${rawData.length}</span><br>
+        Sheet-ID: <span class="setup-info-tx2 setup-info-break">1htGms-zv9-RKl4XyapLeOv9sYS4OXDz_xYzGJdGt_v4</span>
       </div>
     </div>`;
 }
