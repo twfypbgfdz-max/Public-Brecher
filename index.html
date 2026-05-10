@@ -6,11 +6,11 @@
 <meta name="theme-color" content="#080808">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>PB V15.1</title>
+<title>PB V15.1.1</title>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;700;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 /* ════════════════════════════════════════
-   PLATEAU BRECHER V15.1 — PUBLIC
+   PLATEAU BRECHER V15.1.1 — PUBLIC
    Barlow Condensed + DM Mono
    Layout: Personal App V9.0 · Data: Google Sheet
    ════════════════════════════════════════ */
@@ -510,7 +510,7 @@ main { padding: 14px 16px; }
 <!-- HEADER -->
 <header>
   <div>
-    <div class="logo">PB<span>V15.1</span></div>
+    <div class="logo">PB<span>V15.1.1</span></div>
     <span class="hbadge" id="today-badge">REST</span>
   </div>
   <div class="hdr-r">
@@ -627,24 +627,30 @@ main { padding: 14px 16px; }
 // ============================================================
 //  ADMIN-LOGGING
 // ============================================================
-const ADMIN_LOG_URL = 'https://script.google.com/macros/s/AKfycbwonJnXhw3k0saV9DdqU0t5U6fY4AHW8sdoH6Oq1WuDD3ILH_bPN-JOkl9Znu7F_sAH/exec';
-const APP_ENV       = 'PUBLIC';
-const APP_VERSION   = 'V15.1';
+const PUBLIC_ADMIN_LOG_URL = 'https://script.google.com/macros/s/AKfycbwonJnXhw3k0saV9DdqU0t5U6fY4AHW8sdoH6Oq1WuDD3ILH_bPN-JOkl9Znu7F_sAH/exec';
+const APP_ENV              = 'PUBLIC';
+const APP_VERSION          = 'V15.1.1';
+function sanitizeAdminValue(value, maxLen=500) {
+  return String(value || '')
+    .replace(/(gsk_|AIza)[a-zA-Z0-9_-]+/g, '[REDACTED]')
+    .replace(/https:\/\/script\.google\.com\/macros\/s\/[^"'\s<>]+/g, 'https://script.google.com/macros/s/[REDACTED]')
+    .replace(/\/spreadsheets\/d\/[a-zA-Z0-9_-]+/g, '/spreadsheets/d/[REDACTED]')
+    .substring(0, maxLen);
+}
 function logToAdmin(type, message, opts={}) {
   try {
-    const cleanMsg = String(message||'').replace(/(gsk_|AIza)[a-zA-Z0-9_-]+/g,'[REDACTED]').substring(0,500);
     const payload = {
       appVersion: APP_VERSION,
       env:        APP_ENV,
       type:       String(type||'JS_ERROR').toUpperCase(),
-      message:    cleanMsg,
-      detail:     String(opts.detail||'').substring(0,500),
-      url:        String(opts.url||location.href).substring(0,300),
+      message:    sanitizeAdminValue(message, 500),
+      detail:     sanitizeAdminValue(opts.detail, 500),
+      url:        sanitizeAdminValue(opts.url||location.href, 300),
       device:     navigator.userAgent.slice(0,300),
-      stack:      String(opts.stack||'').substring(0,800),
+      stack:      sanitizeAdminValue(opts.stack, 800),
       httpStatus: String(opts.httpStatus||'')
     };
-    fetch(ADMIN_LOG_URL, { method:'POST', mode:'no-cors', headers:{'Content-Type':'text/plain'}, body:JSON.stringify(payload) }).catch(()=>{});
+    fetch(PUBLIC_ADMIN_LOG_URL, { method:'POST', mode:'no-cors', headers:{'Content-Type':'text/plain'}, body:JSON.stringify(payload) }).catch(()=>{});
   } catch(_) {}
 }
 window.onerror = function(msg, url, line, col, error) {
@@ -658,8 +664,30 @@ window.addEventListener('unhandledrejection', function(e) {
 // ════════════════════════════════════════════════════
 //  STATE
 // ════════════════════════════════════════════════════
-let API   = localStorage.getItem('pb_api')   || '';
-let SHEET = localStorage.getItem('pb_sheet') || 'ZYKLUS MASTER';
+const LS_KEYS = {
+  api: 'pb_public_api',
+  sheet: 'pb_public_sheet',
+  lastSaved: 'pb_public_last_saved',
+  test: '_pb_public_test'
+};
+function migratePublicStorage() {
+  try {
+    const migrations = [
+      ['pb_api', LS_KEYS.api],
+      ['pb_sheet', LS_KEYS.sheet],
+      ['pb_last_saved', LS_KEYS.lastSaved]
+    ];
+    migrations.forEach(([oldKey, publicKey]) => {
+      if (!localStorage.getItem(publicKey)) {
+        const oldValue = localStorage.getItem(oldKey);
+        if (oldValue) localStorage.setItem(publicKey, oldValue);
+      }
+    });
+  } catch (_) {}
+}
+migratePublicStorage();
+let API   = localStorage.getItem(LS_KEYS.api)   || '';
+let SHEET = localStorage.getItem(LS_KEYS.sheet) || 'ZYKLUS MASTER';
 let rawData = [], curDay = '', curWeek = '';
 // sheetRowMap[i] = echte Sheet-Zeile für rawData[i]
 // rawData[0] = Sheet-Zeile 4 → Offset 4; Apps Script liefert Zeilen ab 1
@@ -698,7 +726,7 @@ async function runDiag(manual = false) {
     diagAdd('ok', 'Datumsformat korrekt', 'Heute: ' + td);
   } catch (e) { diagAdd('err', 'Datumsformat-Fehler', e.message); }
   try {
-    localStorage.setItem('_pb_test','1'); localStorage.removeItem('_pb_test');
+    localStorage.setItem(LS_KEYS.test,'1'); localStorage.removeItem(LS_KEYS.test);
     diagAdd('ok', 'localStorage verfügbar', '');
   } catch (e) { diagAdd('err', 'localStorage nicht verfügbar', 'Privater Modus?'); }
   if (API && API.startsWith('https://')) {
@@ -1227,7 +1255,7 @@ async function saveAll() {
   if (ok > 0) {
     const n = new Date();
     const ts = String(n.getHours()).padStart(2,'0') + ':' + String(n.getMinutes()).padStart(2,'0');
-    localStorage.setItem('pb_last_saved', ts);
+    localStorage.setItem(LS_KEYS.lastSaved, ts);
     setLastSaved(ts);
   }
 
@@ -1468,8 +1496,8 @@ function setupSave() {
   const sh=document.getElementById('si-sheet').value.trim();
   const url=document.getElementById('si-url').value.trim();
   if (url&&!url.startsWith('https://')) { toast('URL muss mit https:// beginnen','err'); return; }
-  if (sh)  { SHEET=sh;  localStorage.setItem('pb_sheet',sh); }
-  if (url) { API=url;   localStorage.setItem('pb_api',url); }
+  if (sh)  { SHEET=sh;  localStorage.setItem(LS_KEYS.sheet,sh); }
+  if (url) { API=url;   localStorage.setItem(LS_KEYS.api,url); }
   setupClose(); location.reload();
 }
 
@@ -1533,7 +1561,7 @@ function doUpdate() {
 }
 
 // Beim Start: letzten Speicher-Timestamp wiederherstellen
-const _lsTs = localStorage.getItem('pb_last_saved');
+const _lsTs = localStorage.getItem(LS_KEYS.lastSaved);
 if (_lsTs) setLastSaved(_lsTs);
 
 // Beim Start + alle 10 Minuten
