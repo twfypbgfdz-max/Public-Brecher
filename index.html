@@ -6,11 +6,11 @@
 <meta name="theme-color" content="#080808">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>PB V15.0</title>
+<title>PB V15.1</title>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;700;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 /* ════════════════════════════════════════
-   PLATEAU BRECHER V15.0 — PUBLIC
+   PLATEAU BRECHER V15.1 — PUBLIC
    Barlow Condensed + DM Mono
    Layout: Personal App V9.0 · Data: Google Sheet
    ════════════════════════════════════════ */
@@ -510,7 +510,7 @@ main { padding: 14px 16px; }
 <!-- HEADER -->
 <header>
   <div>
-    <div class="logo">PB<span>V15.0</span></div>
+    <div class="logo">PB<span>V15.1</span></div>
     <span class="hbadge" id="today-badge">REST</span>
   </div>
   <div class="hdr-r">
@@ -625,17 +625,34 @@ main { padding: 14px 16px; }
 
 <script>
 // ============================================================
-//  ADMIN-LOGGING — nicht anfassen
+//  ADMIN-LOGGING
 // ============================================================
-const ADMIN_URL   = 'https://script.google.com/macros/s/AKfycbwhSOHROvw6VgNyd248plmIsnwcbvTCEcHynhPkEs0uEXYhSVT7tqXujBCdoDyxe8za/exec';
-const APP_ENV     = 'PUBLIC';
-const APP_VERSION = '15.0';
+const ADMIN_LOG_URL = 'https://script.google.com/macros/s/AKfycbwonJnXhw3k0saV9DdqU0t5U6fY4AHW8sdoH6Oq1WuDD3ILH_bPN-JOkl9Znu7F_sAH/exec';
+const APP_ENV       = 'PUBLIC';
+const APP_VERSION   = 'V15.1';
+function logToAdmin(type, message, opts={}) {
+  try {
+    const cleanMsg = String(message||'').replace(/(gsk_|AIza)[a-zA-Z0-9_-]+/g,'[REDACTED]').substring(0,500);
+    const payload = {
+      appVersion: APP_VERSION,
+      env:        APP_ENV,
+      type:       String(type||'JS_ERROR').toUpperCase(),
+      message:    cleanMsg,
+      detail:     String(opts.detail||'').substring(0,500),
+      url:        String(opts.url||location.href).substring(0,300),
+      device:     navigator.userAgent.slice(0,300),
+      stack:      String(opts.stack||'').substring(0,800),
+      httpStatus: String(opts.httpStatus||'')
+    };
+    fetch(ADMIN_LOG_URL, { method:'POST', mode:'no-cors', headers:{'Content-Type':'text/plain'}, body:JSON.stringify(payload) }).catch(()=>{});
+  } catch(_) {}
+}
 window.onerror = function(msg, url, line, col, error) {
-  fetch(ADMIN_URL, { method:'POST', mode:'no-cors', body: JSON.stringify({ type:'log', env:APP_ENV, appVersion:APP_VERSION, error:msg, device:navigator.userAgent.slice(0,80), stack:error?error.stack:'Line:'+line }) });
+  logToAdmin('JS_ERROR', msg, { detail:'line:'+line, stack: error ? error.stack : '' });
   return false;
 };
 window.addEventListener('unhandledrejection', function(e) {
-  fetch(ADMIN_URL, { method:'POST', mode:'no-cors', body: JSON.stringify({ type:'log', env:APP_ENV, appVersion:APP_VERSION, error:'ASYNC:'+String(e.reason), device:navigator.userAgent.slice(0,80), stack:'unhandledrejection' }) });
+  logToAdmin('ASYNC_ERROR', String(e.reason));
 });
 
 // ════════════════════════════════════════════════════
