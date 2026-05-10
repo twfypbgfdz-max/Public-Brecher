@@ -6,11 +6,11 @@
 <meta name="theme-color" content="#080808">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>PB V15.1.1</title>
+<title>PB V15.1.2</title>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;700;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 /* ════════════════════════════════════════
-   PLATEAU BRECHER V15.1.1 — PUBLIC
+   PLATEAU BRECHER V15.1.2 — PUBLIC
    Barlow Condensed + DM Mono
    Layout: Personal App V9.0 · Data: Google Sheet
    ════════════════════════════════════════ */
@@ -510,7 +510,7 @@ main { padding: 14px 16px; }
 <!-- HEADER -->
 <header>
   <div>
-    <div class="logo">PB<span>V15.1.1</span></div>
+    <div class="logo">PB<span>V15.1.2</span></div>
     <span class="hbadge" id="today-badge">REST</span>
   </div>
   <div class="hdr-r">
@@ -629,7 +629,7 @@ main { padding: 14px 16px; }
 // ============================================================
 const PUBLIC_ADMIN_LOG_URL = 'https://script.google.com/macros/s/AKfycbwonJnXhw3k0saV9DdqU0t5U6fY4AHW8sdoH6Oq1WuDD3ILH_bPN-JOkl9Znu7F_sAH/exec';
 const APP_ENV              = 'PUBLIC';
-const APP_VERSION          = 'V15.1.1';
+const APP_VERSION          = 'V15.1.2';
 function sanitizeAdminValue(value, maxLen=500) {
   return String(value || '')
     .replace(/(gsk_|AIza)[a-zA-Z0-9_-]+/g, '[REDACTED]')
@@ -1470,9 +1470,17 @@ function renderCoach() {
 // ════════════════════════════════════════════════════
 function switchTab(id, el) {
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  document.getElementById('sec-' + id).classList.add('active');
-  el.classList.add('active');
-  document.getElementById('save-footer').style.display = id==='training' ? 'block' : 'none';
+  document.querySelectorAll('.sec').forEach(s => s.classList.remove('active'));
+
+  const tab = el || document.querySelector(`.tab[onclick*="switchTab('${id}')"]`);
+  if (tab) tab.classList.add('active');
+
+  const sec = document.getElementById('sec-' + id);
+  if (sec) sec.classList.add('active');
+
+  const saveFooter = document.getElementById('save-footer');
+  if (saveFooter) saveFooter.style.display = id === 'training' ? 'block' : 'none';
+
   if (id==='plan')  { PS.level='weeks'; renderPlan(); }
   if (id==='pr')    renderPR();
   if (id==='coach') renderCoach();
