@@ -6,11 +6,11 @@
 <meta name="theme-color" content="#080808">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>PB V12.0</title>
+<title>PB V14.1</title>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;700;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 /* ════════════════════════════════════════
-   PLATEAU BRECHER V12.0 — PUBLIC
+   PLATEAU BRECHER V14.1 — PUBLIC
    Barlow Condensed + DM Mono
    Layout: Personal App V9.0 · Data: Google Sheet
    ════════════════════════════════════════ */
@@ -101,6 +101,26 @@ body {
 #toast.err  { border-color: var(--err);  color: var(--err); }
 #toast.warn { border-color: var(--warn); color: var(--warn); }
 
+/* ── UPDATE BANNER ───────────────────── */
+#upd-banner {
+  display: none;
+  background: var(--acc); color: #000;
+  padding: 8px 16px;
+  font-family: 'DM Mono', monospace; font-size: 10px;
+  letter-spacing: .04em;
+  align-items: center; justify-content: space-between; gap: 10px;
+  position: sticky; top: 49px; z-index: 98;
+}
+#upd-banner.show { display: flex; }
+#upd-banner-btn {
+  background: #000; color: var(--acc);
+  border: none; border-radius: 4px;
+  font-family: 'DM Mono', monospace; font-size: 9px;
+  font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+  padding: 5px 10px; cursor: pointer; flex-shrink: 0;
+  white-space: nowrap;
+}
+
 /* ── HEADER ──────────────────────────── */
 header {
   display: flex; align-items: center; justify-content: space-between;
@@ -152,13 +172,6 @@ main { padding: 14px 16px; }
 /* ── SELECTOR ROWS ───────────────────── */
 .sel-row { display: flex; gap: 4px; margin-bottom: 8px; flex-wrap: wrap; align-items: center; }
 .sel-label { font-family: 'DM Mono', monospace; font-size: 8px; color: var(--tx3); text-transform: uppercase; letter-spacing: 2px; min-width: 48px; }
-.sel-btns { display: flex; gap: 4px; flex-wrap: wrap; }
-.week-sel-row { margin-bottom: 6px; }
-.day-sel-row  { margin-bottom: 10px; }
-.bw-val-row   { display: flex; align-items: baseline; }
-.api-dot      { width: 6px; height: 6px; border-radius: 50%; background: var(--tx3); flex-shrink: 0; }
-.api-dot.ok   { background: var(--ok); box-shadow: 0 0 6px rgba(0,230,118,.4); }
-.api-dot.err  { background: var(--err); }
 
 /* ── DAY BTNS ────────────────────────── */
 .dbtn {
@@ -309,79 +322,45 @@ main { padding: 14px 16px; }
 }
 
 /* ── PLANUNG ─────────────────────────── */
-.plan-crumb { display: flex; align-items: center; gap: 6px; padding: 4px 0 10px; font-size: 9px; letter-spacing: .1em; text-transform: uppercase; }
+.plan-crumb { display: flex; align-items: center; gap: 6px; padding: 10px 0 6px; font-size: 9px; letter-spacing: .1em; text-transform: uppercase; }
 .plan-crumb-link { color: var(--acc); cursor: pointer; opacity: .7; transition: opacity .15s; }
 .plan-crumb-link:active { opacity: 1; }
 .plan-crumb-sep { color: var(--tx3); }
-
-/* Plan-Card — identisch excard aber mit Edit-Body */
-.plcard {
-  background: var(--s1); border: 1px solid var(--bor);
-  margin-bottom: 7px; position: relative; overflow: hidden;
-  border-radius: var(--r); transition: border-color .2s;
-}
-.plcard::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--bor); transition: background .2s; }
-.plcard[data-muscle="Schultern"]::before { background: #ffd54f; }
-.plcard[data-muscle="Brust"]::before     { background: #ef5350; }
-.plcard[data-muscle="Trizeps"]::before   { background: #ab47bc; }
-.plcard[data-muscle="Rücken"]::before    { background: #42a5f5; }
-.plcard[data-muscle="Bizeps"]::before    { background: #26c6da; }
-.plcard[data-muscle="Beine"]::before     { background: #66bb6a; }
-.plcard[data-muscle="Bauch"]::before     { background: #ff7043; }
-.plcard[data-muscle="default"]::before   { background: var(--bor); }
-.plcard.open-pl { border-color: var(--b2); }
-.plcard.open-pl::before { background: var(--acc); }
-
-.plhead {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 12px 13px 12px 16px; cursor: pointer; gap: 8px;
-  -webkit-tap-highlight-color: transparent;
-}
-.plhead:active { background: var(--s2); }
-.plhead-left { flex: 1; min-width: 0; }
-.pl-num { font-family: 'DM Mono', monospace; font-size: 9px; color: var(--tx3); margin-bottom: 1px; }
-.pl-name { font-size: 13px; font-weight: 500; line-height: 1.3; color: var(--tx); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.pl-name.empty { color: var(--tx3); font-style: italic; }
-.pl-muscle { font-size: 8px; color: var(--tx3); letter-spacing: .1em; text-transform: uppercase; margin-top: 2px; }
-.pl-muscle.set { color: var(--acc); opacity: .7; }
-.plhead-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
-.pl-chevron { width: 16px; height: 16px; flex-shrink: 0; color: var(--tx3); transition: transform .28s ease, color .15s; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-.plcard.open-pl .pl-chevron { transform: rotate(180deg); color: var(--acc); }
-
-.plbody { max-height: 0; overflow: hidden; transition: max-height .35s cubic-bezier(.4,0,.2,1); border-top: 0px solid var(--bor); }
-.plbody.open { max-height: 300px; border-top: 1px solid var(--bor); }
-
-/* Edit-Felder im Planungs-Body */
-.pl-edit-wrap { padding: 12px 14px 14px; display: flex; flex-direction: column; gap: 10px; }
-.pl-field-lbl { font-family: 'DM Mono', monospace; font-size: 8px; color: var(--tx3); letter-spacing: .12em; text-transform: uppercase; margin-bottom: 4px; }
-.pl-field-inp {
-  width: 100%; background: var(--s3); border: 1px solid var(--b2);
-  border-radius: 6px; color: var(--tx);
-  font-family: 'DM Mono', monospace; font-size: 13px;
-  padding: 10px 12px; outline: none; transition: border-color .15s;
-}
-.pl-field-inp:focus { border-color: var(--acc); }
-.pl-field-inp::placeholder { color: var(--tx3); font-size: 11px; }
-.pl-save-btn {
-  width: 100%; background: var(--acc); color: #000; border: none;
-  border-radius: var(--r); font-family: 'Barlow Condensed', sans-serif;
-  font-weight: 900; font-size: 16px; letter-spacing: .12em;
-  padding: 11px; cursor: pointer; text-transform: uppercase;
-  transition: opacity .15s; -webkit-tap-highlight-color: transparent;
-}
-.pl-save-btn:active { opacity: .8; }
-.pl-quick-row { display: flex; gap: 6px; flex-wrap: wrap; }
-.pl-quick-btn {
-  background: var(--s3); border: 1px solid var(--b2); color: var(--tx2);
-  font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: .08em;
-  padding: 6px 12px; border-radius: 6px; cursor: pointer;
-  transition: border-color .12s, color .12s, background .12s;
-  -webkit-tap-highlight-color: transparent;
-}
-.pl-quick-btn:active { border-color: var(--warn); color: var(--warn); background: rgba(255,170,0,.07); }
-
-/* Woche/Tag Nav im Planungsreiter */
-.plan-nav { margin-bottom: 12px; }
+.plan-crumb-cur { color: var(--tx2); }
+.plan-box { background: var(--s1); border: 1px solid var(--bor); border-radius: var(--r); overflow: hidden; }
+.pw-item { display: flex; align-items: center; padding: 14px; cursor: pointer; border-bottom: 1px solid var(--bor); transition: background .12s; }
+.pw-item:last-child { border-bottom: none; }
+.pw-item:active { background: var(--s3); }
+.pw-left { flex: 1; }
+.pw-name { font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: 18px; letter-spacing: .08em; text-transform: uppercase; color: var(--tx); }
+.pw-meta { font-size: 8px; color: var(--tx3); letter-spacing: .06em; margin-top: 3px; }
+.pw-arr { font-size: 16px; color: var(--tx3); margin-left: 8px; }
+.pd-item { display: flex; align-items: center; padding: 13px 14px; cursor: pointer; border-bottom: 1px solid var(--bor); transition: background .12s; }
+.pd-item:last-child { border-bottom: none; }
+.pd-item:active { background: var(--s3); }
+.pd-left { flex: 1; display: flex; align-items: center; gap: 10px; }
+.pd-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--bor); flex-shrink: 0; }
+.pd-dot.has { background: var(--acc); box-shadow: 0 0 5px var(--acc); }
+.pd-name { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 16px; letter-spacing: .08em; text-transform: uppercase; color: var(--tx2); }
+.pd-count { font-size: 9px; color: var(--tx3); letter-spacing: .06em; }
+.pd-arr { font-size: 14px; color: var(--tx3); margin-left: 8px; }
+.pe-item { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-bottom: 1px solid var(--bor); }
+.pe-item:last-child { border-bottom: none; }
+.pe-num { font-size: 9px; color: var(--tx3); width: 18px; text-align: right; flex-shrink: 0; }
+.pe-info { flex: 1; min-width: 0; }
+.pe-name { font-family: 'Barlow Condensed', sans-serif; font-size: 15px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--tx3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pe-name.named { color: var(--tx); }
+.pe-muscle { font-size: 8px; color: var(--tx3); letter-spacing: .08em; text-transform: uppercase; margin-top: 1px; }
+.pe-muscle.has { color: var(--acc); opacity: .7; }
+.pe-prog { font-size: 13px; flex-shrink: 0; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; border-radius: 4px; }
+.pe-prog.up { color: var(--ok);  background: rgba(0,230,118,.1); }
+.pe-prog.dn { color: var(--err); background: rgba(255,68,68,.1); }
+.pe-prog.eq { color: var(--tx3); background: var(--s3); }
+.edit-btn { background: var(--s3); border: 1px solid var(--b2); color: var(--tx2); font-family: 'DM Mono', monospace; font-size: 8px; letter-spacing: .08em; padding: 5px 8px; border-radius: 4px; cursor: pointer; flex-shrink: 0; transition: border-color .12s, color .12s; }
+.edit-btn:active { border-color: var(--acc); color: var(--acc); }
+.edit-btn-muscle { border-color: transparent; color: var(--tx3); }
+.edit-btn-muscle:active { border-color: var(--acc); color: var(--acc); }
+.pe-btns { display: flex; gap: 4px; flex-shrink: 0; }
 
 /* ── PR-SEITE ─────────────────────────── */
 .pr-filter { display: flex; gap: 6px; flex-wrap: wrap; padding: 4px 0 12px; }
@@ -409,24 +388,7 @@ main { padding: 14px 16px; }
 .empty { text-align: center; padding: 40px 20px; color: var(--tx3); font-size: 11px; line-height: 1.8; }
 .empty big { display: block; font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: 36px; color: var(--b2); letter-spacing: .1em; margin-bottom: 8px; }
 
-#plan-footer {
-  position: fixed; bottom: 0; left: 0; right: 0;
-  padding: 12px 16px; padding-bottom: calc(12px + env(safe-area-inset-bottom));
-  background: rgba(8,8,8,.97); backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px); border-top: 1px solid var(--bor); z-index: 90;
-}
-#plan-save-btn {
-  display: flex; align-items: center; justify-content: center; gap: 9px;
-  background: var(--acc); border: none; color: #000;
-  font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: 17px;
-  letter-spacing: 2px; padding: 14px; cursor: pointer; transition: all .2s;
-  width: 100%; border-radius: var(--r); text-transform: uppercase;
-  -webkit-tap-highlight-color: transparent;
-}
-#plan-save-btn:active  { transform: scale(.98); }
-#plan-save-btn:disabled { opacity: .4; cursor: not-allowed; transform: none; }
-#plan-save-btn.saving .spin-sm { display: block; }
-#plan-save-btn.saving .btn-lbl { display: none; }
+/* ── SAVE FOOTER ─────────────────────── */
 #save-footer {
   position: fixed; bottom: 0; left: 0; right: 0;
   padding: 12px 16px; padding-bottom: calc(12px + env(safe-area-inset-bottom));
@@ -448,49 +410,7 @@ main { padding: 14px 16px; }
 #save-btn.saving .btn-lbl { display: none; }
 .api-status { display: flex; align-items: center; gap: 6px; margin-top: 6px; font-family: 'DM Mono', monospace; font-size: 9px; color: var(--tx3); }
 
-/* ── SETUP TAB ───────────────────────── */
-.setup-section {
-  background: var(--s1); border: 1px solid var(--bor);
-  border-radius: var(--r); padding: 16px; margin-bottom: 10px;
-}
-.setup-section-title {
-  font-family: 'Barlow Condensed', sans-serif; font-weight: 900;
-  font-size: 16px; letter-spacing: .1em; text-transform: uppercase;
-  color: var(--tx); margin-bottom: 12px; display: flex; align-items: center; gap: 8px;
-}
-.setup-section-title svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; color: var(--acc); flex-shrink: 0; }
-.setup-status-row {
-  display: flex; align-items: center; gap: 8px;
-  background: var(--s3); border: 1px solid var(--bor); border-radius: 6px;
-  padding: 10px 12px; margin-bottom: 14px;
-}
-.setup-status-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--tx3); flex-shrink: 0; }
-.setup-status-dot.ok   { background: var(--ok);  box-shadow: 0 0 6px rgba(0,230,118,.4); }
-.setup-status-dot.err  { background: var(--err); }
-.setup-status-dot.warn { background: var(--warn); }
-.setup-status-txt { font-family: 'DM Mono', monospace; font-size: 9px; color: var(--tx3); flex: 1; word-break: break-all; }
-.setup-test-btn {
-  background: none; border: 1px solid var(--b2); color: var(--tx3);
-  font-family: 'DM Mono', monospace; font-size: 9px; padding: 7px 12px;
-  border-radius: 6px; cursor: pointer; transition: border-color .15s, color .15s;
-  width: 100%; margin-top: 8px; letter-spacing: .06em;
-  -webkit-tap-highlight-color: transparent;
-}
-.setup-test-btn:active { border-color: var(--acc); color: var(--acc); }
-.setup-save-btn {
-  width: 100%; background: var(--acc); color: #000; border: none;
-  border-radius: var(--r); font-family: 'Barlow Condensed', sans-serif;
-  font-weight: 900; font-size: 17px; letter-spacing: .14em;
-  padding: 13px; cursor: pointer; margin-top: 4px;
-  -webkit-tap-highlight-color: transparent;
-}
-.setup-inp-spaced  { margin-bottom: 10px; }
-.setup-info-box    { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--tx3); line-height: 2; }
-.setup-info-acc    { color: var(--acc); }
-.setup-info-tx2    { color: var(--tx2); }
-.setup-info-break  { word-break: break-all; }
-
-/* ── SETUP MODAL (Fallback bei erstem Start) ── */
+/* ── SETUP MODAL ─────────────────────── */
 #setup-ov { position: fixed; inset: 0; z-index: 200; background: rgba(0,0,0,.88); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); display: none; align-items: flex-end; justify-content: center; }
 #setup-ov.open { display: flex; }
 .modal-sheet { background: var(--s1); border-top: 1px solid var(--b2); border-radius: 16px 16px 0 0; padding: 20px; padding-bottom: calc(20px + env(safe-area-inset-bottom)); width: 100%; max-width: 480px; animation: slideUp .22s ease; }
@@ -544,6 +464,12 @@ main { padding: 14px 16px; }
     <input class="setup-inp" id="si-sheet" type="text" placeholder="ZYKLUS MASTER">
     <div class="setup-lbl">Apps Script URL</div>
     <input class="setup-inp" id="si-url" type="url" placeholder="https://script.google.com/macros/s/…/exec">
+    <div class="setup-lbl">App-Version</div>
+    <div id="si-version-info" style="font-family:'DM Mono',monospace;font-size:10px;color:var(--tx3);margin-bottom:12px;line-height:1.7;">
+      Lokal: <span id="si-ver-local">—</span><br>
+      Online: <span id="si-ver-remote">—</span><br>
+      Status: <span id="si-ver-status">—</span>
+    </div>
     <button class="modal-save" onclick="setupSave()">SPEICHERN & NEU LADEN</button>
     <button class="modal-cancel" onclick="setupClose()">Abbrechen</button>
   </div>
@@ -552,7 +478,7 @@ main { padding: 14px 16px; }
 <!-- HEADER -->
 <header>
   <div>
-    <div class="logo">PB<span>V12.0</span></div>
+    <div class="logo">PB<span>V14.1</span></div>
     <span class="hbadge" id="today-badge">REST</span>
   </div>
   <div class="hdr-r">
@@ -572,9 +498,15 @@ main { padding: 14px 16px; }
   <button class="tab" id="t-pr" onclick="switchTab('pr',this)">
     <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>PRs
   </button>
-  <button class="tab" id="t-set" onclick="switchTab('set',this)">
+  <button class="tab" id="t-set" onclick="setupOpen()">
     <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Setup
   </button>
+</div>
+
+<!-- UPDATE BANNER -->
+<div id="upd-banner">
+  <span id="upd-banner-txt">Update verfügbar — bitte neu laden</span>
+  <button id="upd-banner-btn" onclick="doUpdate()">Neu laden</button>
 </div>
 
 <main>
@@ -582,13 +514,13 @@ main { padding: 14px 16px; }
 <!-- TRAINING TAB -->
 <div class="sec active" id="sec-training">
   <!-- Woche/Tag Selector -->
-  <div class="sel-row week-sel-row">
+  <div class="sel-row" id="week-sel-row" style="margin-bottom:6px;">
     <span class="sel-label">Woche</span>
-    <div id="week-btns" class="sel-btns"></div>
+    <div id="week-btns" style="display:flex;gap:4px;flex-wrap:wrap;"></div>
   </div>
-  <div class="sel-row day-sel-row">
+  <div class="sel-row" id="day-sel-row" style="margin-bottom:10px;">
     <span class="sel-label">Tag</span>
-    <div id="day-btns" class="sel-btns"></div>
+    <div id="day-btns" style="display:flex;gap:4px;flex-wrap:wrap;"></div>
   </div>
 
   <!-- Cycle Info -->
@@ -604,7 +536,7 @@ main { padding: 14px 16px; }
         <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
         Körpergewicht
       </div>
-      <div class="bw-val-row">
+      <div style="display:flex;align-items:baseline;">
         <input class="bw-input" type="number" min="0" step="0.1" placeholder="0.0" id="bwIn" inputmode="decimal">
         <span class="bw-unit">kg</span>
       </div>
@@ -636,31 +568,19 @@ main { padding: 14px 16px; }
   <div id="view-pr"></div>
 </div>
 
-<!-- SETUP TAB -->
-<div class="sec" id="sec-set">
-  <div id="view-set"></div>
-</div>
-
 </main>
 
-<!-- SAVE FOOTER (Training) -->
+<!-- SAVE FOOTER -->
 <div id="save-footer">
   <button id="save-btn" onclick="saveAll()">
     <div class="spin-sm"></div>
     <span class="btn-lbl">In Google Sheet speichern</span>
   </button>
   <div class="api-status">
-    <div id="dot2" class="api-dot"></div>
+    <div id="dot2" style="width:6px;height:6px;border-radius:50%;background:var(--tx3);flex-shrink:0;"></div>
     <span id="api-status-txt">API nicht verbunden — Setup öffnen</span>
   </div>
-</div>
-
-<!-- PLAN FOOTER (Planung) -->
-<div id="plan-footer" style="display:none;">
-  <button id="plan-save-btn" onclick="planSaveAll()">
-    <div class="spin-sm"></div>
-    <span class="btn-lbl">Alle Änderungen speichern</span>
-  </button>
+  <div id="last-saved-txt" style="font-family:'DM Mono',monospace;font-size:8px;color:var(--tx3);letter-spacing:.06em;margin-top:3px;"></div>
 </div>
 
 <script>
@@ -669,7 +589,7 @@ main { padding: 14px 16px; }
 // ============================================================
 const ADMIN_URL   = 'https://script.google.com/macros/s/AKfycbwhSOHROvw6VgNyd248plmIsnwcbvTCEcHynhPkEs0uEXYhSVT7tqXujBCdoDyxe8za/exec';
 const APP_ENV     = 'PUBLIC';
-const APP_VERSION = '12.0';
+const APP_VERSION = '14.1';
 window.onerror = function(msg, url, line, col, error) {
   fetch(ADMIN_URL, { method:'POST', mode:'no-cors', body: JSON.stringify({ type:'log', env:APP_ENV, appVersion:APP_VERSION, error:msg, device:navigator.userAgent.slice(0,80), stack:error?error.stack:'Line:'+line }) });
   return false;
@@ -684,7 +604,11 @@ window.addEventListener('unhandledrejection', function(e) {
 let API   = localStorage.getItem('pb_api')   || '';
 let SHEET = localStorage.getItem('pb_sheet') || 'ZYKLUS MASTER';
 let rawData = [], curDay = '', curWeek = '';
-let planWeek = '', planDay = '';
+// sheetRowMap[i] = echte Sheet-Zeile für rawData[i]
+// rawData[0] = Sheet-Zeile 4 → Offset 4; Apps Script liefert Zeilen ab 1
+// Falls AS rowOffset mitliefert, wird dieser genutzt; sonst Fallback i+4
+let sheetRowOffset = 4;
+const PS = { level: 'weeks', week: '', day: '' };
 
 // ════════════════════════════════════════════════════
 //  DIAGNOSTICS
@@ -779,10 +703,29 @@ async function init() {
     const res  = await fetch(`${API}?sheet=${encodeURIComponent(SHEET)}&v=${Date.now()}`);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const json = await res.json();
-    if      (Array.isArray(json))        rawData = json;
-    else if (Array.isArray(json?.data))  rawData = json.data;
-    else if (Array.isArray(json?.values))rawData = json.values;
-    else throw new Error('Unbekanntes Format');
+    let raw;
+    if (Array.isArray(json)) {
+      raw = json; sheetRowOffset = json.rowOffset ?? 4;
+    } else if (Array.isArray(json?.data)) {
+      raw = json.data; sheetRowOffset = json.rowOffset ?? 4;
+    } else if (Array.isArray(json?.values)) {
+      raw = json.values; sheetRowOffset = json.rowOffset ?? 4;
+    } else { throw new Error('Unbekanntes Format'); }
+
+    // Normalisieren: jede Row bekommt _ri (echte Sheet-Zeilennummer)
+    // Falls AS {rowIdx, values} liefert → nutzen; sonst Offset-Fallback
+    rawData = raw.map((row, i) => {
+      if (row && typeof row === 'object' && !Array.isArray(row) && Array.isArray(row.values)) {
+        // AS liefert {rowIdx, values} Format
+        const r = row.values;
+        r._ri = parseInt(row.rowIdx);
+        return r;
+      }
+      // Fallback: Array-of-Arrays mit Offset
+      const r = Array.isArray(row) ? row : [];
+      r._ri = i + sheetRowOffset;
+      return r;
+    });
     setDot('ok');
     document.getElementById('dot2').style.background = 'var(--ok)';
     document.getElementById('dot2').style.boxShadow  = '0 0 6px rgba(0,230,118,.4)';
@@ -971,7 +914,7 @@ function renderWorkout() {
 
     const muscle  = (row[5]||'').trim();
     const progRaw = (row[15]||'').trim();
-    const ri      = i + 3;
+    const ri      = row._ri;  // echte Sheet-Zeilennummer, aus Normalisierung
     const isFirst = tCount === 1;
     const pCls    = progRaw==='▲'?'up':progRaw==='▼'?'dn':'eq';
     const pLabel  = progRaw==='▲'?'▲ PR':progRaw==='▼'?'▼ Rück':'► Neu';
@@ -1030,284 +973,71 @@ function renderWorkout() {
 }
 
 // ════════════════════════════════════════════════════
-//  PLANUNG — Woche/Tag-Selector + Tag-Edit + Übungs-Cards
+//  PLANUNG — 3-Stufen
 // ════════════════════════════════════════════════════
 function renderPlan() {
   const container = document.getElementById('view-plan');
   container.innerHTML = '';
   const structure = buildStructure();
-  if (!structure.length) {
-    container.innerHTML = '<div class="empty"><big>?</big>Keine Daten geladen.</div>';
-    return;
-  }
+  if (!structure.length) { container.innerHTML = '<div class="empty"><big>?</big>Keine Daten.</div>'; return; }
 
-  // Woche-Selector
-  const wRow = document.createElement('div');
-  wRow.className = 'sel-row week-sel-row';
-  const wLbl = document.createElement('span');
-  wLbl.className = 'sel-label'; wLbl.textContent = 'Woche';
-  const wBtns = document.createElement('div');
-  wBtns.className = 'sel-btns';
-  wRow.appendChild(wLbl); wRow.appendChild(wBtns);
-
-  // Tag-Selector
-  const dRow = document.createElement('div');
-  dRow.className = 'sel-row day-sel-row';
-  const dLbl = document.createElement('span');
-  dLbl.className = 'sel-label'; dLbl.textContent = 'Tag';
-  const dBtns = document.createElement('div');
-  dBtns.className = 'sel-btns';
-  dBtns.id = 'plan-day-btns';
-  dRow.appendChild(dLbl); dRow.appendChild(dBtns);
-
-  container.appendChild(wRow);
-  container.appendChild(dRow);
-
-  // Cards-Container (Tag-Edit + Übungen)
-  const cardsWrap = document.createElement('div');
-  cardsWrap.id = 'plan-cards';
-  container.appendChild(cardsWrap);
-
-  // Init
-  if (!planWeek || !structure.find(w => w.week === planWeek)) {
-    planWeek = structure[0].week;
-    planDay  = structure[0].days[0]?.day || '';
-  }
-
-  function buildWBtns() {
-    wBtns.innerHTML = '';
-    structure.forEach((wObj, wi) => {
-      const btn = document.createElement('button');
-      btn.className = 'dbtn' + (wObj.week === planWeek ? ' active' : '');
-      btn.textContent = 'W' + (wi + 1);
-      btn.title = wObj.week;
-      btn.onclick = () => {
-        planWeek = wObj.week;
-        planDay  = wObj.days[0]?.day || '';
-        buildWBtns(); buildDBtns(); renderPlanCards();
-      };
-      wBtns.appendChild(btn);
+  if (PS.level === 'weeks') {
+    const box = document.createElement('div'); box.className = 'plan-box';
+    structure.forEach(wObj => {
+      const named = wObj.days.reduce((a,d) => a+d.named, 0);
+      const el = document.createElement('div'); el.className = 'pw-item';
+      el.innerHTML = `<div class="pw-left"><div class="pw-name">${esc(wObj.week)}</div><div class="pw-meta">${wObj.days.length} Tage · ${named} benannte Übungen</div></div><span class="pw-arr">›</span>`;
+      el.onclick = () => { PS.level='days'; PS.week=wObj.week; renderPlan(); };
+      box.appendChild(el);
     });
+    container.appendChild(box); return;
   }
 
-  function buildDBtns() {
-    dBtns.innerHTML = '';
-    const wObj = structure.find(w => w.week === planWeek);
-    if (!wObj) return;
+  if (PS.level === 'days') {
+    const wObj = structure.find(w => w.week===PS.week);
+    if (!wObj) { PS.level='weeks'; renderPlan(); return; }
+    const crumb = document.createElement('div'); crumb.className = 'plan-crumb';
+    crumb.innerHTML = `<span class="plan-crumb-link" onclick="PS.level='weeks';renderPlan()">${esc(PS.week)}</span>`;
+    container.appendChild(crumb);
+    const box = document.createElement('div'); box.className = 'plan-box';
     wObj.days.forEach(dObj => {
-      const btn = document.createElement('button');
-      btn.className = 'dbtn' + (dObj.day === planDay ? ' active' : '');
-      const short = dObj.day.includes(':') ? dObj.day.split(':')[1].split('(')[0].trim() : dObj.day;
-      btn.textContent = short; btn.title = dObj.day;
-      btn.onclick = () => {
-        planDay = dObj.day;
-        buildDBtns(); renderPlanCards();
-      };
-      dBtns.appendChild(btn);
+      const cs = dObj.named>0?`${dObj.named} benannt`:dObj.total>0?`${dObj.total} Slots`:'leer';
+      const el = document.createElement('div'); el.className = 'pd-item';
+      el.innerHTML = `<div class="pd-left"><div class="pd-dot${dObj.named>0?' has':''}"></div><span class="pd-name">${esc(dObj.day)}</span></div><span class="pd-count">${cs}</span><span class="pd-arr">›</span>`;
+      el.onclick = () => { PS.level='exercises'; PS.day=dObj.day; renderPlan(); };
+      box.appendChild(el);
     });
+    container.appendChild(box); return;
   }
 
-  buildWBtns(); buildDBtns(); renderPlanCards();
-}
-
-function renderPlanCards() {
-  const wrap = document.getElementById('plan-cards');
-  if (!wrap) return;
-  wrap.innerHTML = '';
-
-  // ── Tag-Edit-Card ──────────────────────────────────
-  // Zeile im rawData finden die planDay in Spalte D enthält
-  let dayRowIdx = -1, lastWC = '';
-  for (let i = 0; i < rawData.length; i++) {
-    const row = rawData[i];
-    const w = (row[0]||'').trim();
-    const d = (row[3]||'').trim();
-    if (d === 'Trainingstag') continue;
-    if (w) lastWC = w;
-    if (d === planDay && lastWC === planWeek) {
-      dayRowIdx = i + 3; // rawData[0] = Sheet-Zeile 4 (3 Header-Zeilen)
-      break;
-    }
+  if (PS.level === 'exercises') {
+    const wObj = structure.find(w => w.week===PS.week);
+    const dObj = wObj?.days.find(d => d.day===PS.day);
+    if (!dObj) { PS.level='days'; renderPlan(); return; }
+    const crumb = document.createElement('div'); crumb.className = 'plan-crumb';
+    crumb.innerHTML = `<span class="plan-crumb-link" onclick="PS.level='weeks';renderPlan()">${esc(PS.week)}</span><span class="plan-crumb-sep">›</span><span class="plan-crumb-link" onclick="PS.level='days';renderPlan()">${esc(PS.day)}</span>`;
+    container.appendChild(crumb);
+    const box = document.createElement('div'); box.className = 'plan-box';
+    let idx = 0;
+    rawData.forEach((row, i) => {
+      const w=(row[0]||'').trim(), d=(row[3]||'').trim();
+      let lastW='',lastD='';
+      // inline scan
+      if (w) lastW=w; if(d) lastD=d;
+      if (!(lastD===PS.day||d===PS.day)) return;
+      const name=(row[4]||'').trim();
+      if (!name||name==='Übung') return;
+      const muscle=(row[5]||'').trim();
+      const progRaw=(row[15]||'').trim();
+      const ri=row._ri; idx++;
+      const pCls=progRaw==='▲'?'up':progRaw==='▼'?'dn':'eq';
+      const isNamed=name!=='Übung eintragen...';
+      const el=document.createElement('div'); el.className='pe-item';
+      el.innerHTML=`<div class="pe-num">${idx}</div><div class="pe-info"><div class="pe-name${isNamed?' named':''}">${esc(name)}</div>${muscle?`<div class="pe-muscle${muscle?' has':''}">${esc(muscle)}</div>`:''}</div><div class="pe-prog ${pCls}">${progRaw||'►'}</div><div class="pe-btns"><button class="edit-btn" onclick="renameEx(${ri},\`${name.replace(/`/g,'\\`')}\`)">ÜBUNG</button><button class="edit-btn edit-btn-muscle" onclick="editMuscle(${ri},\`${muscle.replace(/`/g,'\\`')}\`)">MUSK.</button></div>`;
+      box.appendChild(el);
+    });
+    container.appendChild(box);
   }
-
-  const isRest = planDay.toLowerCase().includes('rest') || planDay.toLowerCase().includes('pause') || planDay.toLowerCase().includes('ruhe');
-
-  const tagCard = document.createElement('div');
-  tagCard.className = 'plcard open-pl';
-  tagCard.dataset.muscle  = 'default';
-  tagCard.dataset.rowIdx  = dayRowIdx;
-  tagCard.id = 'pc-tag';
-  tagCard.innerHTML =
-    `<div class="plhead" onclick="togglePlanTag()">
-       <div class="plhead-left">
-         <div class="pl-num">📅</div>
-         <div class="pl-name">${esc(planDay)}</div>
-         <div class="pl-muscle${isRest ? ' set' : ''}">${isRest ? 'REST / PAUSE' : 'Trainingstag'}</div>
-       </div>
-       <div class="plhead-right">
-         <svg class="pl-chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
-       </div>
-     </div>
-     <div class="plbody open" id="pb-tag">
-       <div class="pl-edit-wrap">
-         <div>
-           <div class="pl-field-lbl">Tagesname (Spalte D)</div>
-           <input class="pl-field-inp" id="pld-name" type="text"
-             value="${escA(planDay)}" placeholder="z.B. Tag 1: Push (Brust/Schulter)">
-         </div>
-         <div class="pl-quick-row">
-           <button class="pl-quick-btn" onclick="planSetDayType('REST')">REST</button>
-           <button class="pl-quick-btn" onclick="planSetDayType('Pause')">Pause</button>
-           <button class="pl-quick-btn" onclick="planSetDayType('Ruhetag')">Ruhetag</button>
-         </div>
-       </div>
-     </div>`;
-  wrap.appendChild(tagCard);
-
-  // ── Übungs-Cards ───────────────────────────────────
-  let inDay = false, idx = 0, lastWeekCol = '';
-
-  rawData.forEach((row, i) => {
-    const w = (row[0]||'').trim();
-    const d = (row[3]||'').trim();
-    if (w === 'Woche' || d === 'Trainingstag') return;
-    if (w) lastWeekCol = w;
-    if (d) inDay = (d === planDay && lastWeekCol === planWeek);
-    if (!inDay) return;
-
-    const name   = (row[4]||'').trim();
-    const muscle = (row[5]||'').trim();
-    if (!name || name === 'Übung') return;
-
-    const progRaw = (row[15]||'').trim();
-    const ri      = i + 3;
-    const mk      = muscleKey(muscle);
-    const isNamed = name && name !== 'Übung eintragen...';
-    const isFirst = idx === 0;
-    idx++;
-
-    const pCls   = progRaw==='▲'?'up':progRaw==='▼'?'dn':'eq';
-    const pLabel = progRaw==='▲'?'▲ PR':progRaw==='▼'?'▼ Rück':'► Neu';
-
-    const card = document.createElement('div');
-    card.className = 'plcard' + (isFirst ? ' open-pl' : '');
-    card.dataset.muscle = mk;
-    card.id = 'pc-' + ri;
-    card.style.animationDelay = Math.min(idx * .04, .25) + 's';
-    card.innerHTML =
-      `<div class="plhead" onclick="togglePlan(${ri})">
-         <div class="plhead-left">
-           <div class="pl-num">${idx}.</div>
-           <div class="pl-name${isNamed ? '' : ' empty'}">${esc(isNamed ? name : 'Übung eintragen…')}</div>
-           ${muscle ? `<div class="pl-muscle set">${esc(muscle)}</div>` : '<div class="pl-muscle">— Muskel fehlt</div>'}
-         </div>
-         <div class="plhead-right">
-           <span class="prog-arrow ${pCls}">${pLabel}</span>
-           <svg class="pl-chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
-         </div>
-       </div>
-       <div class="plbody${isFirst ? ' open' : ''}" id="pb-${ri}">
-         <div class="pl-edit-wrap">
-           <div>
-             <div class="pl-field-lbl">Übungsname</div>
-             <input class="pl-field-inp" id="pln-${ri}" type="text"
-               value="${escA(isNamed ? name : '')}"
-               placeholder="Übungsname eintragen…"
-               oninput="planPreview(${ri})">
-           </div>
-         </div>
-       </div>`;
-    wrap.appendChild(card);
-  });
-
-  if (!idx) {
-    const empty = document.createElement('div');
-    empty.className = 'empty';
-    empty.innerHTML = '<big>LEER</big>Keine Übungen für diesen Tag.';
-    wrap.appendChild(empty);
-  }
-}
-
-function togglePlanTag() {
-  const card = document.getElementById('pc-tag');
-  const body = document.getElementById('pb-tag');
-  if (!card || !body) return;
-  card.classList.toggle('open-pl');
-  body.classList.toggle('open');
-}
-
-function planSetDayType(type) {
-  const inp = document.getElementById('pld-name');
-  if (inp) inp.value = type;
-}
-
-// ════════════════════════════════════════════════════
-//  PLANUNG — Batch-Speichern (Tag + alle Übungen)
-// ════════════════════════════════════════════════════
-async function planSaveAll() {
-  const btn = document.getElementById('plan-save-btn');
-  const changes = [];
-
-  // 1. Tag-Name → Spalte D (col 4)
-  const dayName = document.getElementById('pld-name')?.value.trim();
-  const dayRi   = parseInt(document.getElementById('pc-tag')?.dataset.rowIdx || '0');
-  if (dayName && dayRi > 0) {
-    if (/<|>|script/i.test(dayName)) { toast('Ungültiger Tagesname', 'err'); return; }
-    changes.push({ rowIdx: dayRi, action: 'rename', col: 4, newName: dayName });
-  }
-
-  // 2. Übungsnamen → Spalte E (col 5, Standard)
-  document.querySelectorAll('.plcard[id^="pc-"]:not(#pc-tag)').forEach(card => {
-    const ri = parseInt(card.id.replace('pc-', ''));
-    if (isNaN(ri) || ri < 3) return;
-    const n = document.getElementById('pln-' + ri)?.value.trim();
-    if (!n || /<|>|script/i.test(n)) return;
-    changes.push({ rowIdx: ri, action: 'rename', col: 5, newName: n });
-  });
-
-  if (!changes.length) { toast('Keine Änderungen erkannt', 'warn'); return; }
-
-  btn.classList.add('saving'); btn.disabled = true;
-
-  let ok = 0, failed = 0;
-  for (const ch of changes) {
-    try {
-      await fetch(API, {
-        method: 'POST', mode: 'no-cors',
-        headers: { 'Content-Type': 'text/plain' },
-        body: JSON.stringify({
-          sheet:   SHEET,
-          rowIdx:  ch.rowIdx,
-          action:  ch.action,
-          col:     ch.col,
-          newName: ch.newName
-        })
-      });
-      ok++;
-    } catch(_) { failed++; }
-  }
-
-  btn.classList.remove('saving'); btn.disabled = false;
-
-  if (failed > 0) {
-    toast(`${ok} gespeichert · ${failed} fehlgeschlagen`, 'warn');
-  } else {
-    toast(`${ok} Änderung${ok > 1 ? 'en' : ''} gespeichert — lade neu…`, 'ok');
-    setTimeout(() => location.reload(), 900);
-  }
-}
-
-function togglePlan(ri) {
-  document.getElementById('pc-' + ri)?.classList.toggle('open-pl');
-  document.getElementById('pb-' + ri)?.classList.toggle('open');
-}
-
-function planPreview(ri) {
-  const val    = document.getElementById('pln-' + ri)?.value.trim();
-  const nameEl = document.querySelector(`#pc-${ri} .pl-name`);
-  if (!nameEl) return;
-  nameEl.textContent = val || 'Übung eintragen…';
-  nameEl.classList.toggle('empty', !val);
 }
 
 // ════════════════════════════════════════════════════
@@ -1320,11 +1050,11 @@ function buildPRMap() {
     if (w==='Woche'||d==='Trainingstag') return;
     const name=(row[4]||'').trim();
     if (!name||name==='Übung eintragen...'||name==='Übung') return;
-    const muscle=(row[5]||'').trim(), date=(row[12]||'').trim();
+    const muscle=(row[5]||'').trim(), date=(row[1]||'').trim();
     const weights=[row[6],row[8],row[10]].map(x=>parseFloat(String(x||'').replace(',','.'))).filter(x=>!isNaN(x)&&x>0);
     if (!weights.length) return;
     const maxKg=Math.max(...weights);
-    const sets=[[row[6],row[7]],[row[8],row[9]],[row[10],row[11]]].filter(([g])=>parseFloat(String(g||'').replace(',','.')>0)).map(([g,r])=>`${g}kg×${r||'?'}`).join(' · ');
+    const sets=[[row[6],row[7]],[row[8],row[9]],[row[10],row[11]]].filter(([g])=>parseFloat(String(g||'').replace(',','.'))>0).map(([g,r])=>`${g}kg×${r||'?'}`).join(' · ');
     if (!map[name]||maxKg>map[name].kg) map[name]={kg:maxKg,date,sets,muscle};
   });
   return map;
@@ -1361,52 +1091,139 @@ function renderPR() {
 // ════════════════════════════════════════════════════
 //  SAVE
 // ════════════════════════════════════════════════════
+function validatePayload(p) {
+  if (!p.rowIdx || isNaN(p.rowIdx) || p.rowIdx < 4) return 'Ungültiger Zeilen-Index';
+  if (!p.sheet || typeof p.sheet !== 'string') return 'Kein Tabellenblatt';
+  if (!p.uebung) return 'Kein Übungsname';
+  const numFields = ['g1','g2','g3','r1','r2','r3','rpe'];
+  for (const f of numFields) {
+    const val = p[f];
+    if (val === '' || val === undefined) continue;
+    const n = parseFloat(String(val).replace(',','.'));
+    if (isNaN(n)) return `${f.toUpperCase()}: kein gültiger Zahlenwert`;
+    if ((f==='g1'||f==='g2'||f==='g3') && n < 0) return `${f.toUpperCase()}: negatives Gewicht`;
+  }
+  return null; // ok
+}
+
 async function saveAll() {
   const cards = [...document.querySelectorAll('.excard')];
   if (!cards.length) return toast('Keine Übungen', 'err');
+  if (!API) return toast('Kein API-Endpunkt — Setup öffnen', 'err');
+  if (!SHEET) return toast('Kein Tabellenblatt konfiguriert', 'err');
+
   const hasAny = cards.some(c => {
     const ri = parseInt(c.querySelector('input')?.id.split('-')[1]);
     return v(`g1-${ri}`) || v(`r1-${ri}`);
   });
   if (!hasAny) { toast('Keine Gewichte eingetragen', 'warn'); return; }
+
   let date;
   try {
     const _n=new Date();
     date=String(_n.getDate()).padStart(2,'0')+'.'+String(_n.getMonth()+1).padStart(2,'0')+'.';
     if (!/^\d{2}\.\d{2}\.$/.test(date)) throw new Error('Format: '+date);
   } catch(e) { toast('Datumsfehler: '+e.message,'err'); return; }
+
   const btn=document.getElementById('save-btn');
   btn.classList.add('saving'); btn.disabled=true;
+
   const stats={kg:v('bwIn'),kcal:v('kcalIn'),bpm:v('bpmIn'),duration:v('minIn')};
-  let ok=0,skipped=0;
+  let ok=0, skipped=0, errors=[];
+
   for (const card of cards) {
     const ri=parseInt(card.querySelector('input')?.id.split('-')[1]);
-    if (isNaN(ri)||ri<3) { skipped++; continue; }
-    const payload={sheet:SHEET,date,rowIdx:ri,uebung:card.querySelector('.ex-title')?.textContent.trim(),g1:v(`g1-${ri}`),r1:v(`r1-${ri}`),g2:v(`g2-${ri}`),r2:v(`r2-${ri}`),g3:v(`g3-${ri}`),r3:v(`r3-${ri}`),rpe:v(`rpe1-${ri}`),...stats};
-    if (!payload.uebung) { skipped++; continue; }
+    const payload={
+      sheet:SHEET, date, rowIdx:ri,
+      uebung:card.querySelector('.ex-title')?.textContent.trim(),
+      g1:v(`g1-${ri}`), r1:v(`r1-${ri}`),
+      g2:v(`g2-${ri}`), r2:v(`r2-${ri}`),
+      g3:v(`g3-${ri}`), r3:v(`r3-${ri}`),
+      rpe:v(`rpe1-${ri}`),
+      ...stats
+    };
+    const err = validatePayload(payload);
+    if (err) { skipped++; errors.push(err); continue; }
+    // Leere Rows überspringen (keine einzige Zahl eingetragen)
+    const hasData = ['g1','r1','g2','r2','g3','r3'].some(f => payload[f] !== '');
+    if (!hasData && !stats.kg && !stats.kcal && !stats.bpm && !stats.duration) { skipped++; continue; }
     try {
-      await fetch(API,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify(payload)});
-      ok++;
-    } catch(_) { skipped++; }
+      const res = await fetch(API, {
+        method:'POST',
+        headers:{'Content-Type':'text/plain'},
+        body:JSON.stringify(payload)
+      });
+      if (!res.ok) { skipped++; errors.push(`HTTP ${res.status}`); continue; }
+      let json;
+      try { json = await res.json(); } catch(_) {
+        // JSON nicht parsbar → Fehler, kein stiller Erfolg
+        skipped++; errors.push('Antwort kein gültiges JSON'); continue;
+      }
+      if (!json || json.success !== true) {
+        skipped++; errors.push(json?.error || 'success !== true');
+      } else { ok++; }
+    } catch(e) { skipped++; errors.push(e.message||'Netzwerkfehler'); }
   }
+
   btn.classList.remove('saving'); btn.disabled=false;
-  if (skipped>0) toast(`${ok} gesichert · ${skipped} übersprungen`,'warn');
-  else           toast(`${ok}/${cards.length} gesichert ✓`,'ok');
+
+  if (ok > 0) {
+    const n = new Date();
+    const ts = String(n.getHours()).padStart(2,'0') + ':' + String(n.getMinutes()).padStart(2,'0');
+    localStorage.setItem('pb_last_saved', ts);
+    setLastSaved(ts);
+  }
+
+  if (ok === 0 && skipped > 0) {
+    toast(`Fehler: ${errors[0]||'Unbekannt'}`, 'err');
+  } else if (skipped > 0) {
+    toast(`${ok} gesichert · ${skipped} Fehler: ${errors[0]||'?'}`, 'warn');
+  } else {
+    toast(`${ok}/${cards.length} gesichert ✓`, 'ok');
+  }
 }
 
 // ════════════════════════════════════════════════════
-//  RENAME
+//  RENAME MUSCLE
 // ════════════════════════════════════════════════════
+async function editMuscle(ri, old) {
+  const n=prompt('Muskelgruppe:', old||'');
+  if (n === null) return; // abgebrochen
+  if (/<|>|script/i.test(n)) { toast('Ungültiger Wert','err'); return; }
+  if (!API) { toast('Kein API-Endpunkt','err'); return; }
+  const err = validatePayload({ rowIdx: ri, sheet: SHEET, uebung: '(muscle)' });
+  if (err) { toast(err, 'err'); return; }
+  try {
+    const res = await fetch(API, {
+      method:'POST',
+      headers:{'Content-Type':'text/plain'},
+      body:JSON.stringify({ sheet:SHEET, rowIdx:ri, action:'rename', col:6, newName:n.trim() })
+    });
+    if (!res.ok) { toast(`Fehler HTTP ${res.status}`, 'err'); return; }
+    let json; try { json = await res.json(); } catch(_) { toast('Antwort kein gültiges JSON','err'); return; }
+    if (!json || json.success !== true) { toast(json?.error||'success !== true', 'err'); return; }
+    toast('Muskelgruppe gespeichert — lade neu…','ok');
+    setTimeout(()=>location.reload(),900);
+  } catch(e) { toast('Fehler: '+e.message,'err'); }
+}
 async function renameEx(ri, old) {
   const def=old==='Übung eintragen...'?'':old;
   const n=prompt('Übungsname:',def);
   if (!n?.trim()) return;
   if (/<|>|script/i.test(n)) { toast('Ungültiger Name','err'); return; }
+  if (!API) { toast('Kein API-Endpunkt','err'); return; }
   try {
-    await fetch(API,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify({sheet:SHEET,rowIdx:ri,action:'rename',newName:n.trim()})});
+    const res = await fetch(API, {
+      method:'POST',
+      headers:{'Content-Type':'text/plain'},
+      body:JSON.stringify({sheet:SHEET, rowIdx:ri, action:'rename', col:5, newName:n.trim()})
+    });
+    if (!res.ok) { toast(`Fehler HTTP ${res.status}`,'err'); return; }
+    let json; try { json = await res.json(); } catch(_) { toast('Antwort kein gültiges JSON','err'); return; }
+    if (!json || json.success !== true) { toast(json?.error||'success !== true','err'); return; }
     toast('Gespeichert — lade neu…','ok');
     setTimeout(()=>location.reload(),900);
-  } catch(_) { toast('Fehler','err'); }
+  } catch(e) { toast('Fehler: '+e.message,'err'); }
 }
 
 // ════════════════════════════════════════════════════
@@ -1417,112 +1234,33 @@ function switchTab(id, el) {
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   document.getElementById('sec-' + id).classList.add('active');
   el.classList.add('active');
-  document.getElementById('save-footer').style.display  = id === 'training' ? 'block' : 'none';
-  document.getElementById('plan-footer').style.display  = id === 'plan'     ? 'block' : 'none';
-  if (id === 'plan') renderPlan();
-  if (id === 'pr')   renderPR();
-  if (id === 'set')  renderSetup();
+  document.getElementById('save-footer').style.display = id==='training' ? 'block' : 'none';
+  if (id==='plan') { PS.level='weeks'; renderPlan(); }
+  if (id==='pr')   renderPR();
 }
 
-
 // ════════════════════════════════════════════════════
-//  SETUP — Modal (nur erster Start ohne API)
+//  SETUP
 // ════════════════════════════════════════════════════
 function setupOpen() {
   document.getElementById('si-sheet').value = SHEET;
   document.getElementById('si-url').value   = API;
+  _updateVersionDisplay(_remoteVersion);
   document.getElementById('setup-ov').classList.add('open');
+  document.getElementById('t-set').classList.add('active');
 }
 function setupClose() {
   document.getElementById('setup-ov').classList.remove('open');
+  document.getElementById('t-set').classList.remove('active');
 }
 function setupSave() {
-  const sh  = document.getElementById('si-sheet').value.trim();
-  const url = document.getElementById('si-url').value.trim();
-  if (url && !url.startsWith('https://')) { toast('URL muss mit https:// beginnen', 'err'); return; }
-  if (sh)  { SHEET = sh;  localStorage.setItem('pb_sheet', sh); }
-  if (url) { API   = url; localStorage.setItem('pb_api',   url); }
+  const sh=document.getElementById('si-sheet').value.trim();
+  const url=document.getElementById('si-url').value.trim();
+  if (url&&!url.startsWith('https://')) { toast('URL muss mit https:// beginnen','err'); return; }
+  if (sh)  { SHEET=sh;  localStorage.setItem('pb_sheet',sh); }
+  if (url) { API=url;   localStorage.setItem('pb_api',url); }
   setupClose(); location.reload();
 }
-
-// ════════════════════════════════════════════════════
-//  SETUP — Tab-Inhalt
-// ════════════════════════════════════════════════════
-function renderSetup() {
-  const c = document.getElementById('view-set');
-  const connected = API && API.startsWith('https://');
-  const dotCls    = connected ? 'ok' : 'err';
-  const statusTxt = connected ? `Verbunden · ${SHEET}` : 'Nicht verbunden — URL eintragen';
-
-  c.innerHTML = `
-    <div class="setup-section">
-      <div class="setup-section-title">
-        <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-        Verbindung
-      </div>
-      <div class="setup-status-row">
-        <div class="setup-status-dot ${dotCls}" id="set-dot"></div>
-        <div class="setup-status-txt" id="set-status-txt">${esc(statusTxt)}</div>
-      </div>
-      <div class="setup-lbl">Tabellenblatt</div>
-      <input class="setup-inp setup-inp-spaced" id="set-sheet" type="text"
-        value="${escA(SHEET)}" placeholder="ZYKLUS MASTER">
-      <div class="setup-lbl">Apps Script URL</div>
-      <input class="setup-inp setup-inp-spaced" id="set-url" type="url"
-        value="${escA(API)}" placeholder="https://script.google.com/macros/s/…/exec">
-      <button class="setup-save-btn" onclick="setupSaveInline()">SPEICHERN &amp; NEU LADEN</button>
-      <button class="setup-test-btn" id="set-test-btn" onclick="setupTest()">Verbindung testen</button>
-    </div>
-    <div class="setup-section">
-      <div class="setup-section-title">
-        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-        Info
-      </div>
-      <div class="setup-info-box">
-        Version: <span class="setup-info-acc">V12.0</span><br>
-        Zeilen im Speicher: <span class="setup-info-tx2">${rawData.length}</span>
-      </div>
-    </div>`;
-}
-
-function setupSaveInline() {
-  const sh  = document.getElementById('set-sheet')?.value.trim();
-  const url = document.getElementById('set-url')?.value.trim();
-  if (url && !url.startsWith('https://')) { toast('URL muss mit https:// beginnen', 'err'); return; }
-  if (sh)  { SHEET = sh;  localStorage.setItem('pb_sheet', sh); }
-  if (url) { API   = url; localStorage.setItem('pb_api',   url); }
-  toast('Gespeichert — lade neu…', 'ok');
-  setTimeout(() => location.reload(), 800);
-}
-
-async function setupTest() {
-  const url = document.getElementById('set-url')?.value.trim();
-  const sh  = document.getElementById('set-sheet')?.value.trim() || SHEET;
-  const btn = document.getElementById('set-test-btn');
-  const dot = document.getElementById('set-dot');
-  const txt = document.getElementById('set-status-txt');
-  if (!url) { toast('Erst URL eintragen', 'warn'); return; }
-  if (btn) { btn.textContent = 'Teste…'; btn.disabled = true; }
-  try {
-    const ctrl = new AbortController();
-    const tid  = setTimeout(() => ctrl.abort(), 6000);
-    const res  = await fetch(`${url}?sheet=${encodeURIComponent(sh)}&v=${Date.now()}`, { signal: ctrl.signal });
-    clearTimeout(tid);
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const json = await res.json();
-    const rows = Array.isArray(json) ? json : (Array.isArray(json?.data) ? json.data : null);
-    if (!rows) throw new Error('Kein Array zurückgegeben');
-    if (dot) dot.className = 'setup-status-dot ok';
-    if (txt) txt.textContent = `OK · ${rows.length} Zeilen · ${sh}`;
-    toast(`Verbindung OK · ${rows.length} Zeilen`, 'ok');
-  } catch(e) {
-    if (dot) dot.className = 'setup-status-dot err';
-    if (txt) txt.textContent = 'Fehler: ' + e.message;
-    toast('Verbindung fehlgeschlagen', 'err');
-  }
-  if (btn) { btn.textContent = 'Verbindung testen'; btn.disabled = false; }
-}
-
 
 // ════════════════════════════════════════════════════
 //  HELPERS
@@ -1533,12 +1271,63 @@ const escA = s  => String(s||'').replace(/"/g,'&quot;');
 function lmsg(m)   { document.getElementById('ls-msg').textContent=m; }
 function hideLS()  { setTimeout(()=>document.getElementById('ls').classList.add('off'),260); }
 function setDot(c) { document.getElementById('dot').className=c; }
+function setLastSaved(ts) {
+  const el = document.getElementById('last-saved-txt');
+  if (el && ts) el.textContent = 'Zuletzt gespeichert: ' + ts;
+}
 let _tt;
 function toast(msg,type='') {
   const t=document.getElementById('toast');
   t.textContent=msg; t.className='show'+(type?' '+type:'');
   clearTimeout(_tt); _tt=setTimeout(()=>{t.className='';},2800);
 }
+
+// ════════════════════════════════════════════════════
+//  UPDATE CHECK
+// ════════════════════════════════════════════════════
+let _remoteVersion = '';
+
+async function checkUpdate() {
+  try {
+    const res = await fetch('./version.json?v=' + Date.now(), { cache: 'no-store' });
+    if (!res.ok) return;
+    const json = await res.json();
+    const remote = String(json.version || '').trim();
+    if (!remote) return;
+    _remoteVersion = remote;
+    _updateVersionDisplay(remote);
+    if (remote !== APP_VERSION.trim()) {
+      const banner = document.getElementById('upd-banner');
+      if (banner) banner.classList.add('show');
+    }
+  } catch(_) { /* still, keine Fehlermeldung */ }
+}
+
+function _updateVersionDisplay(remote) {
+  const lo = document.getElementById('si-ver-local');
+  const re = document.getElementById('si-ver-remote');
+  const st = document.getElementById('si-ver-status');
+  if (!lo) return;
+  lo.textContent = APP_VERSION;
+  re.textContent = remote || '—';
+  if (!remote) { st.textContent = '—'; st.style.color = 'var(--tx3)'; return; }
+  const upToDate = remote === APP_VERSION;
+  st.textContent  = upToDate ? '✓ aktuell' : '⚠ Update verfügbar';
+  st.style.color  = upToDate ? 'var(--ok)' : 'var(--warn)';
+}
+
+function doUpdate() {
+  // Cache-bust für PWA/HomeScreen
+  location.href = location.pathname + '?v=' + Date.now();
+}
+
+// Beim Start: letzten Speicher-Timestamp wiederherstellen
+const _lsTs = localStorage.getItem('pb_last_saved');
+if (_lsTs) setLastSaved(_lsTs);
+
+// Beim Start + alle 10 Minuten
+checkUpdate();
+setInterval(checkUpdate, 10 * 60 * 1000);
 
 init();
 </script>
