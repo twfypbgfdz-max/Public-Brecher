@@ -6,13 +6,13 @@
 <meta name="theme-color" content="#080808">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>PB V15.1.2</title>
+<title>PB V15.3.1</title>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;700;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 /* ════════════════════════════════════════
-   PLATEAU BRECHER V15.1.2 — PUBLIC
+   PLATEAU BRECHER V15.3.1 — PUBLIC
    Barlow Condensed + DM Mono
-   Layout: Personal App V9.0 · Data: Google Sheet
+   Layout: Public App · Data: Google Sheet
    ════════════════════════════════════════ */
 :root {
   --bg:  #080808;
@@ -415,6 +415,17 @@ main { padding: 14px 16px; }
   font-family: 'DM Mono', monospace; font-size: 9px;
   color: var(--tx2); letter-spacing: .03em; line-height: 1.5;
 }
+.coach-card { cursor: pointer; }
+.coach-card.open { border-color: var(--b2); }
+.coach-head { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; }
+.coach-main { flex: 1; min-width: 0; }
+.coach-toggle { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--tx3); line-height: 1; transition: transform .2s; }
+.coach-card.open .coach-toggle { transform: rotate(180deg); }
+.coach-details { display: none; margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--bor); }
+.coach-card.open .coach-details { display: block; }
+.coach-detail-row { margin-bottom: 8px; }
+.coach-detail-k { font-family: 'DM Mono', monospace; font-size: 8px; color: var(--tx3); letter-spacing: .12em; text-transform: uppercase; margin-bottom: 2px; }
+.coach-detail-v { font-family: 'DM Mono', monospace; font-size: 9px; color: var(--tx2); line-height: 1.5; }
 
 /* ── LEER-ZUSTÄNDE ───────────────────── */
 .empty { text-align: center; padding: 40px 20px; color: var(--tx3); font-size: 11px; line-height: 1.8; }
@@ -451,6 +462,7 @@ main { padding: 14px 16px; }
 .setup-lbl { font-size: 8px; color: var(--tx3); letter-spacing: .1em; text-transform: uppercase; margin-bottom: 5px; }
 .setup-inp { width: 100%; background: var(--s3); border: 1px solid var(--b2); border-radius: var(--r); color: var(--tx); font-family: 'DM Mono', monospace; font-size: 11px; padding: 11px 12px; outline: none; margin-bottom: 12px; transition: border-color .15s; }
 .setup-inp:focus { border-color: var(--acc); }
+.setup-help { font-size: 10px; color: var(--tx2); line-height: 1.6; margin: -4px 0 12px; }
 .modal-save { width: 100%; background: var(--acc); color: #000; border: none; border-radius: var(--r); font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: 17px; letter-spacing: .14em; padding: 13px; cursor: pointer; margin-bottom: 8px; }
 .modal-cancel { width: 100%; background: none; border: 1px solid var(--b2); border-radius: var(--r); color: var(--tx3); font-family: 'DM Mono', monospace; font-size: 11px; padding: 11px; cursor: pointer; }
 
@@ -477,12 +489,12 @@ main { padding: 14px 16px; }
 <div id="diag-overlay">
   <div class="diag-sheet">
     <div class="diag-handle"></div>
-    <div class="diag-title">⚙ System-Check</div>
+    <div class="diag-title">⚙ Verbindungscheck</div>
     <div class="diag-subtitle" id="diag-subtitle"></div>
     <div id="diag-list"></div>
     <div class="diag-actions">
       <button class="diag-btn-ok" onclick="diagClose()">VERSTANDEN</button>
-      <button class="diag-btn-setup" onclick="diagClose();setupOpen()">Setup öffnen</button>
+      <button class="diag-btn-setup" onclick="diagClose();setupOpen()">Verbindung einrichten</button>
     </div>
   </div>
 </div>
@@ -491,10 +503,11 @@ main { padding: 14px 16px; }
 <div id="setup-ov">
   <div class="modal-sheet">
     <div class="modal-handle"></div>
-    <div class="modal-title">Setup</div>
-    <div class="setup-lbl">Tabellenblatt</div>
+    <div class="modal-title">Google-Sheet verbinden</div>
+    <div class="setup-help">Trage hier den Web-App-Link aus deinem Google Apps Script ein. Deine Trainingsdaten bleiben in deinem Google Sheet.</div>
+    <div class="setup-lbl">Trainingsplan-Tab</div>
     <input class="setup-inp" id="si-sheet" type="text" placeholder="ZYKLUS MASTER">
-    <div class="setup-lbl">Apps Script URL</div>
+    <div class="setup-lbl">Verbindungslink</div>
     <input class="setup-inp" id="si-url" type="url" placeholder="https://script.google.com/macros/s/…/exec">
     <div class="setup-lbl">App-Version</div>
     <div id="si-version-info" style="font-family:'DM Mono',monospace;font-size:10px;color:var(--tx3);margin-bottom:12px;line-height:1.7;">
@@ -502,7 +515,7 @@ main { padding: 14px 16px; }
       Online: <span id="si-ver-remote">—</span><br>
       Status: <span id="si-ver-status">—</span>
     </div>
-    <button class="modal-save" onclick="setupSave()">SPEICHERN & NEU LADEN</button>
+    <button class="modal-save" onclick="setupSave()">VERBINDUNG SPEICHERN</button>
     <button class="modal-cancel" onclick="setupClose()">Abbrechen</button>
   </div>
 </div>
@@ -510,12 +523,12 @@ main { padding: 14px 16px; }
 <!-- HEADER -->
 <header>
   <div>
-    <div class="logo">PB<span>V15.1.2</span></div>
+    <div class="logo">PB<span>V15.3.1</span></div>
     <span class="hbadge" id="today-badge">REST</span>
   </div>
   <div class="hdr-r">
     <span id="hdr-date"></span>
-    <div id="dot" title="System-Check" onclick="runDiag(true)"></div>
+    <div id="dot" title="Verbindungscheck" onclick="runDiag(true)"></div>
   </div>
 </header>
 
@@ -534,7 +547,7 @@ main { padding: 14px 16px; }
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>Coach
   </button>
   <button class="tab" id="t-set" onclick="setupOpen()">
-    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Setup
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Verbinden
   </button>
 </div>
 
@@ -618,7 +631,7 @@ main { padding: 14px 16px; }
   </button>
   <div class="api-status">
     <div id="dot2" style="width:6px;height:6px;border-radius:50%;background:var(--tx3);flex-shrink:0;"></div>
-    <span id="api-status-txt">API nicht verbunden — Setup öffnen</span>
+    <span id="api-status-txt">Nicht verbunden — Verbindung einrichten</span>
   </div>
   <div id="last-saved-txt" style="font-family:'DM Mono',monospace;font-size:8px;color:var(--tx3);letter-spacing:.06em;margin-top:3px;"></div>
 </div>
@@ -629,7 +642,7 @@ main { padding: 14px 16px; }
 // ============================================================
 const PUBLIC_ADMIN_LOG_URL = 'https://script.google.com/macros/s/AKfycbwonJnXhw3k0saV9DdqU0t5U6fY4AHW8sdoH6Oq1WuDD3ILH_bPN-JOkl9Znu7F_sAH/exec';
 const APP_ENV              = 'PUBLIC';
-const APP_VERSION          = 'V15.1.2';
+const APP_VERSION          = 'V15.3.1';
 function sanitizeAdminValue(value, maxLen=500) {
   return String(value || '')
     .replace(/(gsk_|AIza)[a-zA-Z0-9_-]+/g, '[REDACTED]')
@@ -708,16 +721,16 @@ function diagAdd(level, label, detail) {
 async function runDiag(manual = false) {
   DIAG.results = []; DIAG.hasError = false; DIAG.hasWarn = false;
   if (!API) {
-    diagAdd('err', 'Kein API-Endpunkt', 'Gehe zu Setup und trage die Apps Script URL ein.');
+    diagAdd('err', 'Kein Verbindungslink', 'Öffne „Google-Sheet verbinden" und trage den Web-App-Link ein.');
   } else if (!API.startsWith('https://script.google.com/macros/s/')) {
-    diagAdd('warn', 'API-URL ungewöhnlich', 'Erwartet: https://script.google.com/macros/s/…/exec');
+    diagAdd('warn', 'Verbindungslink ungewöhnlich', 'Erwartet: https://script.google.com/macros/s/…/exec');
   } else {
-    diagAdd('ok', 'API-URL vorhanden', API.slice(0,55) + '…');
+    diagAdd('ok', 'Verbindungslink vorhanden', API.slice(0,55) + '…');
   }
   if (!SHEET) {
-    diagAdd('err', 'Kein Tabellenblatt', 'Standard: "ZYKLUS MASTER".');
+    diagAdd('err', 'Kein Trainingsplan-Tab', 'Standard: "ZYKLUS MASTER".');
   } else {
-    diagAdd('ok', 'Tabellenblatt gesetzt', SHEET);
+    diagAdd('ok', 'Trainingsplan-Tab gesetzt', SHEET);
   }
   try {
     const _n = new Date();
@@ -727,8 +740,8 @@ async function runDiag(manual = false) {
   } catch (e) { diagAdd('err', 'Datumsformat-Fehler', e.message); }
   try {
     localStorage.setItem(LS_KEYS.test,'1'); localStorage.removeItem(LS_KEYS.test);
-    diagAdd('ok', 'localStorage verfügbar', '');
-  } catch (e) { diagAdd('err', 'localStorage nicht verfügbar', 'Privater Modus?'); }
+    diagAdd('ok', 'Browser-Speicher verfügbar', '');
+  } catch (e) { diagAdd('err', 'Browser-Speicher nicht verfügbar', 'Privater Modus?'); }
   if (API && API.startsWith('https://')) {
     try {
       const ctrl = new AbortController();
@@ -736,15 +749,15 @@ async function runDiag(manual = false) {
       const res  = await fetch(`${API}?sheet=${encodeURIComponent(SHEET)}&v=${Date.now()}`, { signal: ctrl.signal });
       clearTimeout(tid);
       if (!res.ok) {
-        diagAdd('err', `API HTTP ${res.status}`, 'Prüfe Deployment.');
+        diagAdd('err', `Verbindung HTTP ${res.status}`, 'Prüfe Deployment.');
       } else {
         const json = await res.json();
         let data = Array.isArray(json) ? json : (Array.isArray(json?.data) ? json.data : null);
-        if (!data) diagAdd('err', 'API gibt kein Array', JSON.stringify(json).slice(0,80));
-        else diagAdd('ok', `API OK — ${data.length} Zeilen`, '');
+        if (!data) diagAdd('err', 'Verbindung liefert keine Trainingsdaten', JSON.stringify(json).slice(0,80));
+        else diagAdd('ok', `Verbindung OK — ${data.length} Zeilen`, '');
       }
     } catch (e) {
-      diagAdd('err', e.name === 'AbortError' ? 'API Timeout' : 'API Fehler: '+e.message, '');
+      diagAdd('err', e.name === 'AbortError' ? 'Verbindung Timeout' : 'Verbindung fehlgeschlagen: '+e.message, '');
     }
   }
   if (rawData.length > 0) diagAdd('ok', `${rawData.length} Zeilen im Speicher`, '');
@@ -780,7 +793,7 @@ document.getElementById('hdr-date').textContent = (() => {
 async function init() {
   lmsg('Verbinde…');
   if (!API) { hideLS(); return setupOpen(); }
-  lmsg('System-Check…');
+  lmsg('Verbindungscheck…');
   const ok = await runDiag(false);
   if (!ok) { hideLS(); return; }
   lmsg('Lade Plan…');
@@ -843,7 +856,7 @@ function buildStructure() {
 }
 
 // ════════════════════════════════════════════════════
-//  SELECTORS — Woche + Tag Buttons (wie Personal)
+//  SELECTORS — Woche + Tag Buttons
 // ════════════════════════════════════════════════════
 function buildSelectors() {
   const structure = buildStructure();
@@ -973,7 +986,7 @@ function liveOrm(ri, s) {
 }
 
 // ════════════════════════════════════════════════════
-//  RENDER WORKOUT (wie Personal: Tag-Header + Cards)
+//  RENDER WORKOUT: Tag-Header + Cards
 // ════════════════════════════════════════════════════
 function renderWorkout() {
   const container = document.getElementById('workout-content');
@@ -1002,7 +1015,7 @@ function renderWorkout() {
     const ri      = row._ri;  // echte Sheet-Zeilennummer, aus Normalisierung
     const isFirst = tCount === 1;
     const pCls    = progRaw==='▲'?'up':progRaw==='▼'?'dn':'eq';
-    const pLabel  = progRaw==='▲'?'▲ PR':progRaw==='▼'?'▼ Rück':'► Neu';
+    const pLabel  = progRaw==='▲'?'▲ PR':progRaw==='▼'?'▼ Rückgang':'► Neu';
     const mk      = muscleKey(muscle);
     const g1      = escA(row[6]);
 
@@ -1047,7 +1060,7 @@ function renderWorkout() {
   });
 
   if (!tCount) {
-    container.innerHTML = '<div class="empty"><big>LEER</big>Noch keine Übungen benannt.<br>→ Tab „Planung" zum Eintragen.</div>';
+    container.innerHTML = '<div class="empty"><big>Training</big>Für diesen Tag sind noch keine Übungen benannt.<br>Öffne „Planung", um Übungen einzutragen.</div>';
     return;
   }
 
@@ -1064,7 +1077,7 @@ function renderPlan() {
   const container = document.getElementById('view-plan');
   container.innerHTML = '';
   const structure = buildStructure();
-  if (!structure.length) { container.innerHTML = '<div class="empty"><big>?</big>Keine Daten.</div>'; return; }
+  if (!structure.length) { container.innerHTML = '<div class="empty"><big>Planung</big>Noch kein Trainingsplan geladen.<br>Verbinde zuerst dein Google Sheet.</div>'; return; }
 
   if (PS.level === 'weeks') {
     const box = document.createElement('div'); box.className = 'plan-box';
@@ -1150,7 +1163,7 @@ function renderPR() {
   container.innerHTML='';
   const map=buildPRMap();
   const entries=Object.entries(map);
-  if (!entries.length) { container.innerHTML='<div class="empty"><big>PR</big>Noch keine Trainingsdaten.</div>'; return; }
+  if (!entries.length) { container.innerHTML='<div class="empty"><big>PR</big>Noch keine Bestleistungen gefunden.<br>Trage Gewichte im Training ein und speichere sie.</div>'; return; }
   const muscles=['Alle',...new Set(entries.map(([,vv])=>muscleKey(vv.muscle)).filter(m=>m!=='default'))];
   const fb=document.createElement('div'); fb.className='pr-filter';
   muscles.forEach(m=>{
@@ -1162,7 +1175,7 @@ function renderPR() {
   });
   container.appendChild(fb);
   const filtered=entries.filter(([,val])=>prFilter==='Alle'||muscleKey(val.muscle)===prFilter).sort((a,b)=>b[1].kg-a[1].kg);
-  if (!filtered.length) { const e=document.createElement('div'); e.className='empty'; e.innerHTML='<big>—</big>Keine Einträge.'; container.appendChild(e); return; }
+  if (!filtered.length) { const e=document.createElement('div'); e.className='empty'; e.innerHTML='<big>—</big>Für diesen Filter gibt es noch keine Bestleistung.'; container.appendChild(e); return; }
   const list=document.createElement('div'); list.className='pr-list';
   filtered.forEach(([name,val],idx)=>{
     const card=document.createElement('div'); card.className='pr-card'; card.dataset.muscle=muscleKey(val.muscle);
@@ -1324,6 +1337,7 @@ function buildCoachHints() {
   // Daten sammeln
   const exData = {}; // name → { maxKg, entries:[], rpeVals[], hasPR, hasData }
   let totalHighRpe = 0;
+  const highRpeEvidence = [];
 
   rawData.forEach(row => {
     const w=(row[0]||'').trim(), d=(row[3]||'').trim();
@@ -1359,7 +1373,10 @@ function buildCoachHints() {
     }
 
     // RPE ≥ 9 zählen
-    if (!isNaN(rpe)&&rpe>=9) totalHighRpe++;
+    if (!isNaN(rpe)&&rpe>=9) {
+      totalHighRpe++;
+      highRpeEvidence.push(`${name}: RPE ${rpe}`);
+    }
   });
 
   const exercises = Object.entries(exData);
@@ -1371,7 +1388,12 @@ function buildCoachHints() {
       type: 'empty',
       label: '◎ Hinweis',
       title: 'Noch zu wenig Trainingsdaten.',
-      sub: 'Speichere 2–3 Einheiten, dann erkennt\ndie App Bestleistungen, Progression und Stagnation.'
+      sub: 'Speichere 2–3 Einheiten, dann erkennt\ndie App Bestleistungen, Progression und Stagnation.',
+      detail: {
+        affected: 'Alle Übungen mit gespeicherten Sätzen',
+        evidence: `${totalWithData} Übungen mit auswertbaren Gewichten`,
+        recommendation: 'Trainiere und speichere noch ein paar Einheiten, bevor du Muster bewertest.'
+      }
     });
     return hints;
   }
@@ -1382,7 +1404,12 @@ function buildCoachHints() {
       type: 'rpe',
       label: '▲ Intensität',
       title: `${totalHighRpe} Sätze mit RPE 9–10 im aktuellen Zyklus.`,
-      sub: 'Nächste Einheit nicht aggressiv steigern.\nErholung zuerst.'
+      sub: 'Nächste Einheit nicht aggressiv steigern.\nErholung zuerst.',
+      detail: {
+        affected: highRpeEvidence.map(x => x.split(':')[0]).filter((v,i,a)=>a.indexOf(v)===i).join(', '),
+        evidence: highRpeEvidence.slice(0,4).join(' · '),
+        recommendation: 'Gewicht halten oder nur sehr klein steigern, wenn sich die erste Arbeitssatz-Serie sauber anfühlt.'
+      }
     });
   }
 
@@ -1396,7 +1423,16 @@ function buildCoachHints() {
       sub: [
         ex.orm1 ? `Geschätztes 1RM: ${ex.orm1} kg` : '',
         ex.bestSet ? `Bester Satz: ${ex.bestSet}` : ''
-      ].filter(Boolean).join(' · ')
+      ].filter(Boolean).join(' · '),
+      detail: {
+        affected: name,
+        evidence: [
+          ex.bestSet ? `Bester Satz: ${ex.bestSet}` : '',
+          ex.orm1 ? `Geschätztes 1RM: ${ex.orm1} kg` : '',
+          `Maximalgewicht im Zyklus: ${ex.maxKg} kg`
+        ].filter(Boolean).join(' · '),
+        recommendation: 'Bestleistung notieren, sauber regenerieren und beim nächsten Mal nur minimal weitersteigern.'
+      }
     });
   });
 
@@ -1412,12 +1448,20 @@ function buildCoachHints() {
     .sort((a,b) => b[1].entries.length - a[1].entries.length);
 
   if (stagnating.length) {
-    const [name] = stagnating[0];
+    const [name, ex] = stagnating[0];
+    const vals = ex.entries;
+    const last = vals[vals.length-1];
+    const prev = vals[vals.length-2];
     hints.push({
       type: 'stagnation',
       label: '► Progression',
       title: `${name} zeigt keine Steigerung.`,
-      sub: 'Gewicht halten — nächste Einheit 1 Wiederholung mehr anpeilen.'
+      sub: 'Gewicht halten — nächste Einheit 1 Wiederholung mehr anpeilen.',
+      detail: {
+        affected: name,
+        evidence: `Letzter Max-Satz: ${last} kg · davor: ${prev} kg`,
+        recommendation: 'Gleiches Gewicht halten und zuerst eine saubere Wiederholung mehr anpeilen.'
+      }
     });
   }
 
@@ -1436,17 +1480,44 @@ function buildCoachHints() {
     recTitle = 'Solide Daten.';
     recSub   = 'Weiter konstant trainieren.\nGewichte schrittweise und geduldig erhöhen.';
   }
-  hints.push({ type:'hint', label:'→ Empfehlung', title:recTitle, sub:recSub });
+  hints.push({
+    type:'hint',
+    label:'→ Empfehlung',
+    title:recTitle,
+    sub:recSub,
+    detail: {
+      affected: 'Gesamter aktueller Zyklus',
+      evidence: `${totalWithData} Übungen ausgewertet · ${prExercises.length} PR-Hinweise · ${totalHighRpe} hohe RPE-Sätze`,
+      recommendation: recSub.replace(/\n/g, ' ')
+    }
+  });
 
   // max. 5
   return hints.slice(0,5);
+}
+
+function coachDetailsHTML(h) {
+  const d = h.detail || {
+    affected: 'Aktuelle Trainingsdaten',
+    evidence: h.sub || h.title,
+    recommendation: h.sub || 'Weiter beobachten.'
+  };
+  return `<div class="coach-details">` +
+    `<div class="coach-detail-row"><div class="coach-detail-k">Übung(en)</div><div class="coach-detail-v">${esc(d.affected || 'Aktuelle Trainingsdaten')}</div></div>` +
+    `<div class="coach-detail-row"><div class="coach-detail-k">Werte</div><div class="coach-detail-v">${esc(d.evidence || 'Noch keine Werte vorhanden')}</div></div>` +
+    `<div class="coach-detail-row"><div class="coach-detail-k">Empfehlung</div><div class="coach-detail-v">${esc(d.recommendation || 'Weiter beobachten.')}</div></div>` +
+  `</div>`;
+}
+
+function toggleCoachCard(card) {
+  card.classList.toggle('open');
 }
 
 function renderCoach() {
   const container = document.getElementById('view-coach');
   container.innerHTML = '';
   if (!rawData.length) {
-    container.innerHTML = '<div class="empty"><big>⚡</big>Keine Daten geladen.</div>';
+    container.innerHTML = '<div class="empty"><big>Coach</big>Noch keine Trainingsdaten geladen.<br>Verbinde dein Google Sheet und speichere Trainingseinträge.</div>';
     return;
   }
   const hints = buildCoachHints();
@@ -1455,11 +1526,17 @@ function renderCoach() {
   hints.forEach((h, i) => {
     const card = document.createElement('div');
     card.className = `coach-card type-${h.type}`;
+    card.tabIndex = 0;
     card.style.animationDelay = (i * 0.05) + 's';
+    card.onclick = () => toggleCoachCard(card);
+    card.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleCoachCard(card); } };
     card.innerHTML =
+      `<div class="coach-head"><div class="coach-main">` +
       `<div class="coach-lbl">${esc(h.label)}</div>` +
       `<div class="coach-title">${esc(h.title)}</div>` +
-      (h.sub ? `<div class="coach-sub">${esc(h.sub).replace(/\n/g,'<br>')}</div>` : '');
+      (h.sub ? `<div class="coach-sub">${esc(h.sub).replace(/\n/g,'<br>')}</div>` : '') +
+      `</div><div class="coach-toggle">⌄</div></div>` +
+      coachDetailsHTML(h);
     list.appendChild(card);
   });
   container.appendChild(list);
