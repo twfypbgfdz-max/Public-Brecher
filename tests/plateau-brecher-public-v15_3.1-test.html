@@ -316,6 +316,10 @@ main { padding: 14px 16px; }
 .rpeinput::-webkit-outer-spin-button, .rpeinput::-webkit-inner-spin-button { -webkit-appearance: none; }
 .rpeinput:focus { border-color: var(--warn); background: #221a00; }
 .rpeinput::placeholder { color: var(--tx3); font-size: 9px; }
+.rpe-empty {
+  font-family: 'DM Mono', monospace; font-size: 13px; color: var(--tx3);
+  padding: 8px 3px; text-align: center;
+}
 .orm-inline {
   font-family: 'DM Mono', monospace; font-size: 10px; color: var(--acc); font-weight: 500;
   padding: 2px 4px; background: rgba(200,255,0,.07); border-radius: 4px; text-align: center; white-space: nowrap;
@@ -333,12 +337,32 @@ main { padding: 14px 16px; }
   .slbl { font-size: 9px; }
   .sinput,
   .rpeinput { min-height: 38px; padding-block: 9px; }
+  .rpe-empty { min-height: 38px; padding-block: 9px; }
   .orm-inline { font-size: 11px; padding-inline: 3px; }
   .pr-card { align-items: flex-start; padding: 13px 12px; }
   .pr-chip { min-height: 34px; }
   .coach-card { padding: 14px 12px 14px 15px; }
   .coach-sub,
   .coach-detail-v { line-height: 1.6; }
+}
+
+@media (min-width: 900px) {
+  main {
+    max-width: 760px;
+    margin: 0 auto;
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+  #save-footer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  #save-btn,
+  #save-footer .api-status,
+  #last-saved-txt {
+    width: min(100%, 720px);
+  }
 }
 
 /* ── PLANUNG ─────────────────────────── */
@@ -1050,12 +1074,15 @@ function renderWorkout() {
       const g   = escA(blankZero(row[6+(s-1)*2]));
       const r   = escA(blankZero(row[7+(s-1)*2]));
       const rpe = s===1 ? escA(blankZero(row[14])) : '';
+      const rpeCell = s===1
+        ? `<input class="rpeinput" type="number" step="0.5" inputmode="decimal" id="rpe${s}-${ri}" value="${rpe}" placeholder="RPE">`
+        : '<div class="rpe-empty">—</div>';
       const orm = calc1RM(g,r);
       return `<div class="set-row">
         <div class="slbl">S${s}</div>
         <input class="sinput" type="number" step="0.5" inputmode="decimal" id="g${s}-${ri}" value="${g}" placeholder="kg" oninput="liveOrm(${ri},${s})">
         <input class="sinput" type="number" inputmode="numeric" id="r${s}-${ri}" value="${r}" placeholder="Wdh" oninput="liveOrm(${ri},${s})">
-        <input class="rpeinput" type="number" step="0.5" inputmode="decimal" id="rpe${s}-${ri}" value="${rpe}" placeholder="RPE">
+        ${rpeCell}
         <div class="orm-inline" id="orm${s}-${ri}">${orm?orm+' kg':'\u2014'}</div>
       </div>`;
     }).join('');
@@ -1649,7 +1676,10 @@ let _remoteVersion = '';
 
 async function checkUpdate() {
   try {
+    if (location.protocol === 'file:') return;
     const res = await fetch('./version.json?v=' + Date.now(), { cache: 'no-store' });
+    if (res.status === 404) return;
+    if (res.status !== 200) return;
     if (!res.ok) return;
     const json = await res.json();
     const remote = String(json.version || '').trim();
