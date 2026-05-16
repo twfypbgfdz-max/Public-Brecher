@@ -6,11 +6,11 @@
 <meta name="theme-color" content="#080808">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>PB V15.3.1-test</title>
+<title>PB V15.3.2-test</title>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;700;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 /* ════════════════════════════════════════
-   PLATEAU BRECHER V15.3.1-test — PUBLIC
+   PLATEAU BRECHER V15.3.2-test — PUBLIC
    Barlow Condensed + DM Mono
    Layout: Public App · Data: Google Sheet
    ════════════════════════════════════════ */
@@ -334,6 +334,11 @@ main { padding: 14px 16px; }
   .sinput,
   .rpeinput { min-height: 38px; padding-block: 9px; }
   .orm-inline { font-size: 11px; padding-inline: 3px; }
+  .pr-card { align-items: flex-start; padding: 13px 12px; }
+  .pr-chip { min-height: 34px; }
+  .coach-card { padding: 14px 12px 14px 15px; }
+  .coach-sub,
+  .coach-detail-v { line-height: 1.6; }
 }
 
 /* ── PLANUNG ─────────────────────────── */
@@ -378,11 +383,11 @@ main { padding: 14px 16px; }
 .pe-btns { display: flex; gap: 4px; flex-shrink: 0; }
 
 /* ── PR-SEITE ─────────────────────────── */
-.pr-filter { display: flex; gap: 6px; flex-wrap: wrap; padding: 4px 0 12px; }
-.pr-chip { background: var(--s2); border: 1px solid var(--bor); color: var(--tx3); font-family: 'DM Mono', monospace; font-size: 9px; padding: 5px 10px; border-radius: 20px; cursor: pointer; transition: all .15s; letter-spacing: .05em; }
+.pr-filter { display: flex; gap: 7px; flex-wrap: wrap; padding: 4px 0 12px; }
+.pr-chip { background: var(--s2); border: 1px solid var(--bor); color: var(--tx2); font-family: 'DM Mono', monospace; font-size: 10px; padding: 7px 12px; border-radius: 20px; cursor: pointer; transition: all .15s; letter-spacing: .04em; }
 .pr-chip.active { background: var(--acc); border-color: var(--acc); color: #000; font-weight: 700; }
-.pr-list { display: flex; flex-direction: column; gap: 6px; }
-.pr-card { background: var(--s1); border: 1px solid var(--bor); border-radius: var(--r); padding: 12px 14px; display: flex; align-items: center; gap: 10px; animation: fadeUp .15s ease both; }
+.pr-list { display: flex; flex-direction: column; gap: 7px; }
+.pr-card { background: var(--s1); border: 1px solid var(--bor); border-radius: var(--r); padding: 13px 14px; display: flex; align-items: center; gap: 12px; animation: fadeUp .15s ease both; }
 .pr-card[data-muscle="Schultern"] { border-left: 3px solid #ffd54f; }
 .pr-card[data-muscle="Brust"]     { border-left: 3px solid #ef5350; }
 .pr-card[data-muscle="Trizeps"]   { border-left: 3px solid #ab47bc; }
@@ -391,20 +396,20 @@ main { padding: 14px 16px; }
 .pr-card[data-muscle="Beine"]     { border-left: 3px solid #66bb6a; }
 .pr-card[data-muscle="Bauch"]     { border-left: 3px solid #ff7043; }
 .pr-info { flex: 1; min-width: 0; }
-.pr-name { font-size: 12px; font-weight: 500; line-height: 1.3; color: var(--tx); }
+.pr-name { font-size: 13px; font-weight: 500; line-height: 1.35; color: var(--tx); }
 .pr-muscle { font-size: 8px; color: var(--tx3); letter-spacing: .1em; text-transform: uppercase; margin-top: 2px; }
-.pr-sets { font-size: 8px; color: var(--tx3); letter-spacing: .04em; margin-top: 3px; }
+.pr-sets { font-size: 9px; color: var(--tx3); letter-spacing: .02em; margin-top: 4px; opacity: .8; }
 .pr-val { text-align: right; flex-shrink: 0; }
 .pr-kg { font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: 26px; color: var(--acc); letter-spacing: 1px; line-height: 1; }
 .pr-kg-unit { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--tx3); font-weight: 400; }
-.pr-date { font-size: 8px; color: var(--tx3); margin-top: 2px; }
+.pr-date { font-size: 9px; color: var(--tx3); margin-top: 3px; opacity: .75; }
 
 /* ── SMART COACH ─────────────────────── */
 .coach-list { display: flex; flex-direction: column; gap: 8px; padding-top: 4px; }
 .coach-card {
   background: var(--s1); border: 1px solid var(--bor);
-  border-radius: var(--r); padding: 13px 14px 13px 16px;
-  border-left-width: 3px;
+  border-radius: var(--r); padding: 14px 14px 14px 16px;
+  border-left-width: 2px;
   animation: fadeUp .15s ease both;
 }
 .coach-card.type-pr         { border-left-color: var(--acc); }
@@ -414,8 +419,9 @@ main { padding: 14px 16px; }
 .coach-card.type-empty      { border-left-color: var(--tx3); }
 .coach-lbl {
   font-family: 'DM Mono', monospace; font-size: 8px;
-  letter-spacing: .12em; text-transform: uppercase;
+  letter-spacing: .08em; text-transform: uppercase;
   margin-bottom: 5px; display: flex; align-items: center; gap: 5px;
+  opacity: .85;
 }
 .coach-card.type-pr         .coach-lbl { color: var(--acc); }
 .coach-card.type-rpe        .coach-lbl { color: var(--warn); }
@@ -424,11 +430,11 @@ main { padding: 14px 16px; }
 .coach-card.type-empty      .coach-lbl { color: var(--tx3); }
 .coach-title {
   font-family: 'Barlow Condensed', sans-serif; font-weight: 700;
-  font-size: 15px; color: var(--tx); line-height: 1.3; margin-bottom: 3px;
+  font-size: 16px; color: var(--tx); line-height: 1.35; margin-bottom: 4px;
 }
 .coach-sub {
-  font-family: 'DM Mono', monospace; font-size: 9px;
-  color: var(--tx2); letter-spacing: .03em; line-height: 1.5;
+  font-family: 'DM Mono', monospace; font-size: 10px;
+  color: var(--tx2); letter-spacing: .01em; line-height: 1.55;
 }
 .coach-card { cursor: pointer; }
 .coach-card.open { border-color: var(--b2); }
@@ -436,11 +442,11 @@ main { padding: 14px 16px; }
 .coach-main { flex: 1; min-width: 0; }
 .coach-toggle { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--tx3); line-height: 1; transition: transform .2s; }
 .coach-card.open .coach-toggle { transform: rotate(180deg); }
-.coach-details { display: none; margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--bor); }
+.coach-details { display: none; margin-top: 11px; padding-top: 11px; border-top: 1px solid var(--bor); }
 .coach-card.open .coach-details { display: block; }
 .coach-detail-row { margin-bottom: 8px; }
-.coach-detail-k { font-family: 'DM Mono', monospace; font-size: 8px; color: var(--tx3); letter-spacing: .12em; text-transform: uppercase; margin-bottom: 2px; }
-.coach-detail-v { font-family: 'DM Mono', monospace; font-size: 9px; color: var(--tx2); line-height: 1.5; }
+.coach-detail-k { font-family: 'DM Mono', monospace; font-size: 8px; color: var(--tx3); letter-spacing: .08em; text-transform: uppercase; margin-bottom: 3px; }
+.coach-detail-v { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--tx2); line-height: 1.55; }
 
 /* ── LEER-ZUSTÄNDE ───────────────────── */
 .empty { text-align: center; padding: 40px 20px; color: var(--tx3); font-size: 11px; line-height: 1.8; }
@@ -538,7 +544,7 @@ main { padding: 14px 16px; }
 <!-- HEADER -->
 <header>
   <div>
-    <div class="logo">PB<span>V15.3.1-test</span></div>
+    <div class="logo">PB<span>V15.3.2-test</span></div>
     <span class="hbadge" id="today-badge">REST</span>
   </div>
   <div class="hdr-r">
@@ -657,7 +663,7 @@ main { padding: 14px 16px; }
 // ============================================================
 const PUBLIC_ADMIN_LOG_URL = 'https://script.google.com/macros/s/AKfycbwonJnXhw3k0saV9DdqU0t5U6fY4AHW8sdoH6Oq1WuDD3ILH_bPN-JOkl9Znu7F_sAH/exec';
 const APP_ENV              = 'PUBLIC';
-const APP_VERSION          = 'V15.3.1-test';
+const APP_VERSION          = 'V15.3.2-test';
 function sanitizeAdminValue(value, maxLen=500) {
   return String(value || '')
     .replace(/(gsk_|AIza)[a-zA-Z0-9_-]+/g, '[REDACTED]')
@@ -1519,7 +1525,7 @@ function coachDetailsHTML(h) {
   };
   return `<div class="coach-details">` +
     `<div class="coach-detail-row"><div class="coach-detail-k">Übung(en)</div><div class="coach-detail-v">${esc(d.affected || 'Aktuelle Trainingsdaten')}</div></div>` +
-    `<div class="coach-detail-row"><div class="coach-detail-k">Werte</div><div class="coach-detail-v">${esc(d.evidence || 'Noch keine Werte vorhanden')}</div></div>` +
+    `<div class="coach-detail-row"><div class="coach-detail-k">Stand</div><div class="coach-detail-v">${esc(d.evidence || 'Noch keine Werte vorhanden')}</div></div>` +
     `<div class="coach-detail-row"><div class="coach-detail-k">Empfehlung</div><div class="coach-detail-v">${esc(d.recommendation || 'Weiter beobachten.')}</div></div>` +
   `</div>`;
 }
