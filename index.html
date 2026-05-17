@@ -526,7 +526,7 @@ main { padding: 14px 16px; }
       <input class="setup-inp" id="si-url" type="url" placeholder="https://script.google.com/macros/s/…/exec">
       <div class="setup-lbl">Verbindungsstatus</div>
       <div id="si-version-info" class="setup-version">
-        <div class="setup-status-line"><span class="setup-status-dot"></span><span>Nicht verbunden</span></div>
+        <div class="setup-status-line"><span id="setup-status-dot" class="setup-status-dot"></span><span id="setup-status-txt">Nicht verbunden</span></div>
         <div>Lokal: <span id="si-ver-local">—</span></div>
         <span id="si-ver-remote" hidden>—</span>
         <span id="si-ver-status" hidden>—</span>
@@ -660,7 +660,7 @@ main { padding: 14px 16px; }
 //  ADMIN-LOGGING
 // ============================================================
 const APP_ENV              = 'PUBLIC';
-const APP_VERSION          = 'V15.3.4-test';
+const APP_VERSION          = 'V15.3.5-test';
 function sanitizeAdminValue(value, maxLen=500) {
   return String(value || '')
     .replace(/(gsk_|AIza)[a-zA-Z0-9_-]+/g, '[REDACTED]')
@@ -844,6 +844,7 @@ async function init() {
     document.getElementById('dot2').style.background = 'var(--ok)';
     document.getElementById('dot2').style.boxShadow  = '0 0 6px rgba(0,230,118,.4)';
     document.getElementById('api-status-txt').textContent = 'Verbunden · ' + SHEET;
+    setSetupConnectionStatus(true);
     buildSelectors();
     hideLS();
   } catch (e) {
@@ -1589,6 +1590,7 @@ function switchTab(id, el) {
 function setupOpen() {
   document.getElementById('si-sheet').value = SHEET;
   document.getElementById('si-url').value   = API;
+  setSetupConnectionStatus(rawData.length > 0);
   _updateVersionDisplay(_remoteVersion);
   document.getElementById('setup-ov').classList.add('open');
   document.getElementById('t-set').classList.add('active');
@@ -1615,6 +1617,20 @@ const escA = s  => String(s||'').replace(/"/g,'&quot;');
 function lmsg(m)   { document.getElementById('ls-msg').textContent=m; }
 function hideLS()  { setTimeout(()=>document.getElementById('ls').classList.add('off'),260); }
 function setDot(c) { document.getElementById('dot').className=c; }
+function setSetupConnectionStatus(connected) {
+  const dot = document.getElementById('setup-status-dot');
+  const txt = document.getElementById('setup-status-txt');
+  if (!dot || !txt) return;
+  if (connected) {
+    dot.style.background = 'var(--ok)';
+    dot.style.boxShadow = '0 0 8px rgba(0,230,118,.45)';
+    txt.textContent = 'Verbunden · ' + SHEET;
+  } else {
+    dot.style.background = 'var(--err)';
+    dot.style.boxShadow = '0 0 8px rgba(255,68,68,.45)';
+    txt.textContent = 'Nicht verbunden';
+  }
+}
 function updateOfflineState() {
   const dot = document.getElementById('dot2');
   const txt = document.getElementById('api-status-txt');
