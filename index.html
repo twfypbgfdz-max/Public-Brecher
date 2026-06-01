@@ -6,11 +6,11 @@
 <meta name="theme-color" content="#080808">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>PB V15.3.6-test</title>
+<title>PB V15.3.7-test</title>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;700;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 /* ════════════════════════════════════════
-   PLATEAU BRECHER V15.3.6-test — PUBLIC
+   PLATEAU BRECHER V15.3.7-test — PUBLIC
    Barlow Condensed + DM Mono
    Layout: Public App · Data: Google Sheet
    ════════════════════════════════════════ */
@@ -280,6 +280,7 @@ main { padding: 14px 16px; }
   font-size: 15px; font-weight: 700; line-height: 1.22; color: var(--tx);
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
+.last-set-line { font-family: 'DM Mono', monospace; font-size: 9px; color: var(--tx2); margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .ex-muscle { font-size: 8px; color: var(--tx2); letter-spacing: .12em; text-transform: uppercase; margin-top: 3px; }
 .exhead-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
 .exstatus { font-family: 'DM Mono', monospace; font-size: 9px; color: var(--tx3); white-space: nowrap; }
@@ -555,7 +556,7 @@ main { padding: 14px 16px; }
 <!-- HEADER -->
 <header>
   <div>
-    <div class="logo">PB<span>V15.3.6-test</span></div>
+    <div class="logo">PB<span>V15.3.7-test</span></div>
     <span class="hbadge" id="today-badge">REST</span>
   </div>
   <div class="hdr-r">
@@ -673,7 +674,7 @@ main { padding: 14px 16px; }
 //  ADMIN-LOGGING
 // ============================================================
 const APP_ENV              = 'PUBLIC';
-const APP_VERSION          = 'V15.3.6-test';
+const APP_VERSION          = 'V15.3.7-test';
 function sanitizeAdminValue(value, maxLen=500) {
   return String(value || '')
     .replace(/(gsk_|AIza)[a-zA-Z0-9_-]+/g, '[REDACTED]')
@@ -1046,6 +1047,42 @@ function updateDayStatus() {
     : '';
 }
 
+function normExerciseName(name) {
+  return String(name||'').trim().toLowerCase().replace(/\s+/g, ' ');
+}
+
+function getCompleteSetsFromRow(row) {
+  const sets = [[row[6],row[7],1],[row[8],row[9],2],[row[10],row[11],3]]
+    .map(([g,r,setNo]) => ({
+      g: publicNum(g),
+      r: publicNum(r),
+      setNo
+    }))
+    .filter(set => set.g > 0 && set.r > 0);
+  return sets;
+}
+
+function pickDisplaySet(row) {
+  const sets = getCompleteSetsFromRow(row);
+  if (!sets.length) return null;
+  const first = sets.find(set => set.setNo === 1);
+  if (first) return first;
+  return sets.slice().sort((a,b) => calc1RM(b.g,b.r) - calc1RM(a.g,a.r) || b.g - a.g)[0];
+}
+
+function findPreviousExerciseSet(name, currentIndex) {
+  const wanted = normExerciseName(name);
+  if (!wanted) return null;
+  for (let i = currentIndex - 1; i >= 0; i--) {
+    const row = rawData[i];
+    const rowName = normExerciseName(row?.[4]);
+    if (!rowName || rowName !== wanted) continue;
+    const set = pickDisplaySet(row);
+    if (set) return set;
+  }
+  return null;
+}
+
 function liveOrm(ri, s) {
   const g  = document.getElementById(`g${s}-${ri}`)?.value;
   const r  = document.getElementById(`r${s}-${ri}`)?.value;
@@ -1099,6 +1136,8 @@ function renderWorkout() {
     const pLabel  = progRaw==='▲'?'▲ PR':progRaw==='▼'?'▼ Rückgang':'► Neu';
     const mk      = muscleKey(muscle);
     const g1      = escA(row[6]);
+    const lastSet = findPreviousExerciseSet(name, i);
+    const lastSetLine = lastSet ? `<div class="last-set-line">Letztes Mal: ${lastSet.g} kg × ${lastSet.r}</div>` : '';
 
     const sets = [1,2,3].map(s => {
       const g   = escA(row[6+(s-1)*2]);
@@ -1126,6 +1165,7 @@ function renderWorkout() {
          <div class="exhead-left">
            <div class="ex-num">${tCount}.</div>
            <div class="ex-title">${esc(name)}</div>
+           ${lastSetLine}
            ${muscle?`<div class="ex-muscle">${esc(muscle)}</div>`:''}
          </div>
          <div class="exhead-right">
