@@ -6,11 +6,11 @@
 <meta name="theme-color" content="#080808">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>PB V15.3.7-test</title>
+<title>PB V15.3.8-test</title>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;700;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 /* ════════════════════════════════════════
-   PLATEAU BRECHER V15.3.7-test — PUBLIC
+   PLATEAU BRECHER V15.3.8-test — PUBLIC
    Barlow Condensed + DM Mono
    Layout: Public App · Data: Google Sheet
    ════════════════════════════════════════ */
@@ -252,7 +252,7 @@ main { padding: 14px 16px; }
 .excard {
   background: linear-gradient(180deg, rgba(255,255,255,.045), rgba(255,255,255,.014)), var(--s1);
   border: 1px solid rgba(255,255,255,.09);
-  margin-bottom: 8px; position: relative; overflow: hidden;
+  margin-bottom: 7px; position: relative; overflow: hidden;
   border-radius: 13px; transition: border-color .2s, background .2s, transform .15s;
 }
 .excard::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--bor); transition: background .2s, opacity .2s; opacity: .78; }
@@ -264,13 +264,13 @@ main { padding: 14px 16px; }
 .excard[data-muscle="Beine"]::before     { background: #66bb6a; }
 .excard[data-muscle="Bauch"]::before     { background: #ff7043; }
 .excard[data-muscle="default"]::before   { background: var(--acc); }
-.excard.open-ex { border-color: rgba(200,255,0,.34); }
-.excard.open-ex::before { background: var(--acc); }
+.excard.open-ex { border-color: rgba(200,255,0,.58); background: linear-gradient(180deg, rgba(200,255,0,.07), rgba(255,255,255,.018)), var(--s1); box-shadow: inset 0 0 0 1px rgba(200,255,0,.08); }
+.excard.open-ex::before { background: var(--acc); opacity: 1; width: 4px; }
 
 /* Card Header */
 .exhead {
   display: flex; align-items: center; justify-content: space-between;
-  padding: 12px 12px 12px 15px; cursor: pointer; gap: 10px; min-height: 58px;
+  padding: 10px 11px 10px 14px; cursor: pointer; gap: 9px; min-height: 56px;
   -webkit-tap-highlight-color: transparent;
 }
 .exhead:active { background: rgba(255,255,255,.035); }
@@ -281,6 +281,8 @@ main { padding: 14px 16px; }
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 .last-set-line { font-family: 'DM Mono', monospace; font-size: 9px; color: var(--tx2); margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.set-progress-mini { font-family: 'DM Mono', monospace; font-size: 8.5px; color: var(--tx3); margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.set-progress-mini.done { color: var(--acc); }
 .ex-muscle { font-size: 8px; color: var(--tx2); letter-spacing: .12em; text-transform: uppercase; margin-top: 3px; }
 .exhead-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
 .exstatus { font-family: 'DM Mono', monospace; font-size: 9px; color: var(--tx3); white-space: nowrap; }
@@ -299,7 +301,7 @@ main { padding: 14px 16px; }
 .warmup-toggle {
   display: flex; align-items: center; gap: 6px;
   font-family: 'DM Mono', monospace; font-size: 9px; color: var(--warn);
-  cursor: pointer; padding: 8px 14px 4px;
+  cursor: pointer; padding: 7px 13px 3px;
   background: none; border: none; text-align: left; width: 100%;
   -webkit-tap-highlight-color: transparent; transition: opacity .15s;
 }
@@ -314,14 +316,14 @@ main { padding: 14px 16px; }
 /* Sets Grid */
 .col-hdr { display: grid; grid-template-columns: 30px 1fr 1fr 42px 52px; gap: 6px; padding: 9px 14px 4px; }
 .ch { font-size: 7px; color: var(--tx2); letter-spacing: .12em; text-align: center; text-transform: uppercase; }
-.sets-wrap { padding: 0 13px 12px; }
-.set-row { display: grid; grid-template-columns: 28px 1fr 1fr 42px 52px; gap: 6px; align-items: center; margin-bottom: 5px; }
+.sets-wrap { padding: 0 12px 10px; }
+.set-row { display: grid; grid-template-columns: 27px 1fr 1fr 42px 52px; gap: 5px; align-items: center; margin-bottom: 5px; }
 .set-row:last-child { margin-bottom: 0; }
 .slbl { font-size: 8px; color: var(--tx2); letter-spacing: .1em; text-align: center; text-transform: uppercase; }
 .sinput {
   background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.1); color: var(--tx);
   font-family: 'DM Mono', monospace; font-size: 14px; font-weight: 700;
-  padding: 9px 4px; text-align: center; outline: none; width: 100%; min-height: 38px;
+  padding: 8px 4px; text-align: center; outline: none; width: 100%; min-height: 36px;
   transition: border-color .15s, background .15s; -moz-appearance: textfield; border-radius: 9px;
 }
 .sinput::-webkit-outer-spin-button, .sinput::-webkit-inner-spin-button { -webkit-appearance: none; }
@@ -330,7 +332,7 @@ main { padding: 14px 16px; }
 .rpeinput {
   background: rgba(255,170,0,.055); border: 1px solid rgba(255,170,0,.26); color: var(--warn);
   font-family: 'DM Mono', monospace; font-size: 13px; font-weight: 500;
-  padding: 9px 3px; text-align: center; outline: none; width: 100%; min-height: 38px;
+  padding: 8px 3px; text-align: center; outline: none; width: 100%; min-height: 36px;
   transition: border-color .12s, background .12s; -moz-appearance: textfield; border-radius: 9px;
 }
 .rpeinput::-webkit-outer-spin-button, .rpeinput::-webkit-inner-spin-button { -webkit-appearance: none; }
@@ -556,7 +558,7 @@ main { padding: 14px 16px; }
 <!-- HEADER -->
 <header>
   <div>
-    <div class="logo">PB<span>V15.3.7-test</span></div>
+    <div class="logo">PB<span>V15.3.8-test</span></div>
     <span class="hbadge" id="today-badge">REST</span>
   </div>
   <div class="hdr-r">
@@ -674,7 +676,7 @@ main { padding: 14px 16px; }
 //  ADMIN-LOGGING
 // ============================================================
 const APP_ENV              = 'PUBLIC';
-const APP_VERSION          = 'V15.3.7-test';
+const APP_VERSION          = 'V15.3.8-test';
 function sanitizeAdminValue(value, maxLen=500) {
   return String(value || '')
     .replace(/(gsk_|AIza)[a-zA-Z0-9_-]+/g, '[REDACTED]')
@@ -1062,6 +1064,22 @@ function getCompleteSetsFromRow(row) {
   return sets;
 }
 
+function countCompleteSetsForRow(row) {
+  return getCompleteSetsFromRow(row).length;
+}
+
+function countCompleteSetsFromDom(ri) {
+  return [1,2,3].filter(s => hasCompleteSet(ri, s)).length;
+}
+
+function updateSetProgressMini(ri) {
+  const el = document.getElementById('setprog-' + ri);
+  if (!el) return;
+  const count = countCompleteSetsFromDom(ri);
+  el.textContent = `${count}/3 Sätze mit Daten`;
+  el.classList.toggle('done', count === 3);
+}
+
 function pickDisplaySet(row) {
   const sets = getCompleteSetsFromRow(row);
   if (!sets.length) return null;
@@ -1101,6 +1119,7 @@ function liveOrm(ri, s) {
     if (body) body.innerHTML = warmupSetsHTML(g);
   }
   updateDayStatus();
+  updateSetProgressMini(ri);
 }
 
 // ════════════════════════════════════════════════════
@@ -1138,6 +1157,8 @@ function renderWorkout() {
     const g1      = escA(row[6]);
     const lastSet = findPreviousExerciseSet(name, i);
     const lastSetLine = lastSet ? `<div class="last-set-line">Letztes Mal: ${lastSet.g} kg × ${lastSet.r}</div>` : '';
+    const setCount = countCompleteSetsForRow(row);
+    const setProgressLine = `<div class="set-progress-mini ${setCount===3?'done':''}" id="setprog-${ri}">${setCount}/3 Sätze mit Daten</div>`;
 
     const sets = [1,2,3].map(s => {
       const g   = escA(row[6+(s-1)*2]);
@@ -1166,6 +1187,7 @@ function renderWorkout() {
            <div class="ex-num">${tCount}.</div>
            <div class="ex-title">${esc(name)}</div>
            ${lastSetLine}
+           ${setProgressLine}
            ${muscle?`<div class="ex-muscle">${esc(muscle)}</div>`:''}
          </div>
          <div class="exhead-right">
