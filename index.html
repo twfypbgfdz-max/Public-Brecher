@@ -6,11 +6,11 @@
 <meta name="theme-color" content="#080808">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>PB V15.3.1-test</title>
+<title>PB V15.3.6-test</title>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;700;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 /* ════════════════════════════════════════
-   PLATEAU BRECHER V15.3.1-test — PUBLIC
+   PLATEAU BRECHER V15.3.6-test — PUBLIC
    Barlow Condensed + DM Mono
    Layout: Public App · Data: Google Sheet
    ════════════════════════════════════════ */
@@ -231,6 +231,19 @@ main { padding: 14px 16px; }
 .whead { display: flex; align-items: flex-end; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }
 .wtitle { font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: 24px; line-height: 1; letter-spacing: .05em; color: var(--tx); }
 .mtag { background: rgba(255,255,255,.045); border: 1px solid rgba(255,255,255,.09); font-family: 'DM Mono', monospace; font-size: 8px; padding: 4px 8px; color: var(--tx2); border-radius: 999px; letter-spacing: .08em; }
+.day-status-card {
+  background: linear-gradient(180deg, rgba(255,255,255,.055), rgba(255,255,255,.018)), var(--s1);
+  border: 1px solid rgba(255,255,255,.09);
+  border-radius: 10px;
+  padding: 9px 10px 10px;
+  margin-bottom: 8px;
+}
+.day-status-top { display: grid; grid-template-columns: minmax(0,1fr) auto; align-items: baseline; gap: 8px; margin-bottom: 5px; }
+.day-status-main { font-family: 'Barlow Condensed', sans-serif; font-size: 18px; font-weight: 900; letter-spacing: .03em; color: var(--tx); line-height: 1; min-width: 0; }
+.day-status-pct { font-family: 'DM Mono', monospace; font-size: 10px; font-weight: 700; color: var(--acc); white-space: nowrap; padding-left: 6px; }
+.day-status-next { font-size: 10.5px; color: var(--tx2); line-height: 1.25; margin-top: 6px; }
+.day-status-next b { color: var(--tx); font-weight: 700; }
+.day-status-note { font-size: 10px; color: var(--tx3); line-height: 1.25; margin-top: 3px; }
 .prog-lbl-bar { font-family: 'DM Mono', monospace; font-size: 9px; color: var(--tx2); margin-bottom: 6px; letter-spacing: .08em; }
 .prog-bar { height: 4px; background: rgba(255,255,255,.08); margin-bottom: 14px; border-radius: 999px; overflow: hidden; }
 .prog-fill { height: 100%; background: linear-gradient(90deg, var(--acc), rgba(200,255,0,.72)); transition: width .5s cubic-bezier(.4,0,.2,1); border-radius: 999px; }
@@ -293,7 +306,7 @@ main { padding: 14px 16px; }
 .warmup-toggle svg { width: 10px; height: 10px; stroke: currentColor; fill: none; stroke-width: 2; transition: transform .2s; flex-shrink: 0; }
 .warmup-toggle.wu-open svg { transform: rotate(180deg); }
 .warmup-body { max-height: 0; overflow: hidden; transition: max-height .3s cubic-bezier(.4,0,.2,1); }
-.warmup-body.wu-open { max-height: 50px; }
+.warmup-body.wu-open { max-height: 76px; }
 .wu-sets { display: flex; gap: 5px; flex-wrap: wrap; padding: 4px 14px 8px; }
 .wu-set { font-family: 'DM Mono', monospace; font-size: 9px; color: var(--warn); background: rgba(255,170,0,.07); border: 1px solid rgba(255,170,0,.16); padding: 5px 10px; border-radius: 999px; }
 
@@ -542,7 +555,7 @@ main { padding: 14px 16px; }
 <!-- HEADER -->
 <header>
   <div>
-    <div class="logo">PB<span>V15.3.1-test</span></div>
+    <div class="logo">PB<span>V15.3.6-test</span></div>
     <span class="hbadge" id="today-badge">REST</span>
   </div>
   <div class="hdr-r">
@@ -660,7 +673,7 @@ main { padding: 14px 16px; }
 //  ADMIN-LOGGING
 // ============================================================
 const APP_ENV              = 'PUBLIC';
-const APP_VERSION          = 'V15.3.5-test';
+const APP_VERSION          = 'V15.3.6-test';
 function sanitizeAdminValue(value, maxLen=500) {
   return String(value || '')
     .replace(/(gsk_|AIza)[a-zA-Z0-9_-]+/g, '[REDACTED]')
@@ -952,17 +965,31 @@ function calc1RM(g, r) {
 // ════════════════════════════════════════════════════
 //  WARMUP
 // ════════════════════════════════════════════════════
-function warmupHTML(ri, g1) {
+function warmupWeights(g1) {
   const wu = parseFloat(String(g1||'').replace(',','.'));
-  const hasWu = wu > 0;
-  const wu60  = hasWu ? Math.round(wu * 0.6 * 2) / 2 : null;
-  const txt   = hasWu ? `\u2192 ${wu60} kg` : '(Gew. S1 eingeben)';
+  if (!(wu > 0)) return null;
+  return [0.4, 0.6, 0.8].map(p => ({
+    pct: Math.round(p * 100),
+    kg: Math.round(wu * p * 2) / 2
+  }));
+}
+
+function warmupSetsHTML(g1) {
+  const weights = warmupWeights(g1);
+  if (!weights) return '';
+  return '<div class="wu-sets">' + weights.map(w => `<span class="wu-set">${w.pct}% \u2192 ${w.kg} kg</span>`).join('') + '</div>';
+}
+
+function warmupHTML(ri, g1) {
+  const weights = warmupWeights(g1);
+  const hasWu = !!weights;
+  const txt = hasWu ? `\u2192 ${weights.map(w => w.kg).join(' / ')} kg` : '(Gew. S1 eingeben)';
   return `<button class="warmup-toggle" id="wutog-${ri}" onclick="toggleWarmup('${ri}')" ${hasWu?'':'style="opacity:.4;pointer-events:none;"'}>
     <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
-    \uD83D\uDD25 WARMUP 60% ${esc(txt)}
+    \uD83D\uDD25 WARMUP 40/60/80 ${esc(txt)}
   </button>
   <div class="warmup-body" id="wubody-${ri}">
-    ${hasWu?`<div class="wu-sets"><span class="wu-set">60% \u2192 ${wu60} kg</span></div>`:''}
+    ${warmupSetsHTML(g1)}
   </div>`;
 }
 
@@ -982,24 +1009,61 @@ function toggleEx(ri) {
 // ════════════════════════════════════════════════════
 //  LIVE ORM
 // ════════════════════════════════════════════════════
+function publicNum(v) {
+  const n = parseFloat(String(v||'').replace(',','.'));
+  return Number.isFinite(n) ? n : 0;
+}
+
+function hasCompleteSet(ri, setNo) {
+  return publicNum(document.getElementById(`g${setNo}-${ri}`)?.value) > 0 &&
+         publicNum(document.getElementById(`r${setNo}-${ri}`)?.value) > 0;
+}
+
+function updateDayStatus() {
+  const cards = [...document.querySelectorAll('#workout-content .excard')];
+  const total = cards.length;
+  const done = cards.filter(card => {
+    const ri = card.dataset.row;
+    return [1,2,3].some(s => hasCompleteSet(ri, s));
+  }).length;
+  const pct = total ? Math.round(done / total * 100) : 0;
+  const nextCard = cards.find(card => {
+    const ri = card.dataset.row;
+    return ![1,2,3].some(s => hasCompleteSet(ri, s));
+  });
+  const nextName = nextCard?.dataset.name || 'Training komplett';
+  const doneEl = document.getElementById('day-status-done');
+  const pctEl = document.getElementById('day-status-pct');
+  const fillEl = document.getElementById('day-status-fill');
+  const nextEl = document.getElementById('day-status-next');
+  const noteEl = document.getElementById('day-status-note');
+  if (doneEl) doneEl.textContent = `${done}/${total} Übungen mit Daten`;
+  if (pctEl) pctEl.textContent = `${pct}%`;
+  if (fillEl) fillEl.style.width = `${pct}%`;
+  if (nextEl) nextEl.innerHTML = `Nächste offene Übung: <b>${esc(nextName)}</b>`;
+  if (noteEl) noteEl.textContent = done > 0
+    ? `${done} ${done === 1 ? 'Übung enthält' : 'Übungen enthalten'} bereits Trainingsdaten`
+    : '';
+}
+
 function liveOrm(ri, s) {
   const g  = document.getElementById(`g${s}-${ri}`)?.value;
   const r  = document.getElementById(`r${s}-${ri}`)?.value;
   const el = document.getElementById(`orm${s}-${ri}`);
   if (el) el.textContent = calc1RM(g,r) ? calc1RM(g,r)+' kg' : '\u2014';
   if (s===1) {
-    const wu   = parseFloat(g||0);
-    const wu60 = wu>0 ? Math.round(wu*0.6*2)/2 : null;
+    const weights = warmupWeights(g);
     const tog  = document.getElementById('wutog-'+ri);
     const body = document.getElementById('wubody-'+ri);
     if (tog) {
-      tog.innerHTML = `<svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>\uD83D\uDD25 WARMUP 60% ${wu60?'\u2192 '+wu60+' kg':'(Gew. S1 eingeben)'}`;
-      tog.style.opacity = wu>0?'1':'.4';
-      tog.style.pointerEvents = wu>0?'auto':'none';
+      const txt = weights ? `\u2192 ${weights.map(w => w.kg).join(' / ')} kg` : '(Gew. S1 eingeben)';
+      tog.innerHTML = `<svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>\uD83D\uDD25 WARMUP 40/60/80 ${esc(txt)}`;
+      tog.style.opacity = weights?'1':'.4';
+      tog.style.pointerEvents = weights?'auto':'none';
     }
-    if (body) body.innerHTML = wu60
-      ? `<div class="wu-sets"><span class="wu-set">60% \u2192 ${wu60} kg</span></div>` : '';
+    if (body) body.innerHTML = warmupSetsHTML(g);
   }
+  updateDayStatus();
 }
 
 // ════════════════════════════════════════════════════
@@ -1053,6 +1117,8 @@ function renderWorkout() {
     const card = document.createElement('div');
     card.className = 'excard' + (isFirst?' open-ex':'');
     card.dataset.muscle = mk;
+    card.dataset.row = ri;
+    card.dataset.name = name;
     card.id = 'ec-' + ri;
     card.style.animationDelay = Math.min(tCount*.05,.3)+'s';
     card.innerHTML =
@@ -1081,10 +1147,12 @@ function renderWorkout() {
     return;
   }
 
-  // Fortschrittsbalken
+  // Tagesstatus
   const doneEl = document.createElement('div');
-  doneEl.innerHTML = `<div class="prog-lbl-bar">0 / ${tCount} Übungen · 0%</div><div class="prog-bar"><div class="prog-fill" style="width:0%"></div></div>`;
+  doneEl.className = 'day-status-card';
+  doneEl.innerHTML = `<div class="day-status-top"><div class="day-status-main" id="day-status-done">0/${tCount} Übungen mit Daten</div><div class="day-status-pct" id="day-status-pct">0%</div></div><div class="prog-bar"><div class="prog-fill" id="day-status-fill" style="width:0%"></div></div><div class="day-status-next" id="day-status-next">Nächste offene Übung: <b>—</b></div><div class="day-status-note" id="day-status-note"></div>`;
   container.insertBefore(doneEl, container.firstChild);
+  updateDayStatus();
 }
 
 // ════════════════════════════════════════════════════
