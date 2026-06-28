@@ -1,0 +1,19 @@
+{
+  "name": "Plateau Brecher Public",
+  "short_name": "PB Public",
+  "description": "Friend-ready public test version of Plateau Brecher with local mode, cloud code login, and install helper.",
+  "start_url": "./plateau-brecher-public-v16_2-friend-ready-test.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#080808",
+  "theme_color": "#080808",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "./pb-public-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

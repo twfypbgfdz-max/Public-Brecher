@@ -7,14 +7,14 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="PB Public">
-<link rel="manifest" href="manifest-v16_1-pwa-install-test.webmanifest">
+<link rel="manifest" href="manifest-v16_2-friend-ready-test.webmanifest">
 <link rel="icon" type="image/svg+xml" href="pb-public-icon.svg">
 <link rel="apple-touch-icon" href="pb-public-icon.svg">
-<title>PB V16.1-pwa-install-test</title>
+<title>PB V16.2-friend-ready-test</title>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;700;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 /* ----------------------------------------
-   PLATEAU BRECHER V16.1-pwa-install-test — PUBLIC
+   PLATEAU BRECHER V16.2-friend-ready-test — PUBLIC
    Barlow Condensed + DM Mono
    Layout: Public App · Data: Local/Friend Cloud vorbereitet
    ---------------------------------------- */
@@ -507,6 +507,15 @@ main { padding: 14px 16px; }
 .setup-mode-btn { width: 100%; border: 1px solid var(--b2); border-radius: 14px; padding: 14px; text-align: left; background: rgba(255,255,255,.045); color: var(--tx); font-family: inherit; cursor: pointer; }
 .setup-mode-btn strong { display: block; font-size: 17px; line-height: 1.1; margin-bottom: 4px; }
 .setup-mode-btn span { display: block; color: var(--tx2); font-size: 12px; line-height: 1.35; }
+.setup-choice-card { border: 1px solid var(--b2); border-radius: 14px; padding: 14px; background: rgba(255,255,255,.04); }
+.setup-choice-card strong { display: block; font-size: 17px; line-height: 1.1; margin-bottom: 5px; }
+.setup-choice-card span { display: block; color: var(--tx2); font-size: 12px; line-height: 1.35; margin-bottom: 11px; }
+.setup-cloud-grid { display: grid; gap: 12px; margin-bottom: 18px; }
+.setup-cloud-card { border: 1px solid var(--bor); border-radius: 14px; padding: 13px 14px; background: rgba(0,0,0,.16); }
+.setup-cloud-card-title { font-family: 'Barlow Condensed', sans-serif; font-size: 18px; font-weight: 900; margin-bottom: 8px; }
+.setup-cloud-hint { color: var(--tx3); font-size: 11px; line-height: 1.45; margin: 8px 0 10px; }
+.setup-cloud-status { display: none; margin: 0 0 14px; border: 1px solid rgba(0,230,118,.24); background: rgba(0,230,118,.06); border-radius: 12px; padding: 10px 12px; color: var(--tx2); font-size: 12px; line-height: 1.45; }
+.setup-cloud-status.show { display: block; }
 .setup-section-title { font-size: 10px; color: var(--tx3); font-weight: 700; letter-spacing: .1em; text-transform: uppercase; margin: 18px 0 10px; }
 .modal-actions { position: sticky; bottom: 0; display: grid; gap: 9px; padding: 14px 22px; padding-bottom: calc(14px + env(safe-area-inset-bottom)); background: rgba(15,17,15,.96); border-top: 1px solid var(--bor); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
 .modal-save { width: 100%; background: var(--acc); color: #000; border: none; border-radius: 14px; font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: 18px; letter-spacing: .12em; padding: 15px; cursor: pointer; }
@@ -551,31 +560,45 @@ main { padding: 14px 16px; }
   <div class="modal-sheet">
     <div class="modal-scroll">
       <div class="modal-handle"></div>
-      <div class="modal-title">Startmodus waehlen</div>
+      <div class="modal-title">Wie willst du starten?</div>
       <div class="setup-help">Du kannst sofort lokal starten. Cloud-Code ist fuer den neuen Freunde-Sync vorbereitet und wird erst aktiv, wenn ein Public-Sync-Endpoint konfiguriert ist.</div>
       <div id="pwa-install-card" class="pwa-install-card">
         <div class="pwa-install-title">App installieren</div>
         <div class="pwa-install-list">
-          <div><strong>iPhone/Safari:</strong> Teilen - Zum Home-Bildschirm - Hinzufuegen.</div>
-          <div><strong>Android/Chrome:</strong> Menue - App installieren oder Zum Startbildschirm hinzufuegen.</div>
+          <div><strong>Auf iPhone:</strong> Safari oeffnen - Teilen - Zum Home-Bildschirm.</div>
+          <div><strong>Android:</strong> Chrome oeffnen - Menue - App installieren.</div>
         </div>
         <div class="pwa-install-note">Hinweis: Der Browser-Cache kann alte Versionen zeigen. Bei Problemen Website-Daten loeschen und neu oeffnen.</div>
         <button class="pwa-install-hide" type="button" onclick="hidePwaInstallHint()">Anleitung ausblenden</button>
       </div>
       <button id="pwa-install-show" class="pwa-install-show" type="button" onclick="showPwaInstallHint()">Install-Anleitung anzeigen</button>
       <div class="setup-mode-grid">
-        <button class="setup-mode-btn" onclick="setupStartLocal()"><strong>Lokal starten</strong><span>Speichert Training und Plan nur in diesem Browser.</span></button>
-        <button class="setup-mode-btn" onclick="setupShowCloudFields()"><strong>Mit Cloud-Code starten</strong><span>User-Code + PIN fuer Friend/Pro-Sync vorbereiten.</span></button>
+        <div class="setup-choice-card"><strong>Sofort lokal starten</strong><span>Speichert nur auf diesem Geraet. Kein Account, kein Google Sheet.</span><button class="setup-mode-btn" type="button" onclick="setupStartLocal()">Lokal starten</button></div>
+        <div class="setup-choice-card"><strong>Mit Cloud-Code nutzen</strong><span>Fuer Freunde: speichert dein Training zentral, damit Backup/Sync moeglich ist.</span><button class="setup-mode-btn" type="button" onclick="setupShowCloudFields()">Cloud-Code oeffnen</button></div>
       </div>
-      <div class="setup-section-title">Cloud-Code</div>
+      <div id="setup-cloud-user-status" class="setup-cloud-status"></div>
       <div id="setup-cloud-panel" style="display:none;">
-      <div class="setup-lbl">User-Code</div>
-      <input class="setup-inp" id="si-user" type="text" placeholder="u_abc123">
-      <div class="setup-lbl">PIN</div>
-      <input class="setup-inp" id="si-pin" type="password" inputmode="numeric" autocomplete="current-password" placeholder="PIN">
-      <div class="setup-lbl">Spitzname optional</div>
-      <input class="setup-inp" id="si-name" type="text" maxlength="40" placeholder="Name">
-        <button class="modal-save" type="button" onclick="setupCloudLogin()">Cloud anmelden / erstellen</button>
+        <div class="setup-section-title">Cloud-Code</div>
+        <div class="setup-help">Cloud speichert deinen Spitznamen/User-Code und Trainingsdaten in Felix' Master-Sheet. Keine echten Namen noetig.</div>
+        <div class="setup-cloud-grid">
+          <div class="setup-cloud-card">
+            <div class="setup-cloud-card-title">Neuer Freund</div>
+            <div class="setup-lbl">Spitzname</div>
+            <input class="setup-inp" id="si-new-name" type="text" maxlength="40" placeholder="z. B. TestFreund">
+            <div class="setup-lbl">PIN festlegen</div>
+            <input class="setup-inp" id="si-new-pin" type="password" inputmode="numeric" autocomplete="new-password" placeholder="PIN">
+            <div class="setup-cloud-hint">Du bekommst danach automatisch deinen User-Code. Schreib ihn dir auf.</div>
+            <button class="modal-save" type="button" onclick="setupCloudLogin('new')">Neuen Cloud-Code erstellen</button>
+          </div>
+          <div class="setup-cloud-card">
+            <div class="setup-cloud-card-title">Bestehender Freund</div>
+            <div class="setup-lbl">User-Code</div>
+            <input class="setup-inp" id="si-login-user" type="text" placeholder="u_abc123">
+            <div class="setup-lbl">PIN</div>
+            <input class="setup-inp" id="si-login-pin" type="password" inputmode="numeric" autocomplete="current-password" placeholder="PIN">
+            <button class="modal-save" type="button" onclick="setupCloudLogin('existing')">Mit Cloud-Code einloggen</button>
+          </div>
+        </div>
       </div>
       <div class="setup-section-title">Eigenes Sheet optional</div>
       <div class="setup-help">Fallback fuer alte Public-Tests mit eigenem Google Sheet. Der neue Friend Mode benoetigt das nicht.</div>
@@ -602,7 +625,7 @@ main { padding: 14px 16px; }
 <!-- HEADER -->
 <header>
   <div>
-    <div class="logo">PB<span>V16.1-pwa-install-test</span></div>
+    <div class="logo">PB<span>V16.2-friend-ready-test</span></div>
     <span class="hbadge" id="today-badge">REST</span>
   </div>
   <div class="hdr-r">
@@ -720,7 +743,7 @@ main { padding: 14px 16px; }
 //  ADMIN-LOGGING
 // ============================================================
 const APP_ENV              = 'PUBLIC';
-const APP_VERSION          = 'V16.1-pwa-install-test';
+const APP_VERSION          = 'V16.2-friend-ready-test';
 const BUILD_DATE           = '2026-06-28';
 const PUBLIC_SYNC_ENDPOINT = 'https://script.google.com/macros/s/AKfycbxSOaHnYQ8y1biSHHA3qzPN9xveJcgFy-LcZdcnkEV-MtA8D1Agd6sBAjm6loHO347o/exec';
 function sanitizeAdminValue(value, maxLen=500) {
@@ -1554,10 +1577,15 @@ async function saveAll() {
     localStorage.setItem(LS_KEYS.lastSaved, ts);
     setLastSaved(ts);
     btn.classList.remove('saving'); btn.disabled=false;
+    let cloudSaved = false;
     if (APP_MODE === 'cloud') {
-      await syncCloudData('trainingLog', JSON.stringify({ rawData, savedAt: new Date().toISOString() }));
+      cloudSaved = await syncCloudData('trainingLog', JSON.stringify({ rawData, savedAt: new Date().toISOString() }));
     }
-    toast(APP_MODE === 'cloud' ? 'Lokal gespeichert - Cloud vorbereitet' : 'Lokal gespeichert', 'ok');
+    if (APP_MODE === 'cloud') {
+      toast(cloudSaved ? 'Gespeichert - Cloud Backup aktualisiert' : 'Lokal gespeichert - Cloud konnte gerade nicht aktualisiert werden', cloudSaved ? 'ok' : 'warn');
+    } else {
+      toast('Lokal gespeichert', 'ok');
+    }
     updateDayStatus();
     return;
   }
@@ -1922,12 +1950,32 @@ function showPwaInstallHint() {
 }
 
 
+function updateSetupCloudUserStatus(extraMessage = '') {
+  const el = document.getElementById('setup-cloud-user-status');
+  if (!el) return;
+  if (!CLOUD_USER?.userId) {
+    el.classList.remove('show');
+    el.textContent = '';
+    return;
+  }
+  const name = CLOUD_USER.displayName || 'Freund';
+  const msg = extraMessage ? extraMessage + ' ' : '';
+  el.textContent = msg + 'Angemeldet als: ' + name + ' · Code: ' + CLOUD_USER.userId + ' · Plan: ' + (CLOUD_USER.plan || 'friend');
+  el.classList.add('show');
+}
+
 function setupOpen() {
   document.getElementById('si-sheet').value = SHEET;
   document.getElementById('si-url').value   = API;
-  document.getElementById('si-user').value  = CLOUD_USER?.userId || '';
-  document.getElementById('si-name').value  = CLOUD_USER?.displayName || '';
-  document.getElementById('si-pin').value   = '';
+  const loginUser = document.getElementById('si-login-user');
+  const newName = document.getElementById('si-new-name');
+  const loginPin = document.getElementById('si-login-pin');
+  const newPin = document.getElementById('si-new-pin');
+  if (loginUser) loginUser.value = CLOUD_USER?.userId || '';
+  if (newName) newName.value = CLOUD_USER?.displayName || '';
+  if (loginPin) loginPin.value = '';
+  if (newPin) newPin.value = '';
+  updateSetupCloudUserStatus();
   setSetupConnectionStatus(rawData.length > 0);
   setupPwaInstallHint();
   _updateVersionDisplay(_remoteVersion);
@@ -1951,8 +1999,9 @@ function setupSave() {
 function setupShowCloudFields() {
   const panel = document.getElementById('setup-cloud-panel');
   if (panel) panel.style.display = 'block';
+  updateSetupCloudUserStatus();
   setSetupConnectionStatus(rawData.length > 0);
-  const target = document.getElementById(CLOUD_USER?.userId ? 'si-pin' : 'si-user');
+  const target = document.getElementById(CLOUD_USER?.userId ? 'si-login-pin' : 'si-new-name');
   setTimeout(() => target?.focus(), 60);
 }
 
@@ -1967,32 +2016,40 @@ function setupStartLocal() {
   location.reload();
 }
 
-async function setupCloudLogin() {
-  const userId = v('si-user');
-  const pin = v('si-pin');
-  const displayName = v('si-name');
+async function setupCloudLogin(flow) {
+  const isExisting = flow === 'existing';
+  const userId = isExisting ? v('si-login-user') : '';
+  const displayName = isExisting ? '' : v('si-new-name');
+  const pin = isExisting ? v('si-login-pin') : v('si-new-pin');
   if (!publicSyncConfigured()) {
     console.warn('[PUBLIC_CLOUD_LOGIN_SKIP]', 'Endpoint fehlt');
-    toast('Cloud-Sync ist noch nicht eingerichtet.', 'warn');
+    toast('Cloud gerade nicht erreichbar. Lokal speichern funktioniert weiterhin.', 'warn');
     return;
   }
   if (!pin) {
-    console.warn('[PUBLIC_CLOUD_LOGIN_SKIP]', 'PIN fehlt');
-    toast('PIN eingeben', 'err');
+    console.warn('[PUBLIC_CLOUD_LOGIN_SKIP]', 'PIN fehlt', { flow });
+    toast('Bitte PIN eingeben.', 'err');
     return;
   }
-  if (!userId && !displayName) {
-    console.warn('[PUBLIC_CLOUD_LOGIN_SKIP]', 'User-Code und Spitzname fehlen');
-    toast('Spitzname oder User-Code eingeben', 'err');
+  if (isExisting && !userId) {
+    console.warn('[PUBLIC_CLOUD_LOGIN_SKIP]', 'User-Code fehlt');
+    toast('Bitte User-Code eingeben.', 'err');
     return;
   }
-  const action = userId ? 'loginUser' : 'createOrLoginUser';
-  const payload = userId ? { userId, pin } : { displayName, pin };
+  if (!isExisting && !displayName) {
+    console.warn('[PUBLIC_CLOUD_LOGIN_SKIP]', 'Spitzname fehlt');
+    toast('Bitte Spitzname eingeben.', 'err');
+    return;
+  }
+  const action = isExisting ? 'loginUser' : 'createOrLoginUser';
+  const payload = isExisting ? { userId, pin } : { displayName, pin };
   try {
     const json = await postPublicSync(action, payload);
     if (!json.ok) {
       console.warn('[PUBLIC_CLOUD_LOGIN_ERROR]', { action, code: json.code || '', error: json.error || 'Cloud-Login fehlgeschlagen' });
-      return toast(json.error || 'Cloud-Login fehlgeschlagen', 'err');
+      if (json.code === 'USER_DISABLED') return toast('Dieser Cloud-Zugang wurde deaktiviert.', 'warn');
+      if (json.code === 'INVALID_PIN' || json.code === 'USER_NOT_FOUND') return toast('User-Code oder PIN stimmt nicht.', 'err');
+      return toast('Cloud gerade nicht erreichbar. Lokal speichern funktioniert weiterhin.', 'warn');
     }
     CLOUD_USER = {
       userId: json.userId,
@@ -2004,23 +2061,24 @@ async function setupCloudLogin() {
     if (CLOUD_USER.status === 'disabled') {
       clearCloudPinSession();
       console.warn('[PUBLIC_CLOUD_LOGIN_SKIP]', 'User deaktiviert');
-      return toast('Cloud-Zugang deaktiviert', 'warn');
+      return toast('Dieser Cloud-Zugang wurde deaktiviert.', 'warn');
     }
     localStorage.setItem(LS_KEYS.cloudUser, JSON.stringify(CLOUD_USER));
     setCloudPinSession(pin);
     setMode('cloud');
+    const successMsg = isExisting ? 'Cloud aktiv. Dein User-Code: ' + CLOUD_USER.userId : 'Cloud aktiv. Dein User-Code: ' + CLOUD_USER.userId + '. Speichere dir diesen Code zusammen mit deiner PIN.';
+    updateSetupCloudUserStatus(successMsg);
     console.info('[PUBLIC_CLOUD_LOGIN_OK]', {
       userId: CLOUD_USER.userId,
       plan: CLOUD_USER.plan,
       status: CLOUD_USER.status,
       hasPinSession: true
     });
-    toast('Cloud-Code aktiv', 'ok');
-    setupClose();
-    location.reload();
+    toast(successMsg, 'ok');
+    setTimeout(() => location.reload(), isExisting ? 700 : 1800);
   } catch(e) {
     console.warn('[PUBLIC_CLOUD_LOGIN_ERROR]', { action, message: e.message || String(e) });
-    toast('Cloud-Login: ' + (e.message || 'Unbekannter Fehler'), 'err');
+    toast('Cloud gerade nicht erreichbar. Lokal speichern funktioniert weiterhin.', 'warn');
   }
 }
 
@@ -2052,12 +2110,12 @@ async function syncCloudData(dataKey, payloadJson) {
       userId: CLOUD_USER?.userId || '',
       ...publicStateDebug()
     });
-    toast('Cloud-Login fuer Sync erneut oeffnen', 'warn');
+    toast('Cloud gerade nicht erreichbar. Lokal speichern funktioniert weiterhin.', 'warn');
     return false;
   }
   if (CLOUD_USER.status === 'disabled') {
     clearCloudPinSession();
-    toast('Cloud-Zugang deaktiviert', 'warn');
+    toast('Dieser Cloud-Zugang wurde deaktiviert.', 'warn');
     return false;
   }
   if (CLOUD_USER.features && CLOUD_USER.features.cloudSync === false) {
@@ -2066,7 +2124,7 @@ async function syncCloudData(dataKey, payloadJson) {
       userId: CLOUD_USER.userId,
       plan: CLOUD_USER.plan
     });
-    toast('Cloud-Sync fuer diesen Plan nicht aktiv', 'warn');
+    toast('Cloud Backup ist fuer diesen Zugang nicht aktiv.', 'warn');
     return false;
   }
   console.info('[PUBLIC_SYNC_ATTEMPT]', { dataKey, userId: CLOUD_USER.userId });
@@ -2079,7 +2137,7 @@ async function syncCloudData(dataKey, payloadJson) {
     });
     if (!json.ok) {
       console.warn('[PUBLIC_SYNC_ERROR]', json.error || json.code || 'Cloud-Sync fehlgeschlagen', json);
-      toast(json.error || 'Cloud-Sync fehlgeschlagen', 'warn');
+      toast('Lokal gespeichert - Cloud konnte gerade nicht aktualisiert werden', 'warn');
       return false;
     }
     console.info('[PUBLIC_SYNC_SAVED]', dataKey);
@@ -2097,7 +2155,7 @@ async function syncCloudData(dataKey, payloadJson) {
       console.warn('[PUBLIC_SYNC_SKIP]', 'file:// kann Fetch/CORS-Tests verfaelschen. Cloud-Sync sollte ueber lokalen Server oder deployed GitHub Pages getestet werden.');
       toast('Cloud-Sync besser ueber lokalen Server oder GitHub Pages testen', 'warn');
     } else {
-      toast('Cloud-Sync nicht moeglich: ' + (e.message || 'Unbekannter Fehler'), 'warn');
+      toast('Lokal gespeichert - Cloud konnte gerade nicht aktualisiert werden', 'warn');
     }
     return false;
   }
