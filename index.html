@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="de">
 <head>
 <meta charset="UTF-8">
@@ -6,14 +6,14 @@
 <meta name="theme-color" content="#080808">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>PB V15.3.8-test</title>
+<title>PB V16.0-friend-mode-test</title>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;700;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-/* ════════════════════════════════════════
-   PLATEAU BRECHER V15.3.8-test — PUBLIC
+/* ----------------------------------------
+   PLATEAU BRECHER V16.0-friend-mode-test � PUBLIC
    Barlow Condensed + DM Mono
-   Layout: Public App · Data: Google Sheet
-   ════════════════════════════════════════ */
+   Layout: Public App � Data: Local/Friend Cloud vorbereitet
+   ---------------------------------------- */
 :root {
   --bg:  #080808;
   --s1:  #111111;
@@ -41,7 +41,7 @@ body {
   overflow-x: hidden;
 }
 
-/* ── LOAD SCREEN ─────────────────────── */
+/* -- LOAD SCREEN ----------------------- */
 #ls {
   position: fixed; inset: 0; z-index: 999;
   background: var(--bg);
@@ -56,7 +56,7 @@ body {
 #ls-msg  { font-size: 9px; color: var(--tx3); letter-spacing: .14em; text-transform: uppercase; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-/* ── DIAGNOSTICS ─────────────────────── */
+/* -- DIAGNOSTICS ----------------------- */
 #diag-overlay {
   position: fixed; inset: 0; z-index: 500;
   background: rgba(0,0,0,.92); backdrop-filter: blur(10px);
@@ -86,7 +86,7 @@ body {
 .diag-btn-ok    { flex: 1; background: var(--acc); color: #000; border: none; border-radius: var(--r); padding: 13px; font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: 16px; letter-spacing: .12em; cursor: pointer; }
 .diag-btn-setup { flex: 1; background: none; border: 1px solid var(--b2); border-radius: var(--r); color: var(--tx3); font-family: 'DM Mono', monospace; font-size: 10px; padding: 13px; cursor: pointer; }
 
-/* ── TOAST ───────────────────────────── */
+/* -- TOAST ----------------------------- */
 #toast {
   position: fixed; top: 58px; left: 50%;
   transform: translateX(-50%) translateY(-4px);
@@ -101,7 +101,7 @@ body {
 #toast.err  { border-color: var(--err);  color: var(--err); }
 #toast.warn { border-color: var(--warn); color: var(--warn); }
 
-/* ── UPDATE BANNER ───────────────────── */
+/* -- UPDATE BANNER --------------------- */
 #upd-banner {
   display: none;
   background: var(--acc); color: #000;
@@ -121,7 +121,7 @@ body {
   white-space: nowrap;
 }
 
-/* ── HEADER ──────────────────────────── */
+/* -- HEADER ---------------------------- */
 header {
   display: flex; align-items: center; justify-content: space-between;
   padding: 10px 16px;
@@ -141,7 +141,7 @@ header {
 #dot.err  { background: var(--err); }
 #dot.warn { background: var(--warn); box-shadow: 0 0 7px var(--warn); }
 
-/* ── TABS ────────────────────────────── */
+/* -- TABS ------------------------------ */
 .tabs {
   display: flex; border-bottom: 1px solid rgba(255,255,255,.08);
   overflow-x: auto; scrollbar-width: none;
@@ -167,18 +167,18 @@ header {
 .tab.active { color: var(--acc); border-bottom-color: var(--acc); background: rgba(182,255,0,.05); }
 .tab svg { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 2.1; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; opacity: .95; }
 
-/* ── MAIN ────────────────────────────── */
+/* -- MAIN ------------------------------ */
 main { padding: 14px 16px; }
 .sec { display: none; }
 .sec.active { display: block; animation: fadeUp .2s ease; }
 @keyframes fadeUp { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
 
-/* ── SELECTOR ROWS ───────────────────── */
+/* -- SELECTOR ROWS --------------------- */
 .sel-row { display: flex; gap: 7px; margin-bottom: 10px; flex-wrap: nowrap; align-items: center; overflow-x: auto; padding-bottom: 2px; scrollbar-width: none; }
 .sel-row::-webkit-scrollbar { display: none; }
 .sel-label { font-family: 'DM Mono', monospace; font-size: 8px; color: var(--tx2); text-transform: uppercase; letter-spacing: .14em; min-width: max-content; flex: 0 0 auto; }
 
-/* ── DAY BTNS ────────────────────────── */
+/* -- DAY BTNS -------------------------- */
 .dbtn {
   background: rgba(255,255,255,.035); border: 1px solid rgba(255,255,255,.09); color: var(--tx2);
   font-family: 'DM Mono', monospace; font-size: 9px; padding: 8px 12px; min-height: 34px;
@@ -189,7 +189,7 @@ main { padding: 14px 16px; }
 .dbtn:active { transform: scale(.98); }
 .dbtn.active { background: rgba(200,255,0,.14); border-color: rgba(200,255,0,.55); color: var(--acc); font-weight: 700; }
 
-/* ── CYCLE INFO BANNER ───────────────── */
+/* -- CYCLE INFO BANNER ----------------- */
 .cinfo {
   background: linear-gradient(135deg, rgba(255,255,255,.05), rgba(255,255,255,.015)), var(--s1);
   border: 1px solid rgba(255,255,255,.09); border-radius: 14px;
@@ -199,7 +199,7 @@ main { padding: 14px 16px; }
 .cinfo-title { font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: 21px; line-height: .95; letter-spacing: .05em; color: var(--tx); }
 .cinfo-dates { font-family: 'DM Mono', monospace; font-size: 9px; color: var(--tx2); letter-spacing: .08em; }
 
-/* ── INFO ROW (BW + STATS) ───────────── */
+/* -- INFO ROW (BW + STATS) ------------- */
 .info-row { display: grid; grid-template-columns: minmax(126px, .85fr) minmax(0, 1.15fr); gap: 9px; margin-bottom: 14px; align-items: stretch; }
 .bw-box {
   background: linear-gradient(180deg, rgba(255,255,255,.045), rgba(255,255,255,.014)), var(--s1); border: 1px solid rgba(255,255,255,.09);
@@ -227,7 +227,7 @@ main { padding: 14px 16px; }
 .stat-inp::-webkit-outer-spin-button, .stat-inp::-webkit-inner-spin-button { -webkit-appearance: none; }
 .stat-inp:focus { border-bottom-color: var(--acc); }
 
-/* ── TAG HEADER ──────────────────────── */
+/* -- TAG HEADER ------------------------ */
 .whead { display: flex; align-items: flex-end; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }
 .wtitle { font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: 24px; line-height: 1; letter-spacing: .05em; color: var(--tx); }
 .mtag { background: rgba(255,255,255,.045); border: 1px solid rgba(255,255,255,.09); font-family: 'DM Mono', monospace; font-size: 8px; padding: 4px 8px; color: var(--tx2); border-radius: 999px; letter-spacing: .08em; }
@@ -248,7 +248,7 @@ main { padding: 14px 16px; }
 .prog-bar { height: 4px; background: rgba(255,255,255,.08); margin-bottom: 14px; border-radius: 999px; overflow: hidden; }
 .prog-fill { height: 100%; background: linear-gradient(90deg, var(--acc), rgba(200,255,0,.72)); transition: width .5s cubic-bezier(.4,0,.2,1); border-radius: 999px; }
 
-/* ── EXERCISE CARDS ──────────────────── */
+/* -- EXERCISE CARDS -------------------- */
 .excard {
   background: linear-gradient(180deg, rgba(255,255,255,.045), rgba(255,255,255,.014)), var(--s1);
   border: 1px solid rgba(255,255,255,.09);
@@ -259,7 +259,7 @@ main { padding: 14px 16px; }
 .excard[data-muscle="Schultern"]::before { background: #ffd54f; }
 .excard[data-muscle="Brust"]::before     { background: #ef5350; }
 .excard[data-muscle="Trizeps"]::before   { background: #ab47bc; }
-.excard[data-muscle="Rücken"]::before    { background: #42a5f5; }
+.excard[data-muscle="R�cken"]::before    { background: #42a5f5; }
 .excard[data-muscle="Bizeps"]::before    { background: #26c6da; }
 .excard[data-muscle="Beine"]::before     { background: #66bb6a; }
 .excard[data-muscle="Bauch"]::before     { background: #ff7043; }
@@ -293,7 +293,7 @@ main { padding: 14px 16px; }
 .ex-chevron { width: 17px; height: 17px; flex-shrink: 0; color: var(--tx2); transition: transform .28s ease, color .15s; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 .excard.open-ex .ex-chevron { transform: rotate(180deg); color: var(--acc); }
 
-/* Card Body — Akkordeon */
+/* Card Body � Akkordeon */
 .exbody { max-height: 0; overflow: hidden; transition: max-height .35s cubic-bezier(.4,0,.2,1); border-top: 0px solid var(--bor); }
 .exbody.open { max-height: 600px; border-top: 1px solid rgba(255,255,255,.07); }
 
@@ -343,7 +343,7 @@ main { padding: 14px 16px; }
   padding: 5px 4px; background: rgba(200,255,0,.07); border: 1px solid rgba(200,255,0,.1); border-radius: 9px; text-align: center; white-space: nowrap;
 }
 
-/* ── PLANUNG ─────────────────────────── */
+/* -- PLANUNG --------------------------- */
 .plan-crumb { display: flex; align-items: center; gap: 6px; padding: 10px 0 6px; font-size: 9px; letter-spacing: .1em; text-transform: uppercase; }
 .plan-crumb-link { color: var(--acc); cursor: pointer; opacity: .7; transition: opacity .15s; }
 .plan-crumb-link:active { opacity: 1; }
@@ -385,7 +385,7 @@ main { padding: 14px 16px; }
 .edit-btn-muscle:active { border-color: var(--acc); color: var(--acc); }
 .pe-btns { display: flex; gap: 4px; flex-shrink: 0; }
 
-/* ── PR-SEITE ─────────────────────────── */
+/* -- PR-SEITE --------------------------- */
 .pr-filter { display: flex; gap: 8px; flex-wrap: wrap; padding: 4px 0 14px; }
 .pr-chip { background: rgba(255,255,255,.035); border: 1px solid var(--bor); color: var(--tx2); font-family: 'DM Mono', monospace; font-size: 10px; padding: 8px 12px; border-radius: 999px; cursor: pointer; transition: all .15s; letter-spacing: .04em; min-height: 34px; }
 .pr-chip.active { background: var(--acc); border-color: var(--acc); color: #000; font-weight: 700; }
@@ -394,7 +394,7 @@ main { padding: 14px 16px; }
 .pr-card[data-muscle="Schultern"] { border-left: 3px solid #ffd54f; }
 .pr-card[data-muscle="Brust"]     { border-left: 3px solid #ef5350; }
 .pr-card[data-muscle="Trizeps"]   { border-left: 3px solid #ab47bc; }
-.pr-card[data-muscle="Rücken"]    { border-left: 3px solid #42a5f5; }
+.pr-card[data-muscle="R�cken"]    { border-left: 3px solid #42a5f5; }
 .pr-card[data-muscle="Bizeps"]    { border-left: 3px solid #26c6da; }
 .pr-card[data-muscle="Beine"]     { border-left: 3px solid #66bb6a; }
 .pr-card[data-muscle="Bauch"]     { border-left: 3px solid #ff7043; }
@@ -407,7 +407,7 @@ main { padding: 14px 16px; }
 .pr-kg-unit { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--tx3); font-weight: 400; }
 .pr-date { font-size: 9px; color: var(--tx2); margin-top: 4px; }
 
-/* ── SMART COACH ─────────────────────── */
+/* -- SMART COACH ----------------------- */
 .coach-list { display: flex; flex-direction: column; gap: 10px; padding-top: 4px; }
 .coach-card {
   background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.015)), var(--s1); border: 1px solid var(--bor);
@@ -450,11 +450,11 @@ main { padding: 14px 16px; }
 .coach-detail-k { font-family: 'DM Mono', monospace; font-size: 8px; color: var(--tx3); letter-spacing: .12em; text-transform: uppercase; margin-bottom: 2px; }
 .coach-detail-v { font-family: 'DM Mono', monospace; font-size: 9px; color: var(--tx2); line-height: 1.5; }
 
-/* ── LEER-ZUSTÄNDE ───────────────────── */
+/* -- LEER-ZUST�NDE --------------------- */
 .empty { text-align: center; padding: 44px 22px; color: var(--tx2); font-size: 12px; line-height: 1.7; background: rgba(255,255,255,.025); border: 1px solid var(--bor); border-radius: 14px; }
 .empty big { display: block; font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: 38px; color: var(--tx); letter-spacing: .08em; margin-bottom: 8px; }
 
-/* ── SAVE FOOTER ─────────────────────── */
+/* -- SAVE FOOTER ----------------------- */
 #save-footer {
   position: fixed; bottom: 0; left: 0; right: 0;
   padding: 12px 16px; padding-bottom: calc(12px + env(safe-area-inset-bottom));
@@ -477,7 +477,7 @@ main { padding: 14px 16px; }
 #save-btn.saving .btn-lbl { display: none; }
 .api-status { display: flex; align-items: center; gap: 7px; margin-top: 7px; font-family: 'DM Mono', monospace; font-size: 10px; color: var(--tx2); }
 
-/* ── SETUP MODAL ─────────────────────── */
+/* -- SETUP MODAL ----------------------- */
 #setup-ov { position: fixed; inset: 0; z-index: 200; background: rgba(0,0,0,.82); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); display: none; align-items: flex-end; justify-content: center; }
 #setup-ov.open { display: flex; }
 .modal-sheet { background: linear-gradient(180deg, #171a17 0%, var(--s1) 100%); border: 1px solid var(--b2); border-bottom: none; border-radius: 24px 24px 0 0; width: 100%; max-width: 520px; height: min(92vh, 760px); animation: slideUp .22s ease; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 -20px 60px rgba(0,0,0,.55); }
@@ -491,6 +491,11 @@ main { padding: 14px 16px; }
 .setup-version { display: grid; gap: 8px; background: rgba(0,0,0,.18); border: 1px solid var(--bor); border-radius: 14px; padding: 12px 14px; margin-bottom: 18px; font-family:'DM Mono',monospace; font-size:10px; color:var(--tx3); line-height:1.6; }
 .setup-status-line { display: flex; align-items: center; gap: 8px; font-family: 'DM Mono', monospace; font-size: 11px; color: var(--tx2); }
 .setup-status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--err); box-shadow: 0 0 8px rgba(255,68,68,.45); flex-shrink: 0; }
+.setup-mode-grid { display: grid; grid-template-columns: 1fr; gap: 10px; margin-bottom: 18px; }
+.setup-mode-btn { width: 100%; border: 1px solid var(--b2); border-radius: 14px; padding: 14px; text-align: left; background: rgba(255,255,255,.045); color: var(--tx); font-family: inherit; cursor: pointer; }
+.setup-mode-btn strong { display: block; font-size: 17px; line-height: 1.1; margin-bottom: 4px; }
+.setup-mode-btn span { display: block; color: var(--tx2); font-size: 12px; line-height: 1.35; }
+.setup-section-title { font-size: 10px; color: var(--tx3); font-weight: 700; letter-spacing: .1em; text-transform: uppercase; margin: 18px 0 10px; }
 .modal-actions { position: sticky; bottom: 0; display: grid; gap: 9px; padding: 14px 22px; padding-bottom: calc(14px + env(safe-area-inset-bottom)); background: rgba(15,17,15,.96); border-top: 1px solid var(--bor); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
 .modal-save { width: 100%; background: var(--acc); color: #000; border: none; border-radius: 14px; font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: 18px; letter-spacing: .12em; padding: 15px; cursor: pointer; }
 .modal-cancel { width: 100%; background: var(--s2); border: 1px solid var(--b2); border-radius: 14px; color: var(--tx); font-family: 'DM Mono', monospace; font-size: 12px; font-weight: 500; padding: 13px; cursor: pointer; }
@@ -509,7 +514,7 @@ main { padding: 14px 16px; }
   <div class="ls-logo">PB</div>
   <div class="ls-sub">Plateau Brecher</div>
   <div class="ls-spin"></div>
-  <div id="ls-msg">Verbinde…</div>
+  <div id="ls-msg">Verbinde�</div>
 </div>
 
 <!-- TOAST -->
@@ -519,7 +524,7 @@ main { padding: 14px 16px; }
 <div id="diag-overlay">
   <div class="diag-sheet">
     <div class="diag-handle"></div>
-    <div class="diag-title">⚙ Verbindungscheck</div>
+    <div class="diag-title">? Verbindungscheck</div>
     <div class="diag-subtitle" id="diag-subtitle"></div>
     <div id="diag-list"></div>
     <div class="diag-actions">
@@ -534,22 +539,39 @@ main { padding: 14px 16px; }
   <div class="modal-sheet">
     <div class="modal-scroll">
       <div class="modal-handle"></div>
-      <div class="modal-title">Google-Sheet verbinden</div>
-      <div class="setup-help">Web-App-Link aus Google Apps Script einfuegen. Zugriff muss fuer Jeder/Anyone freigegeben sein. Deine Trainingsdaten bleiben in deinem Google Sheet.</div>
+      <div class="modal-title">Startmodus waehlen</div>
+      <div class="setup-help">Du kannst sofort lokal starten. Cloud-Code ist fuer den neuen Freunde-Sync vorbereitet und wird erst aktiv, wenn ein Public-Sync-Endpoint konfiguriert ist.</div>
+      <div class="setup-mode-grid">
+        <button class="setup-mode-btn" onclick="setupStartLocal()"><strong>Lokal starten</strong><span>Speichert Training und Plan nur in diesem Browser.</span></button>
+        <button class="setup-mode-btn" onclick="setupShowCloudFields()"><strong>Mit Cloud-Code starten</strong><span>User-Code + PIN fuer Friend/Pro-Sync vorbereiten.</span></button>
+      </div>
+      <div class="setup-section-title">Cloud-Code</div>
+      <div id="setup-cloud-panel" style="display:none;">
+      <div class="setup-lbl">User-Code</div>
+      <input class="setup-inp" id="si-user" type="text" placeholder="u_abc123">
+      <div class="setup-lbl">PIN</div>
+      <input class="setup-inp" id="si-pin" type="password" inputmode="numeric" autocomplete="current-password" placeholder="PIN">
+      <div class="setup-lbl">Spitzname optional</div>
+      <input class="setup-inp" id="si-name" type="text" maxlength="40" placeholder="Name">
+        <button class="modal-save" type="button" onclick="setupCloudLogin()">Cloud anmelden / erstellen</button>
+      </div>
+      <div class="setup-section-title">Eigenes Sheet optional</div>
+      <div class="setup-help">Fallback fuer alte Public-Tests mit eigenem Google Sheet. Der neue Friend Mode benoetigt das nicht.</div>
       <div class="setup-lbl">Trainingsplan-Tab</div>
       <input class="setup-inp" id="si-sheet" type="text" placeholder="ZYKLUS MASTER">
       <div class="setup-lbl">Verbindungslink</div>
-      <input class="setup-inp" id="si-url" type="url" placeholder="https://script.google.com/macros/s/…/exec">
+      <input class="setup-inp" id="si-url" type="url" placeholder="https://script.google.com/macros/s/�/exec">
       <div class="setup-lbl">Verbindungsstatus</div>
       <div id="si-version-info" class="setup-version">
         <div class="setup-status-line"><span id="setup-status-dot" class="setup-status-dot"></span><span id="setup-status-txt">Nicht verbunden</span></div>
-        <div>Lokal: <span id="si-ver-local">—</span></div>
-        <span id="si-ver-remote" hidden>—</span>
-        <span id="si-ver-status" hidden>—</span>
+        <div id="setup-cloud-debug">Mode: - � Cloud User: - � PIN Session: - � Endpoint: -</div>
+        <div>Lokal: <span id="si-ver-local">�</span></div>
+        <span id="si-ver-remote" hidden>�</span>
+        <span id="si-ver-status" hidden>�</span>
       </div>
     </div>
     <div class="modal-actions">
-      <button class="modal-save" onclick="setupSave()">VERBINDUNG SPEICHERN</button>
+      <button class="modal-save" onclick="setupSave()">SHEET-FALLBACK SPEICHERN</button>
       <button class="modal-cancel" onclick="setupClose()">Abbrechen</button>
     </div>
   </div>
@@ -558,7 +580,7 @@ main { padding: 14px 16px; }
 <!-- HEADER -->
 <header>
   <div>
-    <div class="logo">PB<span>V15.3.8-test</span></div>
+    <div class="logo">PB<span>V16.0-friend-mode-test</span></div>
     <span class="hbadge" id="today-badge">REST</span>
   </div>
   <div class="hdr-r">
@@ -588,7 +610,7 @@ main { padding: 14px 16px; }
 
 <!-- UPDATE BANNER -->
 <div id="upd-banner">
-  <span id="upd-banner-txt">Update verfügbar — bitte neu laden</span>
+  <span id="upd-banner-txt">Update verf�gbar � bitte neu laden</span>
   <button id="upd-banner-btn" onclick="doUpdate()">Neu laden</button>
 </div>
 
@@ -608,7 +630,7 @@ main { padding: 14px 16px; }
 
   <!-- Cycle Info -->
   <div class="cinfo" id="cinfo">
-    <div class="cinfo-title" id="cinfo-title">—</div>
+    <div class="cinfo-title" id="cinfo-title">�</div>
     <div class="cinfo-dates" id="cinfo-dates"></div>
   </div>
 
@@ -617,7 +639,7 @@ main { padding: 14px 16px; }
     <div class="bw-box">
       <div class="box-lbl">
         <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-        Körpergewicht
+        K�rpergewicht
       </div>
       <div style="display:flex;align-items:baseline;">
         <input class="bw-input" type="number" min="0" step="0.1" placeholder="0.0" id="bwIn" inputmode="decimal">
@@ -662,11 +684,11 @@ main { padding: 14px 16px; }
 <div id="save-footer">
   <button id="save-btn" onclick="saveAll()">
     <div class="spin-sm"></div>
-    <span class="btn-lbl">In Google Sheet speichern</span>
+    <span class="btn-lbl">Training speichern</span>
   </button>
   <div class="api-status">
     <div id="dot2" style="width:6px;height:6px;border-radius:50%;background:var(--tx3);flex-shrink:0;"></div>
-    <span id="api-status-txt">Nicht verbunden — Setup oeffnen</span>
+    <span id="api-status-txt">Nicht verbunden � Setup oeffnen</span>
   </div>
   <div id="last-saved-txt" style="font-family:'DM Mono',monospace;font-size:8px;color:var(--tx3);letter-spacing:.06em;margin-top:3px;"></div>
 </div>
@@ -676,7 +698,9 @@ main { padding: 14px 16px; }
 //  ADMIN-LOGGING
 // ============================================================
 const APP_ENV              = 'PUBLIC';
-const APP_VERSION          = 'V15.3.8-test';
+const APP_VERSION          = 'V16.0-friend-mode-test';
+const BUILD_DATE           = '2026-06-24';
+const PUBLIC_SYNC_ENDPOINT = 'https://script.google.com/macros/s/AKfycbxSOaHnYQ8y1biSHHA3qzPN9xveJcgFy-LcZdcnkEV-MtA8D1Agd6sBAjm6loHO347o/exec';
 function sanitizeAdminValue(value, maxLen=500) {
   return String(value || '')
     .replace(/(gsk_|AIza)[a-zA-Z0-9_-]+/g, '[REDACTED]')
@@ -708,13 +732,17 @@ window.addEventListener('unhandledrejection', function(e) {
   logToAdmin('ASYNC_ERROR', String(e.reason));
 });
 
-// ════════════════════════════════════════════════════
+// ----------------------------------------------------
 //  STATE
-// ════════════════════════════════════════════════════
+// ----------------------------------------------------
 const LS_KEYS = {
   api: 'pb_public_api',
   sheet: 'pb_public_sheet',
   lastSaved: 'pb_public_last_saved',
+  mode: 'pb_public_mode',
+  cloudUser: 'pb_public_cloud_user',
+  cloudPinSession: 'pb_public_cloud_pin_session',
+  localData: 'pb_public_local_data_v16',
   test: '_pb_public_test'
 };
 function migratePublicStorage() {
@@ -735,16 +763,121 @@ function migratePublicStorage() {
 migratePublicStorage();
 let API   = localStorage.getItem(LS_KEYS.api)   || '';
 let SHEET = localStorage.getItem(LS_KEYS.sheet) || 'ZYKLUS MASTER';
+let APP_MODE = localStorage.getItem(LS_KEYS.mode) || (API ? 'sheet' : '');
+let CLOUD_USER = readCloudUser();
+let CLOUD_PIN_SESSION = readCloudPinSession();
 let rawData = [], curDay = '', curWeek = '';
-// sheetRowMap[i] = echte Sheet-Zeile für rawData[i]
-// rawData[0] = Sheet-Zeile 4 → Offset 4; Apps Script liefert Zeilen ab 1
+// sheetRowMap[i] = echte Sheet-Zeile f�r rawData[i]
+// rawData[0] = Sheet-Zeile 4 ? Offset 4; Apps Script liefert Zeilen ab 1
 // Falls AS rowOffset mitliefert, wird dieser genutzt; sonst Fallback i+4
 let sheetRowOffset = 4;
 const PS = { level: 'weeks', week: '', day: '' };
 
-// ════════════════════════════════════════════════════
+function readCloudUser() {
+  try { return JSON.parse(localStorage.getItem(LS_KEYS.cloudUser) || 'null') || null; }
+  catch(_) { return null; }
+}
+
+function readCloudPinSession() {
+  try { return sessionStorage.getItem(LS_KEYS.cloudPinSession) || ''; }
+  catch(_) { return ''; }
+}
+
+function setCloudPinSession(pin) {
+  CLOUD_PIN_SESSION = String(pin || '');
+  try {
+    if (CLOUD_PIN_SESSION) sessionStorage.setItem(LS_KEYS.cloudPinSession, CLOUD_PIN_SESSION);
+    else sessionStorage.removeItem(LS_KEYS.cloudPinSession);
+  } catch(_) {}
+}
+
+function clearCloudPinSession() {
+  setCloudPinSession('');
+}
+
+function userFeatures(plan, status) {
+  const enabled = status !== 'disabled';
+  return {
+    cloudSync: enabled && ['friend','pro'].includes(plan),
+    proFeatures: enabled && ['friend','pro'].includes(plan)
+  };
+}
+
+function normalizeRows(raw) {
+  return (Array.isArray(raw) ? raw : []).map((row, i) => {
+    if (row && typeof row === 'object' && !Array.isArray(row) && Array.isArray(row.values)) {
+      const r = row.values;
+      r._ri = parseInt(row.rowIdx);
+      return r;
+    }
+    const r = Array.isArray(row) ? row : [];
+    r._ri = Number.isFinite(parseInt(r._ri)) ? parseInt(r._ri) : i + sheetRowOffset;
+    return r;
+  });
+}
+
+function localStarterRows() {
+  return [
+    ['Woche 1','','','Tag 1: Ganzkoerper','Kniebeuge','Beine','','','','','','','','','',''],
+    ['','','','','Bankdruecken','Brust','','','','','','','','','',''],
+    ['','','','','Rudern','Ruecken','','','','','','','','','',''],
+    ['','','','Tag 2: Ganzkoerper','Kreuzheben','Ruecken','','','','','','','','','',''],
+    ['','','','','Schulterdruecken','Schultern','','','','','','','','','',''],
+    ['','','','','Latziehen','Ruecken','','','','','','','','','','']
+  ].map((row, i) => { row._ri = i + 4; return row; });
+}
+
+function loadAppData() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(LS_KEYS.localData) || 'null');
+    if (Array.isArray(saved?.rawData) && saved.rawData.length) return normalizeRows(saved.rawData);
+  } catch(_) {}
+  return localStarterRows();
+}
+
+function saveAppData(meta={}) {
+  localStorage.setItem(LS_KEYS.localData, JSON.stringify({
+    version: APP_VERSION,
+    savedAt: new Date().toISOString(),
+    rawData,
+    ...meta
+  }));
+}
+
+function applyLocalInputsToRawData(date) {
+  [...document.querySelectorAll('.excard')].forEach(card => {
+    const ri = parseInt(card.dataset.row);
+    const row = rawData.find(r => parseInt(r._ri) === ri);
+    if (!row) return;
+    row[1] = date || row[1] || '';
+    row[6]  = v(`g1-${ri}`); row[7]  = v(`r1-${ri}`);
+    row[8]  = v(`g2-${ri}`); row[9]  = v(`r2-${ri}`);
+    row[10] = v(`g3-${ri}`); row[11] = v(`r3-${ri}`);
+    row[14] = v(`rpe1-${ri}`);
+  });
+}
+
+function setMode(mode) {
+  APP_MODE = mode;
+  localStorage.setItem(LS_KEYS.mode, mode);
+}
+
+function publicSyncConfigured() {
+  return PUBLIC_SYNC_ENDPOINT && PUBLIC_SYNC_ENDPOINT.startsWith('https://');
+}
+
+function publicStateDebug() {
+  return {
+    mode: APP_MODE || '',
+    hasCloudUser: !!CLOUD_USER?.userId,
+    hasPinSession: !!CLOUD_PIN_SESSION,
+    endpointConfigured: !!publicSyncConfigured()
+  };
+}
+
+// ----------------------------------------------------
 //  DIAGNOSTICS
-// ════════════════════════════════════════════════════
+// ----------------------------------------------------
 const DIAG = { results: [], hasError: false, hasWarn: false };
 function diagAdd(level, label, detail) {
   DIAG.results.push({ level, label, detail });
@@ -754,12 +887,18 @@ function diagAdd(level, label, detail) {
 
 async function runDiag(manual = false) {
   DIAG.results = []; DIAG.hasError = false; DIAG.hasWarn = false;
+  if (APP_MODE === 'local') {
+    diagAdd('ok', 'Lokalmodus aktiv', 'Speicherung im Browser/localStorage.');
+  } else if (APP_MODE === 'cloud') {
+    if (publicSyncConfigured()) diagAdd('ok', 'Cloud-Modus vorbereitet', 'Public-Sync-Endpoint ist konfiguriert.');
+    else diagAdd('warn', 'Cloud-Sync noch nicht eingerichtet', 'PUBLIC_SYNC_ENDPOINT ist leer.');
+  }
   if (!API) {
-    diagAdd('err', 'Kein Verbindungslink', 'Öffne „Google-Sheet verbinden" und trage den Web-App-Link ein.');
+    if (APP_MODE !== 'local' && APP_MODE !== 'cloud') diagAdd('err', 'Kein Verbindungslink', 'Oeffne Setup oder starte lokal.');
   } else if (!API.startsWith('https://script.google.com/macros/s/')) {
-    diagAdd('warn', 'Verbindungslink ungewöhnlich', 'Erwartet: https://script.google.com/macros/s/…/exec');
+    diagAdd('warn', 'Verbindungslink ungew�hnlich', 'Erwartet: https://script.google.com/macros/s/�/exec');
   } else {
-    diagAdd('ok', 'Verbindungslink vorhanden', API.slice(0,55) + '…');
+    diagAdd('ok', 'Verbindungslink vorhanden', API.slice(0,55) + '�');
   }
   if (!SHEET) {
     diagAdd('err', 'Kein Trainingsplan-Tab', 'Standard: "ZYKLUS MASTER".');
@@ -774,8 +913,8 @@ async function runDiag(manual = false) {
   } catch (e) { diagAdd('err', 'Datumsformat-Fehler', e.message); }
   try {
     localStorage.setItem(LS_KEYS.test,'1'); localStorage.removeItem(LS_KEYS.test);
-    diagAdd('ok', 'Browser-Speicher verfügbar', '');
-  } catch (e) { diagAdd('err', 'Browser-Speicher nicht verfügbar', 'Privater Modus?'); }
+    diagAdd('ok', 'Browser-Speicher verf�gbar', '');
+  } catch (e) { diagAdd('err', 'Browser-Speicher nicht verf�gbar', 'Privater Modus?'); }
   if (API && API.startsWith('https://')) {
     try {
       const ctrl = new AbortController();
@@ -783,12 +922,12 @@ async function runDiag(manual = false) {
       const res  = await fetch(`${API}?sheet=${encodeURIComponent(SHEET)}&v=${Date.now()}`, { signal: ctrl.signal });
       clearTimeout(tid);
       if (!res.ok) {
-        diagAdd('err', `Verbindung HTTP ${res.status}`, 'Prüfe Deployment.');
+        diagAdd('err', `Verbindung HTTP ${res.status}`, 'Pr�fe Deployment.');
       } else {
         const json = await res.json();
         let data = Array.isArray(json) ? json : (Array.isArray(json?.data) ? json.data : null);
         if (!data) diagAdd('err', 'Verbindung liefert keine Trainingsdaten', JSON.stringify(json).slice(0,80));
-        else diagAdd('ok', `Verbindung OK — ${data.length} Zeilen`, '');
+        else diagAdd('ok', `Verbindung OK � ${data.length} Zeilen`, '');
       }
     } catch (e) {
       diagAdd('err', e.name === 'AbortError' ? 'Verbindung Timeout' : 'Verbindung fehlgeschlagen: '+e.message, '');
@@ -804,9 +943,9 @@ async function runDiag(manual = false) {
   else                    setDot('ok');
 
   if (DIAG.hasError || DIAG.hasWarn || manual) {
-    document.getElementById('diag-subtitle').textContent = `${okC} OK · ${warnC} Hinweise · ${errC} Fehler`;
+    document.getElementById('diag-subtitle').textContent = `${okC} OK � ${warnC} Hinweise � ${errC} Fehler`;
     document.getElementById('diag-list').innerHTML = DIAG.results.map(r => {
-      const icon = r.level==='ok'?'✓':r.level==='warn'?'⚠':'✕';
+      const icon = r.level==='ok'?'?':r.level==='warn'?'?':'?';
       return `<div class="diag-item ${r.level}"><div class="diag-icon">${icon}</div><div class="diag-text"><div class="diag-label">${esc(r.label)}</div><div class="diag-detail">${esc(r.detail)}</div></div></div>`;
     }).join('');
     document.getElementById('diag-overlay').classList.add('open');
@@ -815,20 +954,33 @@ async function runDiag(manual = false) {
 }
 function diagClose() { document.getElementById('diag-overlay').classList.remove('open'); }
 
-// ════════════════════════════════════════════════════
+// ----------------------------------------------------
 //  BOOT
-// ════════════════════════════════════════════════════
+// ----------------------------------------------------
 document.getElementById('hdr-date').textContent = (() => {
-  const mo = ['Jan','Feb','Mär','Apr','Mai','Jun','Jul','Aug','Sep','Okt','Nov','Dez'];
+  const mo = ['Jan','Feb','M�r','Apr','Mai','Jun','Jul','Aug','Sep','Okt','Nov','Dez'];
   const n = new Date();
   return String(n.getDate()).padStart(2,'0') + '. ' + mo[n.getMonth()];
 })();
 
 async function init() {
+  console.info('[PUBLIC_STATE]', publicStateDebug());
   updateOfflineState();
-  lmsg('Verbinde…');
+  if (APP_MODE === 'local' || APP_MODE === 'cloud') {
+    lmsg(APP_MODE === 'local' ? 'Lade lokale Daten...' : 'Lade Cloud-Cache...');
+    rawData = loadAppData();
+    setDot(APP_MODE === 'cloud' && !publicSyncConfigured() ? 'warn' : 'ok');
+    const dot2 = document.getElementById('dot2');
+    if (dot2) dot2.style.background = APP_MODE === 'cloud' && !publicSyncConfigured() ? 'var(--warn)' : 'var(--ok)';
+    const status = document.getElementById('api-status-txt');
+    if (status) status.textContent = APP_MODE === 'local' ? 'Lokalmodus - Browser-Speicher' : (publicSyncConfigured() ? 'Cloud-Modus vorbereitet' : 'Cloud-Sync noch nicht eingerichtet');
+    buildSelectors();
+    hideLS();
+    return;
+  }
+  lmsg('Verbinde...');
   if (!API) { hideLS(); return setupOpen(); }
-  lmsg('Lade Plan…');
+  lmsg('Lade Plan�');
   try {
     const res  = await fetch(`${API}?sheet=${encodeURIComponent(SHEET)}&v=${Date.now()}`);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -843,23 +995,12 @@ async function init() {
     } else { throw new Error('Unbekanntes Format'); }
 
     // Normalisieren: jede Row bekommt _ri (echte Sheet-Zeilennummer)
-    // Falls AS {rowIdx, values} liefert → nutzen; sonst Offset-Fallback
-    rawData = raw.map((row, i) => {
-      if (row && typeof row === 'object' && !Array.isArray(row) && Array.isArray(row.values)) {
-        // AS liefert {rowIdx, values} Format
-        const r = row.values;
-        r._ri = parseInt(row.rowIdx);
-        return r;
-      }
-      // Fallback: Array-of-Arrays mit Offset
-      const r = Array.isArray(row) ? row : [];
-      r._ri = i + sheetRowOffset;
-      return r;
-    });
+    // Falls AS {rowIdx, values} liefert ? nutzen; sonst Offset-Fallback
+    rawData = normalizeRows(raw);
     setDot('ok');
     document.getElementById('dot2').style.background = 'var(--ok)';
     document.getElementById('dot2').style.boxShadow  = '0 0 6px rgba(0,230,118,.4)';
-    document.getElementById('api-status-txt').textContent = 'Verbunden · ' + SHEET;
+    document.getElementById('api-status-txt').textContent = 'Verbunden � ' + SHEET;
     setSetupConnectionStatus(true);
     buildSelectors();
     hideLS();
@@ -869,28 +1010,28 @@ async function init() {
   }
 }
 
-// ════════════════════════════════════════════════════
+// ----------------------------------------------------
 //  DATENSTRUKTUR
-// ════════════════════════════════════════════════════
+// ----------------------------------------------------
 function buildStructure() {
   const weeks = [], weekMap = {};
   let lastWeek = '', lastDay = '';
   rawData.forEach(row => {
     const w = (row[0]||'').trim(), d = (row[3]||'').trim(), e = (row[4]||'').trim();
-    if (w==='Woche'||d==='Trainingstag'||e==='Übung') return;
+    if (w==='Woche'||d==='Trainingstag'||e==='�bung') return;
     const week = w||lastWeek, day = d||lastDay;
     if (!week||!day) return;
     lastWeek = week; lastDay = day;
     if (!weekMap[week]) { weekMap[week]={week,days:{},order:weeks.length}; weeks.push(weekMap[week]); }
     if (!weekMap[week].days[day]) weekMap[week].days[day]={day,named:0,total:0};
-    if (e) { weekMap[week].days[day].total++; if (e!=='Übung eintragen...') weekMap[week].days[day].named++; }
+    if (e) { weekMap[week].days[day].total++; if (e!=='�bung eintragen...') weekMap[week].days[day].named++; }
   });
   return weeks.map(w => ({ week:w.week, days:Object.values(w.days) }));
 }
 
-// ════════════════════════════════════════════════════
-//  SELECTORS — Woche + Tag Buttons
-// ════════════════════════════════════════════════════
+// ----------------------------------------------------
+//  SELECTORS � Woche + Tag Buttons
+// ----------------------------------------------------
 function buildSelectors() {
   const structure = buildStructure();
   if (!structure.length) return;
@@ -923,7 +1064,7 @@ function renderDayBtns(wObj) {
   wObj.days.forEach((dObj, di) => {
     const btn = document.createElement('button');
     btn.className = 'dbtn' + (di === 0 ? ' active' : '');
-    // Tag-Name kürzen für Button
+    // Tag-Name k�rzen f�r Button
     const short = dObj.day.includes(':') ? dObj.day.split(':')[1].split('(')[0].trim() : dObj.day;
     btn.innerHTML = short;
     btn.title = dObj.day;
@@ -939,25 +1080,25 @@ function renderDayBtns(wObj) {
   renderWorkout();
 }
 
-// ════════════════════════════════════════════════════
+// ----------------------------------------------------
 //  MUSKELGRUPPEN
-// ════════════════════════════════════════════════════
+// ----------------------------------------------------
 function muscleKey(m) {
   if (!m) return 'default';
   const ml = m.toLowerCase();
   if (ml.includes('schulter'))                         return 'Schultern';
   if (ml.includes('brust'))                            return 'Brust';
   if (ml.includes('trizeps'))                          return 'Trizeps';
-  if (ml.includes('rücken')||ml.includes('ruecken'))   return 'Rücken';
+  if (ml.includes('r�cken')||ml.includes('ruecken'))   return 'R�cken';
   if (ml.includes('bizeps'))                           return 'Bizeps';
   if (ml.includes('bein')||ml.includes('leg'))         return 'Beine';
   if (ml.includes('bauch')||ml.includes('core'))       return 'Bauch';
   return 'default';
 }
 
-// ════════════════════════════════════════════════════
+// ----------------------------------------------------
 //  BERECHNUNGEN
-// ════════════════════════════════════════════════════
+// ----------------------------------------------------
 function calc1RM(g, r) {
   const gf = parseFloat(String(g||'').replace(',','.'));
   const rf = parseFloat(String(r||'').replace(',','.'));
@@ -965,9 +1106,9 @@ function calc1RM(g, r) {
   return Math.round(gf * (1 + rf/30));
 }
 
-// ════════════════════════════════════════════════════
+// ----------------------------------------------------
 //  WARMUP
-// ════════════════════════════════════════════════════
+// ----------------------------------------------------
 function warmupWeights(g1) {
   const wu = parseFloat(String(g1||'').replace(',','.'));
   if (!(wu > 0)) return null;
@@ -1001,17 +1142,17 @@ function toggleWarmup(ri) {
   document.getElementById('wubody-'+ri)?.classList.toggle('wu-open');
 }
 
-// ════════════════════════════════════════════════════
+// ----------------------------------------------------
 //  AKKORDEON
-// ════════════════════════════════════════════════════
+// ----------------------------------------------------
 function toggleEx(ri) {
   document.getElementById('ec-'+ri)?.classList.toggle('open-ex');
   document.getElementById('eb-'+ri)?.classList.toggle('open');
 }
 
-// ════════════════════════════════════════════════════
+// ----------------------------------------------------
 //  LIVE ORM
-// ════════════════════════════════════════════════════
+// ----------------------------------------------------
 function publicNum(v) {
   const n = parseFloat(String(v||'').replace(',','.'));
   return Number.isFinite(n) ? n : 0;
@@ -1040,12 +1181,12 @@ function updateDayStatus() {
   const fillEl = document.getElementById('day-status-fill');
   const nextEl = document.getElementById('day-status-next');
   const noteEl = document.getElementById('day-status-note');
-  if (doneEl) doneEl.textContent = `${done}/${total} Übungen mit Daten`;
+  if (doneEl) doneEl.textContent = `${done}/${total} �bungen mit Daten`;
   if (pctEl) pctEl.textContent = `${pct}%`;
   if (fillEl) fillEl.style.width = `${pct}%`;
-  if (nextEl) nextEl.innerHTML = `Nächste offene Übung: <b>${esc(nextName)}</b>`;
+  if (nextEl) nextEl.innerHTML = `N�chste offene �bung: <b>${esc(nextName)}</b>`;
   if (noteEl) noteEl.textContent = done > 0
-    ? `${done} ${done === 1 ? 'Übung enthält' : 'Übungen enthalten'} bereits Trainingsdaten`
+    ? `${done} ${done === 1 ? '�bung enth�lt' : '�bungen enthalten'} bereits Trainingsdaten`
     : '';
 }
 
@@ -1076,7 +1217,7 @@ function updateSetProgressMini(ri) {
   const el = document.getElementById('setprog-' + ri);
   if (!el) return;
   const count = countCompleteSetsFromDom(ri);
-  el.textContent = `${count}/3 Sätze mit Daten`;
+  el.textContent = `${count}/3 S�tze mit Daten`;
   el.classList.toggle('done', count === 3);
 }
 
@@ -1122,15 +1263,15 @@ function liveOrm(ri, s) {
   updateSetProgressMini(ri);
 }
 
-// ════════════════════════════════════════════════════
+// ----------------------------------------------------
 //  RENDER WORKOUT: Tag-Header + Cards
-// ════════════════════════════════════════════════════
+// ----------------------------------------------------
 function renderWorkout() {
   const container = document.getElementById('workout-content');
   container.innerHTML = '';
 
   // Cycle-Info updaten
-  document.getElementById('cinfo-title').textContent = curWeek + ' — ' + curDay.split(':')[0].trim();
+  document.getElementById('cinfo-title').textContent = curWeek + ' � ' + curDay.split(':')[0].trim();
   document.getElementById('cinfo-dates').textContent = curDay;
   document.getElementById('today-badge').textContent = curDay.includes(':') ? curDay.split(':')[1].split('(')[0].trim() : curDay;
 
@@ -1144,21 +1285,21 @@ function renderWorkout() {
     if (d) inDay = (d===curDay && lastWeekCol===curWeek);
     if (!inDay) return;
     const name = (row[4]||'').trim();
-    if (!name||name==='Übung'||name==='Übung eintragen...') return;
+    if (!name||name==='�bung'||name==='�bung eintragen...') return;
     tCount++;
 
     const muscle  = (row[5]||'').trim();
     const progRaw = (row[15]||'').trim();
     const ri      = row._ri;  // echte Sheet-Zeilennummer, aus Normalisierung
     const isFirst = tCount === 1;
-    const pCls    = progRaw==='▲'?'up':progRaw==='▼'?'dn':'eq';
-    const pLabel  = progRaw==='▲'?'▲ PR':progRaw==='▼'?'▼ Rückgang':'► Neu';
+    const pCls    = progRaw==='?'?'up':progRaw==='?'?'dn':'eq';
+    const pLabel  = progRaw==='?'?'? PR':progRaw==='?'?'? R�ckgang':'? Neu';
     const mk      = muscleKey(muscle);
     const g1      = escA(row[6]);
     const lastSet = findPreviousExerciseSet(name, i);
-    const lastSetLine = lastSet ? `<div class="last-set-line">Letztes Mal: ${lastSet.g} kg × ${lastSet.r}</div>` : '';
+    const lastSetLine = lastSet ? `<div class="last-set-line">Letztes Mal: ${lastSet.g} kg � ${lastSet.r}</div>` : '';
     const setCount = countCompleteSetsForRow(row);
-    const setProgressLine = `<div class="set-progress-mini ${setCount===3?'done':''}" id="setprog-${ri}">${setCount}/3 Sätze mit Daten</div>`;
+    const setProgressLine = `<div class="set-progress-mini ${setCount===3?'done':''}" id="setprog-${ri}">${setCount}/3 S�tze mit Daten</div>`;
 
     const sets = [1,2,3].map(s => {
       const g   = escA(row[6+(s-1)*2]);
@@ -1205,21 +1346,21 @@ function renderWorkout() {
   });
 
   if (!tCount) {
-    container.innerHTML = '<div class="empty"><big>Training</big>Für diesen Tag sind noch keine Übungen benannt.<br>Öffne „Planung", um Übungen einzutragen.</div>';
+    container.innerHTML = '<div class="empty"><big>Training</big>F�r diesen Tag sind noch keine �bungen benannt.<br>�ffne �Planung", um �bungen einzutragen.</div>';
     return;
   }
 
   // Tagesstatus
   const doneEl = document.createElement('div');
   doneEl.className = 'day-status-card';
-  doneEl.innerHTML = `<div class="day-status-top"><div class="day-status-main" id="day-status-done">0/${tCount} Übungen mit Daten</div><div class="day-status-pct" id="day-status-pct">0%</div></div><div class="prog-bar"><div class="prog-fill" id="day-status-fill" style="width:0%"></div></div><div class="day-status-next" id="day-status-next">Nächste offene Übung: <b>—</b></div><div class="day-status-note" id="day-status-note"></div>`;
+  doneEl.innerHTML = `<div class="day-status-top"><div class="day-status-main" id="day-status-done">0/${tCount} �bungen mit Daten</div><div class="day-status-pct" id="day-status-pct">0%</div></div><div class="prog-bar"><div class="prog-fill" id="day-status-fill" style="width:0%"></div></div><div class="day-status-next" id="day-status-next">N�chste offene �bung: <b>�</b></div><div class="day-status-note" id="day-status-note"></div>`;
   container.insertBefore(doneEl, container.firstChild);
   updateDayStatus();
 }
 
-// ════════════════════════════════════════════════════
-//  PLANUNG — 3-Stufen
-// ════════════════════════════════════════════════════
+// ----------------------------------------------------
+//  PLANUNG � 3-Stufen
+// ----------------------------------------------------
 function renderPlan() {
   const container = document.getElementById('view-plan');
   container.innerHTML = '';
@@ -1231,7 +1372,7 @@ function renderPlan() {
     structure.forEach(wObj => {
       const named = wObj.days.reduce((a,d) => a+d.named, 0);
       const el = document.createElement('div'); el.className = 'pw-item';
-      el.innerHTML = `<div class="pw-left"><div class="pw-name">${esc(wObj.week)}</div><div class="pw-meta">${wObj.days.length} Tage · ${named} benannte Übungen</div></div><span class="pw-arr">›</span>`;
+      el.innerHTML = `<div class="pw-left"><div class="pw-name">${esc(wObj.week)}</div><div class="pw-meta">${wObj.days.length} Tage � ${named} benannte �bungen</div></div><span class="pw-arr">�</span>`;
       el.onclick = () => { PS.level='days'; PS.week=wObj.week; renderPlan(); };
       box.appendChild(el);
     });
@@ -1248,7 +1389,7 @@ function renderPlan() {
     wObj.days.forEach(dObj => {
       const cs = dObj.named>0?`${dObj.named} benannt`:dObj.total>0?`${dObj.total} Slots`:'leer';
       const el = document.createElement('div'); el.className = 'pd-item';
-      el.innerHTML = `<div class="pd-left"><div class="pd-dot${dObj.named>0?' has':''}"></div><span class="pd-name">${esc(dObj.day)}</span></div><span class="pd-count">${cs}</span><span class="pd-arr">›</span>`;
+      el.innerHTML = `<div class="pd-left"><div class="pd-dot${dObj.named>0?' has':''}"></div><span class="pd-name">${esc(dObj.day)}</span></div><span class="pd-count">${cs}</span><span class="pd-arr">�</span>`;
       el.onclick = () => { PS.level='exercises'; PS.day=dObj.day; renderPlan(); };
       box.appendChild(el);
     });
@@ -1260,7 +1401,7 @@ function renderPlan() {
     const dObj = wObj?.days.find(d => d.day===PS.day);
     if (!dObj) { PS.level='days'; renderPlan(); return; }
     const crumb = document.createElement('div'); crumb.className = 'plan-crumb';
-    crumb.innerHTML = `<span class="plan-crumb-link" onclick="PS.level='weeks';renderPlan()">${esc(PS.week)}</span><span class="plan-crumb-sep">›</span><span class="plan-crumb-link" onclick="PS.level='days';renderPlan()">${esc(PS.day)}</span>`;
+    crumb.innerHTML = `<span class="plan-crumb-link" onclick="PS.level='weeks';renderPlan()">${esc(PS.week)}</span><span class="plan-crumb-sep">�</span><span class="plan-crumb-link" onclick="PS.level='days';renderPlan()">${esc(PS.day)}</span>`;
     container.appendChild(crumb);
     const box = document.createElement('div'); box.className = 'plan-box';
     let idx = 0;
@@ -1271,35 +1412,35 @@ function renderPlan() {
       if (w) lastW=w; if(d) lastD=d;
       if (!(lastD===PS.day||d===PS.day)) return;
       const name=(row[4]||'').trim();
-      if (!name||name==='Übung') return;
+      if (!name||name==='�bung') return;
       const muscle=(row[5]||'').trim();
       const progRaw=(row[15]||'').trim();
       const ri=row._ri; idx++;
-      const pCls=progRaw==='▲'?'up':progRaw==='▼'?'dn':'eq';
-      const isNamed=name!=='Übung eintragen...';
+      const pCls=progRaw==='?'?'up':progRaw==='?'?'dn':'eq';
+      const isNamed=name!=='�bung eintragen...';
       const el=document.createElement('div'); el.className='pe-item';
-      el.innerHTML=`<div class="pe-num">${idx}</div><div class="pe-info"><div class="pe-name${isNamed?' named':''}">${esc(name)}</div>${muscle?`<div class="pe-muscle${muscle?' has':''}">${esc(muscle)}</div>`:''}</div><div class="pe-prog ${pCls}">${progRaw||'►'}</div><div class="pe-btns"><button class="edit-btn" onclick="renameEx(${ri},\`${name.replace(/`/g,'\\`')}\`)">ÜBUNG</button><button class="edit-btn edit-btn-muscle" onclick="editMuscle(${ri},\`${muscle.replace(/`/g,'\\`')}\`)">MUSK.</button></div>`;
+      el.innerHTML=`<div class="pe-num">${idx}</div><div class="pe-info"><div class="pe-name${isNamed?' named':''}">${esc(name)}</div>${muscle?`<div class="pe-muscle${muscle?' has':''}">${esc(muscle)}</div>`:''}</div><div class="pe-prog ${pCls}">${progRaw||'?'}</div><div class="pe-btns"><button class="edit-btn" onclick="renameEx(${ri},\`${name.replace(/`/g,'\\`')}\`)">�BUNG</button><button class="edit-btn edit-btn-muscle" onclick="editMuscle(${ri},\`${muscle.replace(/`/g,'\\`')}\`)">MUSK.</button></div>`;
       box.appendChild(el);
     });
     container.appendChild(box);
   }
 }
 
-// ════════════════════════════════════════════════════
+// ----------------------------------------------------
 //  PR-SEITE
-// ════════════════════════════════════════════════════
+// ----------------------------------------------------
 function buildPRMap() {
   const map = {};
   rawData.forEach(row => {
     const w=(row[0]||'').trim(), d=(row[3]||'').trim();
     if (w==='Woche'||d==='Trainingstag') return;
     const name=(row[4]||'').trim();
-    if (!name||name==='Übung eintragen...'||name==='Übung') return;
+    if (!name||name==='�bung eintragen...'||name==='�bung') return;
     const muscle=(row[5]||'').trim(), date=(row[1]||'').trim();
     const weights=[row[6],row[8],row[10]].map(x=>parseFloat(String(x||'').replace(',','.'))).filter(x=>!isNaN(x)&&x>0);
     if (!weights.length) return;
     const maxKg=Math.max(...weights);
-    const sets=[[row[6],row[7]],[row[8],row[9]],[row[10],row[11]]].filter(([g])=>parseFloat(String(g||'').replace(',','.'))>0).map(([g,r])=>`${g}kg×${r||'?'}`).join(' · ');
+    const sets=[[row[6],row[7]],[row[8],row[9]],[row[10],row[11]]].filter(([g])=>parseFloat(String(g||'').replace(',','.'))>0).map(([g,r])=>`${g}kg�${r||'?'}`).join(' � ');
     if (!map[name]||maxKg>map[name].kg) map[name]={kg:maxKg,date,sets,muscle};
   });
   return map;
@@ -1322,7 +1463,7 @@ function renderPR() {
   });
   container.appendChild(fb);
   const filtered=entries.filter(([,val])=>prFilter==='Alle'||muscleKey(val.muscle)===prFilter).sort((a,b)=>b[1].kg-a[1].kg);
-  if (!filtered.length) { const e=document.createElement('div'); e.className='empty'; e.innerHTML='<big>—</big>Für diesen Filter gibt es noch keine Bestleistung.'; container.appendChild(e); return; }
+  if (!filtered.length) { const e=document.createElement('div'); e.className='empty'; e.innerHTML='<big>�</big>F�r diesen Filter gibt es noch keine Bestleistung.'; container.appendChild(e); return; }
   const list=document.createElement('div'); list.className='pr-list';
   filtered.forEach(([name,val],idx)=>{
     const card=document.createElement('div'); card.className='pr-card'; card.dataset.muscle=muscleKey(val.muscle);
@@ -1333,38 +1474,43 @@ function renderPR() {
   container.appendChild(list);
 }
 
-// ════════════════════════════════════════════════════
+// ----------------------------------------------------
 //  SAVE
-// ════════════════════════════════════════════════════
+// ----------------------------------------------------
 function validatePayload(p) {
-  if (!p.rowIdx || isNaN(p.rowIdx) || p.rowIdx < 4) return 'Ungültiger Zeilen-Index';
+  if (!p.rowIdx || isNaN(p.rowIdx) || p.rowIdx < 4) return 'Ung�ltiger Zeilen-Index';
   if (!p.sheet || typeof p.sheet !== 'string') return 'Kein Tabellenblatt';
-  if (!p.uebung) return 'Kein Übungsname';
+  if (!p.uebung) return 'Kein �bungsname';
   const numFields = ['g1','g2','g3','r1','r2','r3','rpe'];
   for (const f of numFields) {
     const val = p[f];
     if (val === '' || val === undefined) continue;
     const n = parseFloat(String(val).replace(',','.'));
-    if (isNaN(n)) return `${f.toUpperCase()}: kein gültiger Zahlenwert`;
+    if (isNaN(n)) return `${f.toUpperCase()}: kein g�ltiger Zahlenwert`;
     if ((f==='g1'||f==='g2'||f==='g3') && n < 0) return `${f.toUpperCase()}: negatives Gewicht`;
   }
   return null; // ok
 }
 
 async function saveAll() {
-  if (navigator.onLine === false) {
+  console.info('[PUBLIC_SAVE_DEBUG]', {
+    ...publicStateDebug(),
+    rawDataLength: Array.isArray(rawData) ? rawData.length : 0
+  });
+  const localLikeMode = APP_MODE === 'local' || APP_MODE === 'cloud';
+  if (!localLikeMode && navigator.onLine === false) {
     updateOfflineState();
-    return toast('Offline - Speichern nicht möglich', 'err');
+    return toast('Offline - Speichern nicht m�glich', 'err');
   }
   const cards = [...document.querySelectorAll('.excard')];
-  if (!cards.length) return toast('Keine Übungen', 'err');
-  if (!API) return toast('Kein API-Endpunkt — Setup öffnen', 'err');
-  if (!SHEET) return toast('Kein Tabellenblatt konfiguriert', 'err');
+  if (!cards.length) return toast('Keine �bungen', 'err');
+  if (!localLikeMode && !API) return toast('Kein API-Endpunkt - Setup oeffnen', 'err');
+  if (!localLikeMode && !SHEET) return toast('Kein Tabellenblatt konfiguriert', 'err');
 
   const hasAny = cards.some(c => {
-    const ri = parseInt(c.querySelector('input')?.id.split('-')[1]);
-    return v(`g1-${ri}`) || v(`r1-${ri}`);
-  });
+    const ri = parseInt(c.dataset.row || c.querySelector('input')?.id.split('-')[1]);
+    return ['g1','r1','g2','r2','g3','r3','rpe1'].some(prefix => v(`${prefix}-${ri}`));
+  }) || ['bwIn','kcalIn','bpmIn','minIn'].some(id => v(id));
   if (!hasAny) { toast('Keine Gewichte eingetragen', 'warn'); return; }
 
   let date;
@@ -1376,6 +1522,22 @@ async function saveAll() {
 
   const btn=document.getElementById('save-btn');
   btn.classList.add('saving'); btn.disabled=true;
+
+  if (localLikeMode) {
+    applyLocalInputsToRawData(date);
+    saveAppData({ mode: APP_MODE, userId: CLOUD_USER?.userId || '' });
+    const n = new Date();
+    const ts = String(n.getHours()).padStart(2,'0') + ':' + String(n.getMinutes()).padStart(2,'0');
+    localStorage.setItem(LS_KEYS.lastSaved, ts);
+    setLastSaved(ts);
+    btn.classList.remove('saving'); btn.disabled=false;
+    if (APP_MODE === 'cloud') {
+      await syncCloudData('trainingLog', JSON.stringify({ rawData, savedAt: new Date().toISOString() }));
+    }
+    toast(APP_MODE === 'cloud' ? 'Lokal gespeichert - Cloud vorbereitet' : 'Lokal gespeichert', 'ok');
+    updateDayStatus();
+    return;
+  }
 
   const stats={kg:v('bwIn'),kcal:v('kcalIn'),bpm:v('bpmIn'),duration:v('minIn')};
   let ok=0, skipped=0, errors=[];
@@ -1393,7 +1555,7 @@ async function saveAll() {
     };
     const err = validatePayload(payload);
     if (err) { skipped++; errors.push(err); continue; }
-    // Leere Rows überspringen (keine einzige Zahl eingetragen)
+    // Leere Rows �berspringen (keine einzige Zahl eingetragen)
     const hasData = ['g1','r1','g2','r2','g3','r3'].some(f => payload[f] !== '');
     if (!hasData && !stats.kg && !stats.kcal && !stats.bpm && !stats.duration) { skipped++; continue; }
     try {
@@ -1405,8 +1567,8 @@ async function saveAll() {
       if (!res.ok) { skipped++; errors.push(`HTTP ${res.status}`); continue; }
       let json;
       try { json = await res.json(); } catch(_) {
-        // JSON nicht parsbar → Fehler, kein stiller Erfolg
-        skipped++; errors.push('Antwort kein gültiges JSON'); continue;
+        // JSON nicht parsbar ? Fehler, kein stiller Erfolg
+        skipped++; errors.push('Antwort kein g�ltiges JSON'); continue;
       }
       if (!json || json.success !== true) {
         skipped++; errors.push(json?.error || 'success !== true');
@@ -1426,19 +1588,19 @@ async function saveAll() {
   if (ok === 0 && skipped > 0) {
     toast(`Fehler: ${errors[0]||'Unbekannt'}`, 'err');
   } else if (skipped > 0) {
-    toast(`${ok} gesichert · ${skipped} Fehler: ${errors[0]||'?'}`, 'warn');
+    toast(`${ok} gesichert � ${skipped} Fehler: ${errors[0]||'?'}`, 'warn');
   } else {
-    toast(`${ok}/${cards.length} gesichert ✓`, 'ok');
+    toast(`${ok}/${cards.length} gesichert ?`, 'ok');
   }
 }
 
-// ════════════════════════════════════════════════════
+// ----------------------------------------------------
 //  RENAME MUSCLE
-// ════════════════════════════════════════════════════
+// ----------------------------------------------------
 async function editMuscle(ri, old) {
   const n=prompt('Muskelgruppe:', old||'');
   if (n === null) return; // abgebrochen
-  if (/<|>|script/i.test(n)) { toast('Ungültiger Wert','err'); return; }
+  if (/<|>|script/i.test(n)) { toast('Ung�ltiger Wert','err'); return; }
   if (!API) { toast('Kein API-Endpunkt','err'); return; }
   const err = validatePayload({ rowIdx: ri, sheet: SHEET, uebung: '(muscle)' });
   if (err) { toast(err, 'err'); return; }
@@ -1449,17 +1611,17 @@ async function editMuscle(ri, old) {
       body:JSON.stringify({ sheet:SHEET, rowIdx:ri, action:'rename', col:6, newName:n.trim() })
     });
     if (!res.ok) { toast(`Fehler HTTP ${res.status}`, 'err'); return; }
-    let json; try { json = await res.json(); } catch(_) { toast('Antwort kein gültiges JSON','err'); return; }
+    let json; try { json = await res.json(); } catch(_) { toast('Antwort kein g�ltiges JSON','err'); return; }
     if (!json || json.success !== true) { toast(json?.error||'success !== true', 'err'); return; }
-    toast('Muskelgruppe gespeichert — lade neu…','ok');
+    toast('Muskelgruppe gespeichert � lade neu�','ok');
     setTimeout(()=>location.reload(),900);
   } catch(e) { toast('Fehler: '+e.message,'err'); }
 }
 async function renameEx(ri, old) {
-  const def=old==='Übung eintragen...'?'':old;
-  const n=prompt('Übungsname:',def);
+  const def=old==='�bung eintragen...'?'':old;
+  const n=prompt('�bungsname:',def);
   if (!n?.trim()) return;
-  if (/<|>|script/i.test(n)) { toast('Ungültiger Name','err'); return; }
+  if (/<|>|script/i.test(n)) { toast('Ung�ltiger Name','err'); return; }
   if (!API) { toast('Kein API-Endpunkt','err'); return; }
   try {
     const res = await fetch(API, {
@@ -1468,25 +1630,25 @@ async function renameEx(ri, old) {
       body:JSON.stringify({sheet:SHEET, rowIdx:ri, action:'rename', col:5, newName:n.trim()})
     });
     if (!res.ok) { toast(`Fehler HTTP ${res.status}`,'err'); return; }
-    let json; try { json = await res.json(); } catch(_) { toast('Antwort kein gültiges JSON','err'); return; }
+    let json; try { json = await res.json(); } catch(_) { toast('Antwort kein g�ltiges JSON','err'); return; }
     if (!json || json.success !== true) { toast(json?.error||'success !== true','err'); return; }
-    toast('Gespeichert — lade neu…','ok');
+    toast('Gespeichert � lade neu�','ok');
     setTimeout(()=>location.reload(),900);
   } catch(e) { toast('Fehler: '+e.message,'err'); }
 }
 
-// ════════════════════════════════════════════════════
+// ----------------------------------------------------
 //  TABS
-// ════════════════════════════════════════════════════
-// ════════════════════════════════════════════════════
+// ----------------------------------------------------
+// ----------------------------------------------------
 //  SMART COACH
-// ════════════════════════════════════════════════════
+// ----------------------------------------------------
 function buildCoachHints() {
   const hints = [];
   const pf = x => parseFloat(String(x||'').replace(',','.'));
 
   // Daten sammeln
-  const exData = {}; // name → { maxKg, entries:[], rpeVals[], hasPR, hasData }
+  const exData = {}; // name ? { maxKg, entries:[], rpeVals[], hasPR, hasData }
   let totalHighRpe = 0;
   const highRpeEvidence = [];
 
@@ -1494,7 +1656,7 @@ function buildCoachHints() {
     const w=(row[0]||'').trim(), d=(row[3]||'').trim();
     if (w==='Woche'||d==='Trainingstag') return;
     const name=(row[4]||'').trim();
-    if (!name||name==='Übung'||name==='Übung eintragen...') return;
+    if (!name||name==='�bung'||name==='�bung eintragen...') return;
 
     const g1=pf(row[6]), g2=pf(row[8]), g3=pf(row[10]);
     const r1=pf(row[7]), r2=pf(row[9]), r3=pf(row[11]);
@@ -1510,20 +1672,20 @@ function buildCoachHints() {
     ex.entries.push(maxKg);
     if (maxKg>ex.maxKg) ex.maxKg=maxKg;
     if (!isNaN(rpe)&&rpe>0) ex.rpeVals.push(rpe);
-    if (prog==='▲') ex.hasPR=true;
+    if (prog==='?') ex.hasPR=true;
 
-    // 1RM Epley für PR-Card
-    if (prog==='▲') {
-      // höchsten Satz finden
+    // 1RM Epley f�r PR-Card
+    if (prog==='?') {
+      // h�chsten Satz finden
       const bestG = [[g1,r1],[g2,r2],[g3,r3]].filter(([g])=>!isNaN(g)&&g>0).sort((a,b)=>b[0]-a[0])[0];
       if (bestG) {
         const orm = bestG[1]>1 ? Math.round(bestG[0]*(1+bestG[1]/30)) : bestG[0];
         ex.orm1 = orm;
-        ex.bestSet = `${bestG[0]} kg × ${bestG[1]||'?'}`;
+        ex.bestSet = `${bestG[0]} kg � ${bestG[1]||'?'}`;
       }
     }
 
-    // RPE ≥ 9 zählen
+    // RPE = 9 z�hlen
     if (!isNaN(rpe)&&rpe>=9) {
       totalHighRpe++;
       highRpeEvidence.push(`${name}: RPE ${rpe}`);
@@ -1533,61 +1695,61 @@ function buildCoachHints() {
   const exercises = Object.entries(exData);
   const totalWithData = exercises.length;
 
-  // ── 1. WENIG DATEN ─────────────────────────────────
+  // -- 1. WENIG DATEN ---------------------------------
   if (totalWithData < 3) {
     hints.push({
       type: 'empty',
-      label: '◎ Hinweis',
+      label: '? Hinweis',
       title: 'Noch zu wenig Trainingsdaten.',
-      sub: 'Speichere 2–3 Einheiten, dann erkennt\ndie App Bestleistungen, Progression und Stagnation.',
+      sub: 'Speichere 2�3 Einheiten, dann erkennt\ndie App Bestleistungen, Progression und Stagnation.',
       detail: {
-        affected: 'Alle Übungen mit gespeicherten Sätzen',
-        evidence: `${totalWithData} Übungen mit auswertbaren Gewichten`,
+        affected: 'Alle �bungen mit gespeicherten S�tzen',
+        evidence: `${totalWithData} �bungen mit auswertbaren Gewichten`,
         recommendation: 'Trainiere und speichere noch ein paar Einheiten, bevor du Muster bewertest.'
       }
     });
     return hints;
   }
 
-  // ── 2. HOHER RPE ───────────────────────────────────
+  // -- 2. HOHER RPE -----------------------------------
   if (totalHighRpe >= 2) {
     hints.push({
       type: 'rpe',
-      label: '▲ Intensität',
-      title: `${totalHighRpe} Sätze mit RPE 9–10 im aktuellen Zyklus.`,
-      sub: 'Nächste Einheit nicht aggressiv steigern.\nErholung zuerst.',
+      label: '? Intensit�t',
+      title: `${totalHighRpe} S�tze mit RPE 9�10 im aktuellen Zyklus.`,
+      sub: 'N�chste Einheit nicht aggressiv steigern.\nErholung zuerst.',
       detail: {
         affected: highRpeEvidence.map(x => x.split(':')[0]).filter((v,i,a)=>a.indexOf(v)===i).join(', '),
-        evidence: highRpeEvidence.slice(0,4).join(' · '),
-        recommendation: 'Gewicht halten oder nur sehr klein steigern, wenn sich die erste Arbeitssatz-Serie sauber anfühlt.'
+        evidence: highRpeEvidence.slice(0,4).join(' � '),
+        recommendation: 'Gewicht halten oder nur sehr klein steigern, wenn sich die erste Arbeitssatz-Serie sauber anf�hlt.'
       }
     });
   }
 
-  // ── 3. NEUE BESTLEISTUNGEN (max. 2) ────────────────
+  // -- 3. NEUE BESTLEISTUNGEN (max. 2) ----------------
   const prExercises = exercises.filter(([,ex])=>ex.hasPR).slice(0,2);
   prExercises.forEach(([name,ex]) => {
     hints.push({
       type: 'pr',
-      label: '★ Bestleistung',
+      label: '? Bestleistung',
       title: `Neue Bestleistung: ${name}.`,
       sub: [
-        ex.orm1 ? `Geschätztes 1RM: ${ex.orm1} kg` : '',
+        ex.orm1 ? `Gesch�tztes 1RM: ${ex.orm1} kg` : '',
         ex.bestSet ? `Bester Satz: ${ex.bestSet}` : ''
-      ].filter(Boolean).join(' · '),
+      ].filter(Boolean).join(' � '),
       detail: {
         affected: name,
         evidence: [
           ex.bestSet ? `Bester Satz: ${ex.bestSet}` : '',
-          ex.orm1 ? `Geschätztes 1RM: ${ex.orm1} kg` : '',
+          ex.orm1 ? `Gesch�tztes 1RM: ${ex.orm1} kg` : '',
           `Maximalgewicht im Zyklus: ${ex.maxKg} kg`
-        ].filter(Boolean).join(' · '),
-        recommendation: 'Bestleistung notieren, sauber regenerieren und beim nächsten Mal nur minimal weitersteigern.'
+        ].filter(Boolean).join(' � '),
+        recommendation: 'Bestleistung notieren, sauber regenerieren und beim n�chsten Mal nur minimal weitersteigern.'
       }
     });
   });
 
-  // ── 4. STAGNATION (max. 1, häufigste Übung) ────────
+  // -- 4. STAGNATION (max. 1, h�ufigste �bung) --------
   const stagnating = exercises
     .filter(([,ex]) => !ex.hasPR && ex.entries.length >= 2)
     .filter(([,ex]) => {
@@ -1605,40 +1767,40 @@ function buildCoachHints() {
     const prev = vals[vals.length-2];
     hints.push({
       type: 'stagnation',
-      label: '► Progression',
+      label: '? Progression',
       title: `${name} zeigt keine Steigerung.`,
-      sub: 'Gewicht halten — nächste Einheit 1 Wiederholung mehr anpeilen.',
+      sub: 'Gewicht halten � n�chste Einheit 1 Wiederholung mehr anpeilen.',
       detail: {
         affected: name,
-        evidence: `Letzter Max-Satz: ${last} kg · davor: ${prev} kg`,
+        evidence: `Letzter Max-Satz: ${last} kg � davor: ${prev} kg`,
         recommendation: 'Gleiches Gewicht halten und zuerst eine saubere Wiederholung mehr anpeilen.'
       }
     });
   }
 
-  // ── 5. EMPFEHLUNG (immer genau 1×) ─────────────────
+  // -- 5. EMPFEHLUNG (immer genau 1�) -----------------
   const hasPR    = prExercises.length > 0;
   const highLoad = totalHighRpe >= 2;
 
   let recTitle, recSub;
   if (hasPR && !highLoad) {
     recTitle = 'Starke Einheit.';
-    recSub   = 'Erholung ernst nehmen. Beim nächsten Mal\nGewicht oder Wdh. minimal steigern.';
+    recSub   = 'Erholung ernst nehmen. Beim n�chsten Mal\nGewicht oder Wdh. minimal steigern.';
   } else if (highLoad) {
-    recTitle = 'Intensität war hoch.';
-    recSub   = 'Nächste Einheit bewusst kontrolliert angehen.\nKein Druck zur Steigerung.';
+    recTitle = 'Intensit�t war hoch.';
+    recSub   = 'N�chste Einheit bewusst kontrolliert angehen.\nKein Druck zur Steigerung.';
   } else {
     recTitle = 'Solide Daten.';
-    recSub   = 'Weiter konstant trainieren.\nGewichte schrittweise und geduldig erhöhen.';
+    recSub   = 'Weiter konstant trainieren.\nGewichte schrittweise und geduldig erh�hen.';
   }
   hints.push({
     type:'hint',
-    label:'→ Empfehlung',
+    label:'? Empfehlung',
     title:recTitle,
     sub:recSub,
     detail: {
       affected: 'Gesamter aktueller Zyklus',
-      evidence: `${totalWithData} Übungen ausgewertet · ${prExercises.length} PR-Hinweise · ${totalHighRpe} hohe RPE-Sätze`,
+      evidence: `${totalWithData} �bungen ausgewertet � ${prExercises.length} PR-Hinweise � ${totalHighRpe} hohe RPE-S�tze`,
       recommendation: recSub.replace(/\n/g, ' ')
     }
   });
@@ -1654,7 +1816,7 @@ function coachDetailsHTML(h) {
     recommendation: h.sub || 'Weiter beobachten.'
   };
   return `<div class="coach-details">` +
-    `<div class="coach-detail-row"><div class="coach-detail-k">Übung(en)</div><div class="coach-detail-v">${esc(d.affected || 'Aktuelle Trainingsdaten')}</div></div>` +
+    `<div class="coach-detail-row"><div class="coach-detail-k">�bung(en)</div><div class="coach-detail-v">${esc(d.affected || 'Aktuelle Trainingsdaten')}</div></div>` +
     `<div class="coach-detail-row"><div class="coach-detail-k">Werte</div><div class="coach-detail-v">${esc(d.evidence || 'Noch keine Werte vorhanden')}</div></div>` +
     `<div class="coach-detail-row"><div class="coach-detail-k">Empfehlung</div><div class="coach-detail-v">${esc(d.recommendation || 'Weiter beobachten.')}</div></div>` +
   `</div>`;
@@ -1668,7 +1830,7 @@ function renderCoach() {
   const container = document.getElementById('view-coach');
   container.innerHTML = '';
   if (!rawData.length) {
-    container.innerHTML = '<div class="empty"><big>Coach</big>Noch keine Trainingsdaten geladen.<br>Verbinde dein Google Sheet und speichere Trainingseinträge.</div>';
+    container.innerHTML = '<div class="empty"><big>Coach</big>Noch keine Trainingsdaten geladen.<br>Verbinde dein Google Sheet und speichere Trainingseintr�ge.</div>';
     return;
   }
   const hints = buildCoachHints();
@@ -1686,16 +1848,16 @@ function renderCoach() {
       `<div class="coach-lbl">${esc(h.label)}</div>` +
       `<div class="coach-title">${esc(h.title)}</div>` +
       (h.sub ? `<div class="coach-sub">${esc(h.sub).replace(/\n/g,'<br>')}</div>` : '') +
-      `</div><div class="coach-toggle">⌄</div></div>` +
+      `</div><div class="coach-toggle">?</div></div>` +
       coachDetailsHTML(h);
     list.appendChild(card);
   });
   container.appendChild(list);
 }
 
-// ════════════════════════════════════════════════════
+// ----------------------------------------------------
 //  TABS
-// ════════════════════════════════════════════════════
+// ----------------------------------------------------
 function switchTab(id, el) {
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   document.querySelectorAll('.sec').forEach(s => s.classList.remove('active'));
@@ -1714,12 +1876,15 @@ function switchTab(id, el) {
   if (id==='coach') renderCoach();
 }
 
-// ════════════════════════════════════════════════════
+// ----------------------------------------------------
 //  SETUP
-// ════════════════════════════════════════════════════
+// ----------------------------------------------------
 function setupOpen() {
   document.getElementById('si-sheet').value = SHEET;
   document.getElementById('si-url').value   = API;
+  document.getElementById('si-user').value  = CLOUD_USER?.userId || '';
+  document.getElementById('si-name').value  = CLOUD_USER?.displayName || '';
+  document.getElementById('si-pin').value   = '';
   setSetupConnectionStatus(rawData.length > 0);
   _updateVersionDisplay(_remoteVersion);
   document.getElementById('setup-ov').classList.add('open');
@@ -1735,12 +1900,168 @@ function setupSave() {
   if (url&&!url.startsWith('https://')) { toast('URL muss mit https:// beginnen','err'); return; }
   if (sh)  { SHEET=sh;  localStorage.setItem(LS_KEYS.sheet,sh); }
   if (url) { API=url;   localStorage.setItem(LS_KEYS.api,url); }
+  setMode('sheet');
   setupClose(); location.reload();
 }
 
-// ════════════════════════════════════════════════════
+function setupShowCloudFields() {
+  const panel = document.getElementById('setup-cloud-panel');
+  if (panel) panel.style.display = 'block';
+  setSetupConnectionStatus(rawData.length > 0);
+  const target = document.getElementById(CLOUD_USER?.userId ? 'si-pin' : 'si-user');
+  setTimeout(() => target?.focus(), 60);
+}
+
+function setupStartLocal() {
+  clearCloudPinSession();
+  setMode('local');
+  if (!localStorage.getItem(LS_KEYS.localData)) {
+    rawData = localStarterRows();
+    saveAppData({ mode: 'local' });
+  }
+  setupClose();
+  location.reload();
+}
+
+async function setupCloudLogin() {
+  const userId = v('si-user');
+  const pin = v('si-pin');
+  const displayName = v('si-name');
+  if (!publicSyncConfigured()) {
+    console.warn('[PUBLIC_CLOUD_LOGIN_SKIP]', 'Endpoint fehlt');
+    toast('Cloud-Sync ist noch nicht eingerichtet.', 'warn');
+    return;
+  }
+  if (!pin) {
+    console.warn('[PUBLIC_CLOUD_LOGIN_SKIP]', 'PIN fehlt');
+    toast('PIN eingeben', 'err');
+    return;
+  }
+  if (!userId && !displayName) {
+    console.warn('[PUBLIC_CLOUD_LOGIN_SKIP]', 'User-Code und Spitzname fehlen');
+    toast('Spitzname oder User-Code eingeben', 'err');
+    return;
+  }
+  const action = userId ? 'loginUser' : 'createOrLoginUser';
+  const payload = userId ? { userId, pin } : { displayName, pin };
+  try {
+    const json = await postPublicSync(action, payload);
+    if (!json.ok) {
+      console.warn('[PUBLIC_CLOUD_LOGIN_ERROR]', { action, code: json.code || '', error: json.error || 'Cloud-Login fehlgeschlagen' });
+      return toast(json.error || 'Cloud-Login fehlgeschlagen', 'err');
+    }
+    CLOUD_USER = {
+      userId: json.userId,
+      displayName: json.displayName || displayName || '',
+      plan: json.plan || 'friend',
+      status: json.status || 'active',
+      features: json.features || userFeatures(json.plan || 'friend', json.status || 'active')
+    };
+    if (CLOUD_USER.status === 'disabled') {
+      clearCloudPinSession();
+      console.warn('[PUBLIC_CLOUD_LOGIN_SKIP]', 'User deaktiviert');
+      return toast('Cloud-Zugang deaktiviert', 'warn');
+    }
+    localStorage.setItem(LS_KEYS.cloudUser, JSON.stringify(CLOUD_USER));
+    setCloudPinSession(pin);
+    setMode('cloud');
+    console.info('[PUBLIC_CLOUD_LOGIN_OK]', {
+      userId: CLOUD_USER.userId,
+      plan: CLOUD_USER.plan,
+      status: CLOUD_USER.status,
+      hasPinSession: true
+    });
+    toast('Cloud-Code aktiv', 'ok');
+    setupClose();
+    location.reload();
+  } catch(e) {
+    console.warn('[PUBLIC_CLOUD_LOGIN_ERROR]', { action, message: e.message || String(e) });
+    toast('Cloud-Login: ' + (e.message || 'Unbekannter Fehler'), 'err');
+  }
+}
+
+async function postPublicSync(action, payload={}) {
+  if (!publicSyncConfigured()) throw new Error('Cloud-Sync ist noch nicht eingerichtet.');
+  const res = await fetch(PUBLIC_SYNC_ENDPOINT, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain' },
+    body: JSON.stringify({ action, ...payload })
+  });
+  if (!res.ok) throw new Error('HTTP ' + res.status);
+  let json;
+  try {
+    json = await res.json();
+  } catch(e) {
+    throw new Error('Antwort ist kein JSON: ' + e.message);
+  }
+  return json;
+}
+
+async function syncCloudData(dataKey, payloadJson) {
+  if (!publicSyncConfigured()) {
+    console.warn('[PUBLIC_SYNC_SKIP]', 'Endpoint fehlt', { dataKey, ...publicStateDebug() });
+    return false;
+  }
+  if (!CLOUD_USER?.userId || !CLOUD_PIN_SESSION) {
+    console.warn('[PUBLIC_SYNC_SKIP]', 'Cloud-User oder PIN-Session fehlt', {
+      dataKey,
+      userId: CLOUD_USER?.userId || '',
+      ...publicStateDebug()
+    });
+    toast('Cloud-Login fuer Sync erneut oeffnen', 'warn');
+    return false;
+  }
+  if (CLOUD_USER.status === 'disabled') {
+    clearCloudPinSession();
+    toast('Cloud-Zugang deaktiviert', 'warn');
+    return false;
+  }
+  if (CLOUD_USER.features && CLOUD_USER.features.cloudSync === false) {
+    console.warn('[PUBLIC_SYNC_SKIP]', 'Plan erlaubt keinen Cloud-Sync', {
+      dataKey,
+      userId: CLOUD_USER.userId,
+      plan: CLOUD_USER.plan
+    });
+    toast('Cloud-Sync fuer diesen Plan nicht aktiv', 'warn');
+    return false;
+  }
+  console.info('[PUBLIC_SYNC_ATTEMPT]', { dataKey, userId: CLOUD_USER.userId });
+  try {
+    const json = await postPublicSync('saveCloudData', {
+      userId: CLOUD_USER.userId,
+      pin: CLOUD_PIN_SESSION,
+      dataKey,
+      payloadJson
+    });
+    if (!json.ok) {
+      console.warn('[PUBLIC_SYNC_ERROR]', json.error || json.code || 'Cloud-Sync fehlgeschlagen', json);
+      toast(json.error || 'Cloud-Sync fehlgeschlagen', 'warn');
+      return false;
+    }
+    console.info('[PUBLIC_SYNC_SAVED]', dataKey);
+    return true;
+  } catch(e) {
+    const details = {
+      dataKey,
+      userId: CLOUD_USER?.userId || '',
+      fileProtocol: location.protocol === 'file:',
+      ...publicStateDebug(),
+      message: e.message || String(e)
+    };
+    console.warn('[PUBLIC_SYNC_ERROR]', details);
+    if (details.fileProtocol) {
+      console.warn('[PUBLIC_SYNC_SKIP]', 'file:// kann Fetch/CORS-Tests verfaelschen. Cloud-Sync sollte ueber lokalen Server oder deployed GitHub Pages getestet werden.');
+      toast('Cloud-Sync besser ueber lokalen Server oder GitHub Pages testen', 'warn');
+    } else {
+      toast('Cloud-Sync nicht moeglich: ' + (e.message || 'Unbekannter Fehler'), 'warn');
+    }
+    return false;
+  }
+}
+
+// ----------------------------------------------------
 //  HELPERS
-// ════════════════════════════════════════════════════
+// ----------------------------------------------------
 const v    = id => (document.getElementById(id)?.value||'').trim();
 const esc  = s  => String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 const escA = s  => String(s||'').replace(/"/g,'&quot;');
@@ -1750,11 +2071,30 @@ function setDot(c) { document.getElementById('dot').className=c; }
 function setSetupConnectionStatus(connected) {
   const dot = document.getElementById('setup-status-dot');
   const txt = document.getElementById('setup-status-txt');
+  const debug = document.getElementById('setup-cloud-debug');
+  if (debug) {
+    debug.textContent = 'Mode: ' + (APP_MODE || 'setup') +
+      ' � Cloud User: ' + (CLOUD_USER?.userId ? 'vorhanden' : 'nicht vorhanden') +
+      ' � PIN Session: ' + (CLOUD_PIN_SESSION ? 'vorhanden' : 'nicht vorhanden') +
+      ' � Endpoint: ' + (publicSyncConfigured() ? 'vorhanden' : 'nicht vorhanden');
+  }
   if (!dot || !txt) return;
+  if (APP_MODE === 'local') {
+    dot.style.background = 'var(--ok)';
+    dot.style.boxShadow = '0 0 8px rgba(0,230,118,.45)';
+    txt.textContent = 'Lokalmodus aktiv';
+    return;
+  }
+  if (APP_MODE === 'cloud') {
+    dot.style.background = publicSyncConfigured() ? 'var(--ok)' : 'var(--warn)';
+    dot.style.boxShadow = publicSyncConfigured() ? '0 0 8px rgba(0,230,118,.45)' : '0 0 8px rgba(255,170,0,.45)';
+    txt.textContent = publicSyncConfigured() ? 'Cloud-Modus aktiv' : 'Cloud-Sync noch nicht eingerichtet';
+    return;
+  }
   if (connected) {
     dot.style.background = 'var(--ok)';
     dot.style.boxShadow = '0 0 8px rgba(0,230,118,.45)';
-    txt.textContent = 'Verbunden · ' + SHEET;
+    txt.textContent = 'Verbunden � ' + SHEET;
   } else {
     dot.style.background = 'var(--err)';
     dot.style.boxShadow = '0 0 8px rgba(255,68,68,.45)';
@@ -1764,21 +2104,29 @@ function setSetupConnectionStatus(connected) {
 function updateOfflineState() {
   const dot = document.getElementById('dot2');
   const txt = document.getElementById('api-status-txt');
+  if (APP_MODE === 'local' || APP_MODE === 'cloud') {
+    if (dot) {
+      dot.style.background = APP_MODE === 'cloud' && !publicSyncConfigured() ? 'var(--warn)' : 'var(--ok)';
+      dot.style.boxShadow = APP_MODE === 'cloud' && !publicSyncConfigured() ? '0 0 6px rgba(255,170,0,.4)' : '0 0 6px rgba(0,230,118,.4)';
+    }
+    if (txt) txt.textContent = APP_MODE === 'local' ? 'Lokalmodus - Browser-Speicher' : (publicSyncConfigured() ? 'Cloud-Modus' : 'Cloud-Sync noch nicht eingerichtet');
+    return;
+  }
   if (navigator.onLine !== false) {
-    if (txt && txt.textContent === 'Offline - Speichern nicht möglich') {
+    if (txt && txt.textContent === 'Offline - Speichern nicht m�glich') {
       if (rawData.length > 0) {
         setDot('ok');
         if (dot) {
           dot.style.background = 'var(--ok)';
           dot.style.boxShadow = '0 0 6px rgba(0,230,118,.4)';
         }
-        txt.textContent = 'Verbunden · ' + SHEET;
+        txt.textContent = 'Verbunden � ' + SHEET;
       } else {
         if (dot) {
           dot.style.background = 'var(--tx3)';
           dot.style.boxShadow = '';
         }
-        txt.textContent = 'Nicht verbunden — Setup oeffnen';
+        txt.textContent = 'Nicht verbunden � Setup oeffnen';
       }
     }
     return;
@@ -1788,7 +2136,7 @@ function updateOfflineState() {
     dot.style.background = 'var(--err)';
     dot.style.boxShadow = '0 0 6px rgba(255,68,68,.45)';
   }
-  if (txt) txt.textContent = 'Offline - Speichern nicht möglich';
+  if (txt) txt.textContent = 'Offline - Speichern nicht m�glich';
 }
 window.addEventListener('offline', updateOfflineState);
 window.addEventListener('online', updateOfflineState);
@@ -1803,9 +2151,9 @@ function toast(msg,type='') {
   clearTimeout(_tt); _tt=setTimeout(()=>{t.className='';},2800);
 }
 
-// ════════════════════════════════════════════════════
+// ----------------------------------------------------
 //  UPDATE CHECK
-// ════════════════════════════════════════════════════
+// ----------------------------------------------------
 let _remoteVersion = '';
 
 async function checkUpdate() {
@@ -1830,15 +2178,15 @@ function _updateVersionDisplay(remote) {
   const st = document.getElementById('si-ver-status');
   if (!lo) return;
   lo.textContent = APP_VERSION;
-  re.textContent = remote || '—';
-  if (!remote) { st.textContent = '—'; st.style.color = 'var(--tx3)'; return; }
+  re.textContent = remote || '�';
+  if (!remote) { st.textContent = '�'; st.style.color = 'var(--tx3)'; return; }
   const upToDate = remote === APP_VERSION;
-  st.textContent  = upToDate ? '✓ aktuell' : '⚠ Update verfügbar';
+  st.textContent  = upToDate ? '? aktuell' : '? Update verf�gbar';
   st.style.color  = upToDate ? 'var(--ok)' : 'var(--warn)';
 }
 
 function doUpdate() {
-  // Cache-bust für PWA/HomeScreen
+  // Cache-bust f�r PWA/HomeScreen
   location.href = location.pathname + '?v=' + Date.now();
 }
 
